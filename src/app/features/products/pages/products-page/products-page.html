@@ -34,20 +34,41 @@
             <span role="columnheader">Produit</span>
             <span role="columnheader">Reference</span>
             <span role="columnheader">Prix</span>
-            <span role="columnheader">Seuil min.</span>
+            <span role="columnheader">Stock global</span>
+            <span role="columnheader">Etat</span>
           </div>
 
-          @for (product of state.products; track product.productId) {
+          @for (item of state.products; track item.product.productId) {
             <article class="products-table__row" role="row">
               <div class="product-main" role="cell">
-                <strong>{{ product.name }}</strong>
-                <span>{{ product.productId }}</span>
+                <strong>{{ item.product.name }}</strong>
+                <span>{{ item.product.productId }}</span>
               </div>
-              <span role="cell">{{ product.reference }}</span>
+
+              <span role="cell">{{ item.product.reference }}</span>
+
               <strong class="price" role="cell">
-                {{ product.unitPrice.amount }} {{ product.unitPrice.currency }}
+                {{ item.product.unitPrice.amount }} {{ item.product.unitPrice.currency }}
               </strong>
-              <span role="cell">{{ product.minimumGlobalThreshold }}</span>
+
+              <div class="stock-quantity" role="cell">
+                <strong>{{ item.globalQuantity }}</strong>
+                <span>Seuil {{ item.product.minimumGlobalThreshold }}</span>
+              </div>
+
+              <span class="stock-badge stock-badge--{{ item.stockStatus }}" role="cell">
+                @switch (item.stockStatus) {
+                  @case ('ok') {
+                    OK
+                  }
+                  @case ('low') {
+                    Sous seuil
+                  }
+                  @case ('critical') {
+                    Critique
+                  }
+                }
+              </span>
             </article>
           } @empty {
             <div class="empty-state">

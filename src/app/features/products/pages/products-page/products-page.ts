@@ -6,12 +6,23 @@ import { forkJoin, catchError, map, of, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
+import { StockLevel } from '../../../stock/models/stock-level.model';
 
 
 type ProductsPageState =
   | { readonly status: 'loading' }
-  | { readonly status: 'success'; readonly products: readonly Product[] }
+  | { readonly status: 'success'; readonly products: readonly ProductListItem[] }
   | { readonly status: 'error'; readonly message: string }
+
+
+
+type StockStatus = 'ok' | 'low' | 'critical';
+
+interface ProductListItem {
+  readonly product: Product;
+  readonly globalQuantity: number;
+  readonly stockStatus: StockStatus;
+}
 
 @Component({
   selector: 'app-products-page',
@@ -28,9 +39,19 @@ export class ProductsPage {
     stockLevelsPage: this.stockLevelsApi.listStockLevels({ size: 200 })
   }).pipe(
     map(({ productsPage, stockLevelsPage }): ProductsPageState => {
+      const stockLevels = stockLevelsPage.content;
+
       return {
         status: 'success',
-        products: productsPage.content
+        products: productsPage.content.map((product): ProductListItem => {
+          const globalQuantity = getGlobalQuantity(stockLevels, product.productId);
+
+          return {
+            product,
+            globalQuantity,
+            stockStatus: getStockStatus(product, globalQuantity),
+          };
+        }),
       };
     }),
     startWith({ status: 'loading' } satisfies ProductsPageState),
@@ -60,5 +81,32 @@ function getProductsErrorMessage(error: unknown): string {
     default:
       return 'Impossible de charger les produits pour le moment.';
   }
+
+}
+
+
+function getStockStatus(product: Product, globalQuantity: number): StockStatus {
+  if (globalQuantity === 0) {
+    return 'critical';
+  }
+
+  if (globalQuantity <= product.minimumGlobalThreshold) {
+    return 'low';
+  }
+
+  return 'ok';
+}
+
+
+function getGlobalQuantity(stockLevels: readonly StockLevel[], productId: string): number {
+  let total = 0;
+
+  for (const stockLevel of stockLevels) {
+    if (stockLevel.productId === productId) {
+      total += stockLevel.quantity;
+    }
+  }
+
+  return total;
 }
 

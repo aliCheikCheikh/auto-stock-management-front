@@ -83,7 +83,12 @@ h2 {
 .products-table__header,
 .products-table__row {
   display: grid;
-  grid-template-columns: minmax(220px, 1.7fr) minmax(140px, 1fr) minmax(120px, 0.8fr) minmax(110px, 0.7fr);
+  grid-template-columns:
+    minmax(220px, 1.7fr)
+    minmax(140px, 0.9fr)
+    minmax(120px, 0.75fr)
+    minmax(120px, 0.75fr)
+    minmax(120px, 0.7fr);
   gap: 18px;
   align-items: center;
 }
@@ -130,6 +135,52 @@ h2 {
   font-size: 20px;
 }
 
+.stock-quantity {
+  display: grid;
+  gap: 4px;
+}
+
+.stock-quantity strong {
+  color: #18201c;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.stock-quantity span {
+  color: #6b5f51;
+  font-size: 16px;
+}
+
+.stock-badge {
+  width: max-content;
+  min-width: 96px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
+.stock-badge--ok {
+  border-color: #6b8f57;
+  background: #eef3e7;
+  color: #31552b;
+}
+
+.stock-badge--low {
+  border-color: #b8832f;
+  background: #fbefd3;
+  color: #6f4c18;
+}
+
+.stock-badge--critical {
+  border-color: #b94735;
+  background: #f5ded8;
+  color: #842a20;
+}
+
 .empty-state {
   padding: 28px 24px;
   color: #6b5f51;
@@ -153,5 +204,9 @@ h2 {
   .products-table__row {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .stock-badge {
+    min-width: 0;
   }
 }
