@@ -1,0 +1,149 @@
+.receipt-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #f4efe5;
+  color: #18201c;
+}
+
+.page-header {
+  margin-bottom: 28px;
+}
+
+.page-kicker {
+  margin: 0 0 8px;
+  color: #195b4a;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  color: #18201c;
+  font-size: 36px;
+  line-height: 1.08;
+  font-weight: 800;
+}
+
+h2 {
+  color: #1d211f;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.receipt-form {
+  display: grid;
+  gap: 20px;
+  max-width: 980px;
+}
+
+.form-section {
+  border: 1px solid #d8ccb8;
+  border-radius: 8px;
+  background: #fffbf3;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  min-height: 68px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #d9cdbb;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  padding: 24px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field--wide {
+  grid-column: 1 / -1;
+}
+
+label {
+  color: #4f463c;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+input {
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid #d8ccb8;
+  border-radius: 6px;
+  background: #fffcf6;
+  color: #18201c;
+  font-size: 22px;
+  line-height: 1.2;
+  padding: 12px 14px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #195b4a;
+  box-shadow: 0 0 0 3px rgba(25, 91, 74, 0.14);
+}
+
+.field-error {
+  color: #842a20;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 0 0;
+}
+
+.submit-button {
+  min-height: 54px;
+  border: 1px solid #12483a;
+  border-radius: 6px;
+  background: #195b4a;
+  color: #fffcf6;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 800;
+  padding: 12px 20px;
+}
+
+.submit-button:hover {
+  background: #12483a;
+}
+
+.submit-button:focus-visible {
+  outline: 3px solid rgba(25, 91, 74, 0.24);
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .receipt-page {
+    padding: 24px 16px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+  }
+
+  .submit-button {
+    width: 100%;
+  }
+}

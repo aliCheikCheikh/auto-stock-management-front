@@ -1,26 +1,89 @@
-<main>
-    <h1>Nouvelle réception</h1>
+<main class="receipt-page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Stock</p>
+      <h1>Nouvelle réception</h1>
+    </div>
+  </header>
 
-    <form [formGroup]="form">
-        <label for="productReference">Référence produit</label>
-        <input id="productReference" type="text" formControlName="productReference" />
+  <form class="receipt-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <section class="form-section" aria-labelledby="product-section-title">
+      <div class="section-heading">
+        <h2 id="product-section-title">Produit</h2>
+      </div>
 
-        <label for="productName">Nom du produit</label>
-        <input id="productName" type="text" formControlName="productName" />
+      <div class="form-grid">
+        <div class="field field--wide">
+          <label for="productReference">Référence produit</label>
+          <input id="productReference" type="text" formControlName="productReference" />
+          @if (form.controls.productReference.touched && form.controls.productReference.invalid) {
+            <p class="field-error">Référence obligatoire.</p>
+          }
+        </div>
 
-        <label for="categoryId">Categorie</label>
-        <input id="categoryId" type="text" formControlName="categoryId" />
+        <div class="field field--wide">
+          <label for="productName">Nom du produit</label>
+          <input id="productName" type="text" formControlName="productName" />
+          @if (form.controls.productName.touched && form.controls.productName.invalid) {
+            <p class="field-error">Nom obligatoire.</p>
+          }
+        </div>
 
-        <label for="unitPriceAmount">Prix unitaire</label>
-        <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
+        <div class="field field--wide">
+          <label for="categoryId">Catégorie</label>
+          <input id="categoryId" type="text" formControlName="categoryId" />
+          @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
+            <p class="field-error">Catégorie obligatoire.</p>
+          }
+        </div>
 
-        <label for="minimumGlobalThreshold">Seuil minimum</label>
-        <input id="minimumGlobalThreshold" type="number" formControlName="minimumGlobalThreshold" />
+        <div class="field">
+          <label for="unitPriceAmount">Prix unitaire</label>
+          <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
+          @if (form.controls.unitPriceAmount.touched && form.controls.unitPriceAmount.invalid) {
+            <p class="field-error">Prix obligatoire.</p>
+          }
+        </div>
 
-        <label for="locationId">Emplacement</label>
-        <input id="locationId" type="text" formControlName="locationId" />
+        <div class="field">
+          <label for="minimumGlobalThreshold">Seuil minimum</label>
+          <input id="minimumGlobalThreshold" type="number" formControlName="minimumGlobalThreshold" />
+          @if (
+            form.controls.minimumGlobalThreshold.touched &&
+            form.controls.minimumGlobalThreshold.invalid
+          ) {
+            <p class="field-error">Seuil invalide.</p>
+          }
+        </div>
+      </div>
+    </section>
 
-        <label for="quantity">Quantité reçue</label>
-        <input id="quantity" type="number" formControlName="quantity" />
-    </form>
+    <section class="form-section" aria-labelledby="distribution-section-title">
+      <div class="section-heading">
+        <h2 id="distribution-section-title">Réception</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="field field--wide">
+          <label for="locationId">Emplacement</label>
+          <input id="locationId" type="text" formControlName="locationId" />
+          @if (form.controls.locationId.touched && form.controls.locationId.invalid) {
+            <p class="field-error">Emplacement obligatoire.</p>
+          }
+        </div>
+
+        <div class="field">
+          <label for="quantity">Quantité reçue</label>
+          <input id="quantity" type="number" formControlName="quantity" />
+          @if (form.controls.quantity.touched && form.controls.quantity.invalid) {
+            <p class="field-error">Quantité invalide.</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <footer class="form-actions">
+      <button class="submit-button" type="submit">Enregistrer la réception</button>
+    </footer>
+  </form>
 </main>
