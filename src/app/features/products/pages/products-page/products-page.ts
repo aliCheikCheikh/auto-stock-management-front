@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { ProductsApiService } from '../../data-access/products-api.service';
+import { StockLevelsApiService } from '../../../stock/data-access/stock-levels-api.service';
 import { Product } from '../../models/product.model';
-import { catchError, map, of, startWith } from 'rxjs';
+import { forkJoin, catchError, map, of, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
@@ -20,12 +21,19 @@ type ProductsPageState =
 })
 export class ProductsPage {
   private readonly productsApi = inject(ProductsApiService);
-  readonly state$ = this.productsApi.listProducts().pipe(
-    map((page): ProductsPageState => ({
-      status: 'success',
-      products: page.content
-    })
-    ), startWith({ status: 'loading' } satisfies ProductsPageState),
+  private readonly stockLevelsApi = inject(StockLevelsApiService);
+
+  readonly state$ = forkJoin({
+    productsPage: this.productsApi.listProducts(),
+    stockLevelsPage: this.stockLevelsApi.listStockLevels({ size: 200 })
+  }).pipe(
+    map(({ productsPage, stockLevelsPage }): ProductsPageState => {
+      return {
+        status: 'success',
+        products: productsPage.content
+      };
+    }),
+    startWith({ status: 'loading' } satisfies ProductsPageState),
     catchError((error: unknown) => of({
       status: 'error',
       message: getProductsErrorMessage(error)
