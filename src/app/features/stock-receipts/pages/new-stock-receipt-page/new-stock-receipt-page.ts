@@ -29,5 +29,13 @@ export class NewStockReceiptPage {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
+    locationId: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    quantity: new FormControl(1, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(1)],
+    }),
   });
 }

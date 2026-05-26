@@ -4,7 +4,7 @@
     <form [formGroup]="form">
         <label for="productReference">Référence produit</label>
         <input id="productReference" type="text" formControlName="productReference" />
-        
+
         <label for="productName">Nom du produit</label>
         <input id="productName" type="text" formControlName="productName" />
 
@@ -16,5 +16,11 @@
 
         <label for="minimumGlobalThreshold">Seuil minimum</label>
         <input id="minimumGlobalThreshold" type="number" formControlName="minimumGlobalThreshold" />
+
+        <label for="locationId">Emplacement</label>
+        <input id="locationId" type="text" formControlName="locationId" />
+
+        <label for="quantity">Quantité reçue</label>
+        <input id="quantity" type="number" formControlName="quantity" />
     </form>
 </main>
