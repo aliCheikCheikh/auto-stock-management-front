@@ -1,2 +1,27 @@
 <h1>Catalogue produits</h1>
-<p>La page produits fonctionne.</p>
+
+@if (state$ | async; as state) {
+@if (state.status === 'loading') {
+<p>Chargement des produits...</p>
+}
+
+@if (state.status === 'error') {
+<p>{{ state.message }}</p>
+}
+
+@if (state.status === 'success') {
+<p>{{ state.products.length }} produit(s)</p>
+
+<ul>
+    @for (product of state.products; track product.productId) {
+    <li>
+        <strong>{{ product.name }}</strong>
+        <span>{{ product.reference }}</span>
+        <span>{{ product.unitPrice.amount }} {{ product.unitPrice.currency }}</span>
+    </li>
+    } @empty {
+    <li>Aucun produit pour le moment.</li>
+    }
+</ul>
+}
+}
