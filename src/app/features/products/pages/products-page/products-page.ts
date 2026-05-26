@@ -39,12 +39,12 @@ export class ProductsPage {
     stockLevelsPage: this.stockLevelsApi.listStockLevels({ size: 200 })
   }).pipe(
     map(({ productsPage, stockLevelsPage }): ProductsPageState => {
-      const stockLevels = stockLevelsPage.content;
+      const globalQuantityByProductId = buildGlobalQuantityByProductId(stockLevelsPage.content);
 
       return {
         status: 'success',
         products: productsPage.content.map((product): ProductListItem => {
-          const globalQuantity = getGlobalQuantity(stockLevels, product.productId);
+          const globalQuantity = globalQuantityByProductId.get(product.productId) ?? 0;
 
           return {
             product,
@@ -97,16 +97,17 @@ function getStockStatus(product: Product, globalQuantity: number): StockStatus {
   return 'ok';
 }
 
-
-function getGlobalQuantity(stockLevels: readonly StockLevel[], productId: string): number {
-  let total = 0;
+function buildGlobalQuantityByProductId(
+  stockLevels: readonly StockLevel[]
+): ReadonlyMap<string, number> {
+  const quantities = new Map<string, number>();
 
   for (const stockLevel of stockLevels) {
-    if (stockLevel.productId === productId) {
-      total += stockLevel.quantity;
-    }
+    const currentQuantity = quantities.get(stockLevel.productId) ?? 0;
+
+    quantities.set(stockLevel.productId, currentQuantity + stockLevel.quantity);
   }
 
-  return total;
+  return quantities;
 }
 
