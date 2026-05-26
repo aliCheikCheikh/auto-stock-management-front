@@ -9,6 +9,8 @@ import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { StockLevel } from '../../../stock/models/stock-level.model';
 
 
+const STOCK_LEVELS_PAGE_SIZE = 200;
+
 type ProductsPageState =
   | { readonly status: 'loading' }
   | { readonly status: 'success'; readonly products: readonly ProductListItem[] }
@@ -36,7 +38,7 @@ export class ProductsPage {
 
   readonly state$ = forkJoin({
     productsPage: this.productsApi.listProducts(),
-    stockLevelsPage: this.stockLevelsApi.listStockLevels({ size: 200 })
+    stockLevelsPage: this.stockLevelsApi.listStockLevels({ size: STOCK_LEVELS_PAGE_SIZE })
   }).pipe(
     map(({ productsPage, stockLevelsPage }): ProductsPageState => {
       const globalQuantityByProductId = buildGlobalQuantityByProductId(stockLevelsPage.content);
