@@ -9,6 +9,25 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 })
 export class NewStockReceiptPage {
   readonly form = new FormGroup({
-    productReference: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    productReference: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    productName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    categoryId: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    unitPriceAmount: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    minimumGlobalThreshold: new FormControl(0, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0)],
+    }),
   });
 }

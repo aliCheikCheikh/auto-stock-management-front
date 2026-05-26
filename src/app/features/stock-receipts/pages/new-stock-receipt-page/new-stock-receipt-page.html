@@ -4,5 +4,17 @@
     <form [formGroup]="form">
         <label for="productReference">Référence produit</label>
         <input id="productReference" type="text" formControlName="productReference" />
+        
+        <label for="productName">Nom du produit</label>
+        <input id="productName" type="text" formControlName="productName" />
+
+        <label for="categoryId">Categorie</label>
+        <input id="categoryId" type="text" formControlName="categoryId" />
+
+        <label for="unitPriceAmount">Prix unitaire</label>
+        <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
+
+        <label for="minimumGlobalThreshold">Seuil minimum</label>
+        <input id="minimumGlobalThreshold" type="number" formControlName="minimumGlobalThreshold" />
     </form>
 </main>
