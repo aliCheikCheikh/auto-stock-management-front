@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReceiveStockRequest } from '../../models/stock-receipt.model';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -38,4 +39,39 @@ export class NewStockReceiptPage {
       validators: [Validators.required, Validators.min(1)],
     }),
   });
+
+
+
+  onSubmit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.form.getRawValue();
+
+    const request: ReceiveStockRequest = {
+      productReference: formValue.productReference,
+      newProductInfo: {
+        name: formValue.productName,
+        reference: formValue.productReference,
+        categoryId: formValue.categoryId,
+        unitPrice: {
+          amount: formValue.unitPriceAmount,
+          currency: 'EUR',
+        },
+        minimumGlobalThreshold: formValue.minimumGlobalThreshold,
+      },
+      shopId: 'shop-id-placeholder',
+      userId: 'user-id-placeholder',
+      distributions: [
+        {
+          locationId: formValue.locationId,
+          quantity: formValue.quantity,
+        },
+      ],
+    }
+    console.log(request);
+
+  }
 }
