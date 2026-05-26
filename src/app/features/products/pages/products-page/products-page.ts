@@ -3,6 +3,9 @@ import { ProductsApiService } from '../../data-access/products-api.service';
 import { Product } from '../../models/product.model';
 import { catchError, map, of, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ProblemDetail } from '../../../../core/api/problem-detail.model';
+
 
 type ProductsPageState =
   | { readonly status: 'loading' }
@@ -23,11 +26,31 @@ export class ProductsPage {
       products: page.content
     })
     ), startWith({ status: 'loading' } satisfies ProductsPageState),
-    catchError(() => of({
+    catchError((error: unknown) => of({
       status: 'error',
-      message: 'impossible de charger les produits pour le moment'
+      message: getProductsErrorMessage(error)
     } satisfies ProductsPageState))
   );
 
 
 }
+
+function getProductsErrorMessage(error: unknown): string {
+  if (!(error instanceof HttpErrorResponse)) {
+    return 'Une erreur inattendue est survenue.';
+  }
+
+  const problem = error.error as Partial<ProblemDetail> | null;
+
+  switch (problem?.code) {
+    case 'VALIDATION_FAILED':
+      return 'La demande envoyée au serveur est invalide.';
+
+    case 'BUSINESS_RULE_VIOLATION':
+      return 'Une règle métier empêche le chargement des produits.';
+
+    default:
+      return 'Impossible de charger les produits pour le moment.';
+  }
+}
+
