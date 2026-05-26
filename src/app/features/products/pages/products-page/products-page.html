@@ -1,27 +1,61 @@
-<h1>Catalogue produits</h1>
+<main class="products-page">
+  @if (state$ | async; as state) {
+    <header class="page-header">
+      <div>
+        <p class="page-kicker">Stock</p>
+        <h1>Catalogue produits</h1>
+      </div>
 
-@if (state$ | async; as state) {
-@if (state.status === 'loading') {
-<p>Chargement des produits...</p>
-}
+      @if (state.status === 'success') {
+        <p class="product-count">{{ state.products.length }} produit(s)</p>
+      }
+    </header>
 
-@if (state.status === 'error') {
-<p>{{ state.message }}</p>
-}
-
-@if (state.status === 'success') {
-<p>{{ state.products.length }} produit(s)</p>
-
-<ul>
-    @for (product of state.products; track product.productId) {
-    <li>
-        <strong>{{ product.name }}</strong>
-        <span>{{ product.reference }}</span>
-        <span>{{ product.unitPrice.amount }} {{ product.unitPrice.currency }}</span>
-    </li>
-    } @empty {
-    <li>Aucun produit pour le moment.</li>
+    @if (state.status === 'loading') {
+      <section class="state-panel" aria-live="polite">
+        <p>Chargement des produits...</p>
+      </section>
     }
-</ul>
-}
-}
+
+    @if (state.status === 'error') {
+      <section class="state-panel state-panel--error" aria-live="polite">
+        <p>{{ state.message }}</p>
+      </section>
+    }
+
+    @if (state.status === 'success') {
+      <section class="catalogue-section" aria-labelledby="catalogue-title">
+        <div class="section-heading">
+          <h2 id="catalogue-title">Produits disponibles</h2>
+        </div>
+
+        <div class="products-table" role="table" aria-label="Catalogue produits">
+          <div class="products-table__header" role="row">
+            <span role="columnheader">Produit</span>
+            <span role="columnheader">Reference</span>
+            <span role="columnheader">Prix</span>
+            <span role="columnheader">Seuil min.</span>
+          </div>
+
+          @for (product of state.products; track product.productId) {
+            <article class="products-table__row" role="row">
+              <div class="product-main" role="cell">
+                <strong>{{ product.name }}</strong>
+                <span>{{ product.productId }}</span>
+              </div>
+              <span role="cell">{{ product.reference }}</span>
+              <strong class="price" role="cell">
+                {{ product.unitPrice.amount }} {{ product.unitPrice.currency }}
+              </strong>
+              <span role="cell">{{ product.minimumGlobalThreshold }}</span>
+            </article>
+          } @empty {
+            <div class="empty-state">
+              <p>Aucun produit pour le moment.</p>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+</main>
