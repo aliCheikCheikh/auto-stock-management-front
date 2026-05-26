@@ -6,9 +6,13 @@
         <h1>Catalogue produits</h1>
       </div>
 
-      @if (state.status === 'success') {
-        <p class="product-count">{{ state.products.length }} produit(s)</p>
-      }
+      <div class="page-actions">
+        @if (state.status === 'success') {
+          <p class="product-count">{{ state.products.length }} produit(s)</p>
+        }
+
+        <a class="primary-action" href="/stock-receipts/new">Nouvelle réception</a>
+      </div>
     </header>
 
     @if (state.status === 'loading') {
@@ -45,18 +49,22 @@
                 <span>{{ item.product.productId }}</span>
               </div>
 
-              <span role="cell">{{ item.product.reference }}</span>
+              <span role="cell" data-label="Référence">{{ item.product.reference }}</span>
 
-              <strong class="price" role="cell">
+              <strong class="price" role="cell" data-label="Prix">
                 {{ item.product.unitPrice.amount }} {{ item.product.unitPrice.currency }}
               </strong>
 
-              <div class="stock-quantity" role="cell">
+              <div class="stock-quantity" role="cell" data-label="Stock global">
                 <strong>{{ item.globalQuantity }}</strong>
                 <span>Seuil {{ item.product.minimumGlobalThreshold }}</span>
               </div>
 
-              <span class="stock-badge stock-badge--{{ item.stockStatus }}" role="cell">
+              <span
+                class="stock-badge stock-badge--{{ item.stockStatus }}"
+                role="cell"
+                data-label="Etat"
+              >
                 @switch (item.stockStatus) {
                   @case ('ok') {
                     OK

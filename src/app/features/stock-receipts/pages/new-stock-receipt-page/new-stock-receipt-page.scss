@@ -1,17 +1,22 @@
 .receipt-page {
   min-height: 100vh;
-  padding: 40px;
-  background: #f4efe5;
-  color: #18201c;
+  padding: 34px;
+  background: var(--color-canvas);
+  color: var(--color-ink);
 }
 
 .page-header {
-  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1120px;
+  margin: 0 auto 26px;
 }
 
 .page-kicker {
   margin: 0 0 8px;
-  color: #195b4a;
+  color: var(--color-petrol);
   font-size: 18px;
   font-weight: 700;
 }
@@ -23,29 +28,48 @@ p {
 }
 
 h1 {
-  color: #18201c;
+  color: var(--color-ink);
   font-size: 36px;
   line-height: 1.08;
   font-weight: 800;
 }
 
 h2 {
-  color: #1d211f;
+  color: var(--color-ink);
   font-size: 24px;
   line-height: 1.2;
   font-weight: 800;
 }
 
+.secondary-action {
+  min-height: 48px;
+  display: grid;
+  align-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-petrol);
+  font-size: 18px;
+  font-weight: 800;
+  padding: 10px 16px;
+  text-decoration: none;
+}
+
+.secondary-action:hover {
+  border-color: var(--color-petrol);
+}
+
 .receipt-form {
   display: grid;
-  gap: 20px;
-  max-width: 980px;
+  gap: 22px;
+  max-width: 1120px;
+  margin: 0 auto;
 }
 
 .form-section {
-  border: 1px solid #d8ccb8;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fffbf3;
+  background: var(--color-surface);
 }
 
 .section-heading {
@@ -53,14 +77,15 @@ h2 {
   align-items: center;
   min-height: 68px;
   padding: 20px 24px;
-  border-bottom: 1px solid #d9cdbb;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-strong);
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
-  padding: 24px;
+  gap: 24px;
+  padding: 26px;
 }
 
 .field {
@@ -80,20 +105,49 @@ label {
 
 input {
   width: 100%;
-  min-height: 54px;
-  border: 1px solid #d8ccb8;
+  min-height: 62px;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: #fffcf6;
-  color: #18201c;
-  font-size: 22px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 23px;
   line-height: 1.2;
-  padding: 12px 14px;
+  padding: 14px 16px;
   outline: none;
 }
 
 input:focus {
-  border-color: #195b4a;
+  border-color: var(--color-petrol);
   box-shadow: 0 0 0 3px rgba(25, 91, 74, 0.14);
+}
+
+.price-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  align-items: stretch;
+}
+
+.price-input input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.price-input span {
+  display: grid;
+  place-items: center;
+  min-height: 62px;
+  border: 1px solid var(--color-border);
+  border-left: 0;
+  border-radius: 0 6px 6px 0;
+  background: var(--color-canvas-soft);
+  color: var(--color-muted);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.field--quantity input {
+  font-size: 32px;
+  font-weight: 800;
 }
 
 .field-error {
@@ -105,23 +159,23 @@ input:focus {
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  padding: 4px 0 0;
+  padding: 2px 0 0;
 }
 
 .submit-button {
-  min-height: 54px;
-  border: 1px solid #12483a;
+  min-height: 62px;
+  border: 1px solid var(--color-petrol-dark);
   border-radius: 6px;
-  background: #195b4a;
-  color: #fffcf6;
+  background: var(--color-petrol);
+  color: var(--color-surface);
   cursor: pointer;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
-  padding: 12px 20px;
+  padding: 14px 24px;
 }
 
 .submit-button:hover {
-  background: #12483a;
+  background: var(--color-petrol-dark);
 }
 
 .submit-button:focus-visible {
@@ -129,14 +183,24 @@ input:focus {
   outline-offset: 2px;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 960px) {
   .receipt-page {
-    padding: 24px 16px;
+    padding: 24px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .secondary-action {
+    width: 100%;
+    justify-content: center;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
-    padding: 20px;
+    padding: 22px;
   }
 
   .form-actions {
@@ -145,5 +209,16 @@ input:focus {
 
   .submit-button {
     width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .receipt-page {
+    padding: 20px 14px;
+  }
+
+  input,
+  .price-input span {
+    min-height: 58px;
   }
 }

@@ -4,6 +4,8 @@
       <p class="page-kicker">Stock</p>
       <h1>Nouvelle réception</h1>
     </div>
+
+    <a class="secondary-action" href="/products">Catalogue</a>
   </header>
 
   <form class="receipt-form" [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -37,9 +39,12 @@
           }
         </div>
 
-        <div class="field">
+        <div class="field field--price">
           <label for="unitPriceAmount">Prix unitaire</label>
-          <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
+          <div class="price-input">
+            <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
+            <span>EUR</span>
+          </div>
           @if (form.controls.unitPriceAmount.touched && form.controls.unitPriceAmount.invalid) {
             <p class="field-error">Prix obligatoire.</p>
           }
@@ -72,7 +77,7 @@
           }
         </div>
 
-        <div class="field">
+        <div class="field field--quantity">
           <label for="quantity">Quantité reçue</label>
           <input id="quantity" type="number" formControlName="quantity" />
           @if (form.controls.quantity.touched && form.controls.quantity.invalid) {
