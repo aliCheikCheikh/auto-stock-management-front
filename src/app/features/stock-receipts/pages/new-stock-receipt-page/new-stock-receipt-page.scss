@@ -184,9 +184,38 @@ input:focus {
 }
 
 .form-actions {
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
   padding: 2px 0 0;
+}
+
+.form-feedback {
+  min-height: 58px;
+  display: grid;
+  align-items: center;
+}
+
+.submit-feedback {
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.35;
+  padding: 14px 16px;
+}
+
+.submit-feedback--success {
+  border-color: rgba(107, 143, 87, 0.48);
+  background: #edf3e5;
+  color: #315524;
+}
+
+.submit-feedback--error {
+  border-color: rgba(185, 71, 53, 0.48);
+  background: #f5ded8;
+  color: #842a20;
 }
 
 .submit-button {
@@ -203,6 +232,12 @@ input:focus {
 
 .submit-button:hover {
   background: var(--color-petrol-dark);
+}
+
+.submit-button:disabled {
+  border-color: var(--color-border-strong);
+  background: #6d7770;
+  cursor: wait;
 }
 
 .submit-button:focus-visible {
@@ -235,7 +270,7 @@ input:focus {
   }
 
   .form-actions {
-    justify-content: stretch;
+    grid-template-columns: 1fr;
   }
 
   .submit-button {

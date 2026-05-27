@@ -95,7 +95,23 @@
         </section>
 
         <footer class="form-actions">
-            <button class="submit-button" type="submit">Enregistrer la réception</button>
+            <div class="form-feedback" aria-live="polite">
+                @if (successMessage) {
+                <p class="submit-feedback submit-feedback--success">{{ successMessage }}</p>
+                }
+
+                @if (errorMessage) {
+                <p class="submit-feedback submit-feedback--error">{{ errorMessage }}</p>
+                }
+            </div>
+
+            <button class="submit-button" type="submit" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                Enregistrement...
+                } @else {
+                Enregistrer la réception
+                }
+            </button>
         </footer>
     </form>
 </main>

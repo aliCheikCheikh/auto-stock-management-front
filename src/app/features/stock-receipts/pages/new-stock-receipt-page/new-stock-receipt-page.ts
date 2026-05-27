@@ -12,6 +12,11 @@ import { StockReceiptsApiService } from '../../data-access/stock-receipts-api.se
 })
 export class NewStockReceiptPage {
   private readonly stockReceiptsApi = inject(StockReceiptsApiService);
+
+  isSubmitting = false;
+  successMessage = '';
+  errorMessage = '';
+
   readonly form = new FormGroup({
     productReference: new FormControl('', {
       nonNullable: true,
@@ -85,14 +90,20 @@ export class NewStockReceiptPage {
         },
       ].filter((distribution) => distribution.quantity > 0),
     }
+
+    this.isSubmitting = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+
     this.stockReceiptsApi.receiveStock(request).subscribe({
       next: (acknowledgement) => {
-        console.log('Stock receipt acknowledged:', acknowledgement);
-        alert(`Stock receipt acknowledged for product ID: ${acknowledgement.productId}, total received: ${acknowledgement.totalReceived}`);
+        this.isSubmitting = false;
+        this.successMessage = `Reception enregistrée : ${acknowledgement.totalReceived} pièce(s)`;
       },
-      error: (error) => {
-        console.error('Error receiving stock:', error);
-        alert('An error occurred while receiving stock. Please try again.');
+      error: () => {
+        this.isSubmitting = false;
+        this.errorMessage = 'Impossible d\'enregistrer la réception. Veuillez réessayer.';
+
       },
     })
 
