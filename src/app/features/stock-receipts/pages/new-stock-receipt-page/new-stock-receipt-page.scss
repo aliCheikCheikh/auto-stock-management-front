@@ -156,16 +156,25 @@ input:focus {
   min-height: 150px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
-  padding: 18px;
-}
-
-.distribution-card {
   background: var(--color-surface);
+  padding: 18px;
 }
 
 .distribution-card input {
   font-size: 32px;
   font-weight: 800;
+}
+
+.distribution-error {
+  grid-column: 1 / -1;
+  border: 1px solid var(--color-brick);
+  border-radius: 6px;
+  background: #f5ded8;
+  color: #842a20;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.35;
+  padding: 14px 16px;
 }
 
 .field-error {

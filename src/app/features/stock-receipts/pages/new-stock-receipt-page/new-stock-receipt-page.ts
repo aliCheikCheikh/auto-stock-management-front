@@ -1,4 +1,4 @@
-import { Component,inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
@@ -52,6 +52,13 @@ export class NewStockReceiptPage {
     }
 
     const formValue = this.form.getRawValue();
+
+    const totalReceived = formValue.shopFloorQuantity + formValue.backstockQuantity;
+    if (totalReceived <= 0) {
+      this.form.controls.shopFloorQuantity.markAllAsTouched();
+      this.form.controls.backstockQuantity.markAllAsTouched();
+      return;
+    }
 
     const request: ReceiveStockRequest = {
       productReference: formValue.productReference,

@@ -84,6 +84,13 @@
                     <p class="field-error">Quantité réserve invalide.</p>
                     }
                 </div>
+
+                @if (
+                (form.controls.shopFloorQuantity.touched || form.controls.backstockQuantity.touched) &&
+                form.controls.shopFloorQuantity.value + form.controls.backstockQuantity.value <= 0
+                ) {
+                <p class="distribution-error">Saisis au moins une quantité à réceptionner.</p>
+                }
             </div>
         </section>
 
