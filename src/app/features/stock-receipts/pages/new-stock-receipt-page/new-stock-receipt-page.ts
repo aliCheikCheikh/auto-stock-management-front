@@ -3,6 +3,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
 import { StockReceiptsApiService } from '../../data-access/stock-receipts-api.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -100,12 +102,37 @@ export class NewStockReceiptPage {
         this.isSubmitting = false;
         this.successMessage = `Reception enregistrée : ${acknowledgement.totalReceived} pièce(s)`;
       },
-      error: () => {
+      error: (error: unknown) => {
         this.isSubmitting = false;
-        this.errorMessage = 'Impossible d\'enregistrer la réception. Veuillez réessayer.';
+        this.errorMessage = this.getReceiptErrorMessage(error);
 
       },
     })
 
+  }
+
+  private getReceiptErrorMessage(error: unknown): string {
+    if (!(error instanceof HttpErrorResponse)) {
+      return 'Erreur inattendue pendant l’enregistrement.';
+    }
+
+    const problem = error.error as Partial<ProblemDetail> | null;
+
+    switch (problem?.code) {
+      case 'VALIDATION_FAILED':
+        return 'Certaines informations de la réception sont invalides.';
+
+      case 'PRODUCT_NOT_FOUND':
+        return 'Le produit n’existe pas encore ou la référence est incorrecte.';
+
+      case 'LOCATION_NOT_FOUND':
+        return 'Un emplacement de réception est introuvable.';
+
+      case 'BUSINESS_RULE_VIOLATION':
+        return 'La réception ne respecte pas une règle métier.';
+
+      default:
+        return 'Impossible d’enregistrer la réception pour le moment.';
+    }
   }
 }
