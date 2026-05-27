@@ -69,12 +69,10 @@
       </div>
 
       <div class="form-grid">
-        <div class="field field--wide">
-          <label for="locationId">Emplacement</label>
-          <input id="locationId" type="text" formControlName="locationId" />
-          @if (form.controls.locationId.touched && form.controls.locationId.invalid) {
-            <p class="field-error">Emplacement obligatoire.</p>
-          }
+        <div class="session-context">
+          <span>Emplacement</span>
+          <strong>Emplacement par défaut</strong>
+          <p>La destination est définie par la session de travail.</p>
         </div>
 
         <div class="field field--quantity">
