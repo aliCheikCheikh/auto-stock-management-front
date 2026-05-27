@@ -89,7 +89,7 @@ h2 {
 }
 
 .form-grid--distribution {
-  grid-template-columns: minmax(220px, 0.9fr) repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .field {
@@ -149,7 +149,6 @@ input:focus {
   font-weight: 900;
 }
 
-.distribution-note,
 .distribution-card {
   display: grid;
   gap: 8px;
@@ -160,30 +159,8 @@ input:focus {
   padding: 18px;
 }
 
-.distribution-note {
-  background: var(--color-canvas-soft);
-}
-
 .distribution-card {
   background: var(--color-surface);
-}
-
-.distribution-note span {
-  color: var(--color-muted);
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.distribution-note strong {
-  color: var(--color-petrol);
-  font-size: 22px;
-  line-height: 1.15;
-}
-
-.distribution-note p {
-  color: var(--color-muted);
-  font-size: 17px;
-  line-height: 1.35;
 }
 
 .distribution-card input {
