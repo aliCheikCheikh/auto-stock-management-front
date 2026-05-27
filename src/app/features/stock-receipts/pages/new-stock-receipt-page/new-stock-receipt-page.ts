@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
+import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -62,8 +63,8 @@ export class NewStockReceiptPage {
         },
         minimumGlobalThreshold: formValue.minimumGlobalThreshold,
       },
-      shopId: 'shop-id-placeholder',
-      userId: 'user-id-placeholder',
+      shopId: DEV_SESSION_CONTEXT.shopId,
+      userId: DEV_SESSION_CONTEXT.userId,
       distributions: [
         {
           locationId: formValue.locationId,
