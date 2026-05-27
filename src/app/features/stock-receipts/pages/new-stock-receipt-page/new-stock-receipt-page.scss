@@ -88,6 +88,10 @@ h2 {
   padding: 26px;
 }
 
+.form-grid--distribution {
+  grid-template-columns: minmax(220px, 0.9fr) repeat(2, minmax(0, 1fr));
+}
+
 .field {
   display: grid;
   gap: 8px;
@@ -145,38 +149,46 @@ input:focus {
   font-weight: 900;
 }
 
-.field--quantity input {
-  font-size: 32px;
-  font-weight: 800;
-}
-
-.session-context {
+.distribution-note,
+.distribution-card {
   display: grid;
   gap: 8px;
   align-content: center;
-  min-height: 112px;
+  min-height: 150px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: var(--color-canvas-soft);
   padding: 18px;
 }
 
-.session-context span {
+.distribution-note {
+  background: var(--color-canvas-soft);
+}
+
+.distribution-card {
+  background: var(--color-surface);
+}
+
+.distribution-note span {
   color: var(--color-muted);
   font-size: 16px;
   font-weight: 800;
 }
 
-.session-context strong {
+.distribution-note strong {
   color: var(--color-petrol);
   font-size: 22px;
   line-height: 1.15;
 }
 
-.session-context p {
+.distribution-note p {
   color: var(--color-muted);
   font-size: 17px;
   line-height: 1.35;
+}
+
+.distribution-card input {
+  font-size: 32px;
+  font-weight: 800;
 }
 
 .field-error {
@@ -230,6 +242,10 @@ input:focus {
   .form-grid {
     grid-template-columns: 1fr;
     padding: 22px;
+  }
+
+  .form-grid--distribution {
+    grid-template-columns: 1fr;
   }
 
   .form-actions {

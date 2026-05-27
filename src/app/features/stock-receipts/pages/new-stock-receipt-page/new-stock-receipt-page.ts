@@ -31,9 +31,13 @@ export class NewStockReceiptPage {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
-    quantity: new FormControl(1, {
+    shopFloorQuantity: new FormControl(0, {
       nonNullable: true,
-      validators: [Validators.required, Validators.min(1)],
+      validators: [Validators.required, Validators.min(0)],
+    }),
+    backstockQuantity: new FormControl(1, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(0)],
     }),
   });
 
@@ -63,10 +67,14 @@ export class NewStockReceiptPage {
       userId: DEV_SESSION_CONTEXT.userId,
       distributions: [
         {
-          locationId: DEV_SESSION_CONTEXT.defaultLocationId,
-          quantity: formValue.quantity,
+          locationId: DEV_SESSION_CONTEXT.locations.shopFloor.locationId,
+          quantity: formValue.shopFloorQuantity,
         },
-      ],
+        {
+          locationId: DEV_SESSION_CONTEXT.locations.backstock.locationId,
+          quantity: formValue.backstockQuantity,
+        },
+      ].filter((distribution) => distribution.quantity > 0),
     }
     console.log(request);
 

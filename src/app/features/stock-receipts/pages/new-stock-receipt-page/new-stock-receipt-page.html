@@ -1,92 +1,101 @@
 <main class="receipt-page">
-  <header class="page-header">
-    <div>
-      <p class="page-kicker">Stock</p>
-      <h1>Nouvelle réception</h1>
-    </div>
-
-    <a class="secondary-action" href="/products">Catalogue</a>
-  </header>
-
-  <form class="receipt-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <section class="form-section" aria-labelledby="product-section-title">
-      <div class="section-heading">
-        <h2 id="product-section-title">Produit</h2>
-      </div>
-
-      <div class="form-grid">
-        <div class="field field--wide">
-          <label for="productReference">Référence produit</label>
-          <input id="productReference" type="text" formControlName="productReference" />
-          @if (form.controls.productReference.touched && form.controls.productReference.invalid) {
-            <p class="field-error">Référence obligatoire.</p>
-          }
+    <header class="page-header">
+        <div>
+            <p class="page-kicker">Stock</p>
+            <h1>Nouvelle réception</h1>
         </div>
 
-        <div class="field field--wide">
-          <label for="productName">Nom du produit</label>
-          <input id="productName" type="text" formControlName="productName" />
-          @if (form.controls.productName.touched && form.controls.productName.invalid) {
-            <p class="field-error">Nom obligatoire.</p>
-          }
-        </div>
+        <a class="secondary-action" href="/products">Catalogue</a>
+    </header>
 
-        <div class="field field--wide">
-          <label for="categoryId">Catégorie</label>
-          <input id="categoryId" type="text" formControlName="categoryId" />
-          @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
-            <p class="field-error">Catégorie obligatoire.</p>
-          }
-        </div>
+    <form class="receipt-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <section class="form-section" aria-labelledby="product-section-title">
+            <div class="section-heading">
+                <h2 id="product-section-title">Produit</h2>
+            </div>
 
-        <div class="field field--price">
-          <label for="unitPriceAmount">Prix unitaire</label>
-          <div class="price-input">
-            <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
-            <span>EUR</span>
-          </div>
-          @if (form.controls.unitPriceAmount.touched && form.controls.unitPriceAmount.invalid) {
-            <p class="field-error">Prix obligatoire.</p>
-          }
-        </div>
+            <div class="form-grid">
+                <div class="field field--wide">
+                    <label for="productReference">Référence produit</label>
+                    <input id="productReference" type="text" formControlName="productReference" />
+                    @if (form.controls.productReference.touched && form.controls.productReference.invalid) {
+                    <p class="field-error">Référence obligatoire.</p>
+                    }
+                </div>
 
-        <div class="field">
-          <label for="minimumGlobalThreshold">Seuil minimum</label>
-          <input id="minimumGlobalThreshold" type="number" formControlName="minimumGlobalThreshold" />
-          @if (
-            form.controls.minimumGlobalThreshold.touched &&
-            form.controls.minimumGlobalThreshold.invalid
-          ) {
-            <p class="field-error">Seuil invalide.</p>
-          }
-        </div>
-      </div>
-    </section>
+                <div class="field field--wide">
+                    <label for="productName">Nom du produit</label>
+                    <input id="productName" type="text" formControlName="productName" />
+                    @if (form.controls.productName.touched && form.controls.productName.invalid) {
+                    <p class="field-error">Nom obligatoire.</p>
+                    }
+                </div>
 
-    <section class="form-section" aria-labelledby="distribution-section-title">
-      <div class="section-heading">
-        <h2 id="distribution-section-title">Réception</h2>
-      </div>
+                <div class="field field--wide">
+                    <label for="categoryId">Catégorie</label>
+                    <input id="categoryId" type="text" formControlName="categoryId" />
+                    @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
+                    <p class="field-error">Catégorie obligatoire.</p>
+                    }
+                </div>
 
-      <div class="form-grid">
-        <div class="session-context">
-          <span>Emplacement</span>
-          <strong>Emplacement par défaut</strong>
-          <p>La destination est définie par la session de travail.</p>
-        </div>
+                <div class="field field--price">
+                    <label for="unitPriceAmount">Prix unitaire</label>
+                    <div class="price-input">
+                        <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
+                        <span>EUR</span>
+                    </div>
+                    @if (form.controls.unitPriceAmount.touched && form.controls.unitPriceAmount.invalid) {
+                    <p class="field-error">Prix obligatoire.</p>
+                    }
+                </div>
 
-        <div class="field field--quantity">
-          <label for="quantity">Quantité reçue</label>
-          <input id="quantity" type="number" formControlName="quantity" />
-          @if (form.controls.quantity.touched && form.controls.quantity.invalid) {
-            <p class="field-error">Quantité invalide.</p>
-          }
-        </div>
-      </div>
-    </section>
+                <div class="field">
+                    <label for="minimumGlobalThreshold">Seuil minimum</label>
+                    <input id="minimumGlobalThreshold" type="number" formControlName="minimumGlobalThreshold" />
+                    @if (
+                    form.controls.minimumGlobalThreshold.touched &&
+                    form.controls.minimumGlobalThreshold.invalid
+                    ) {
+                    <p class="field-error">Seuil invalide.</p>
+                    }
+                </div>
+            </div>
+        </section>
 
-    <footer class="form-actions">
-      <button class="submit-button" type="submit">Enregistrer la réception</button>
-    </footer>
-  </form>
+        <section class="form-section" aria-labelledby="distribution-section-title">
+            <div class="section-heading">
+                <h2 id="distribution-section-title">Réception</h2>
+            </div>
+
+            <div class="form-grid form-grid--distribution">
+                <div class="distribution-note">
+                    <span>Répartition</span>
+                    <strong>Surface + réserve</strong>
+                    <p>Le vendeur saisit les quantités visibles ; l’application envoie les emplacements techniques au
+                        backend.</p>
+                </div>
+
+                <div class="distribution-card">
+                    <label for="shopFloorQuantity">Surface de vente</label>
+                    <input id="shopFloorQuantity" type="number" formControlName="shopFloorQuantity" />
+                    @if (form.controls.shopFloorQuantity.touched && form.controls.shopFloorQuantity.invalid) {
+                    <p class="field-error">Quantité surface invalide.</p>
+                    }
+                </div>
+
+                <div class="distribution-card">
+                    <label for="backstockQuantity">Réserve</label>
+                    <input id="backstockQuantity" type="number" formControlName="backstockQuantity" />
+                    @if (form.controls.backstockQuantity.touched && form.controls.backstockQuantity.invalid) {
+                    <p class="field-error">Quantité réserve invalide.</p>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <footer class="form-actions">
+            <button class="submit-button" type="submit">Enregistrer la réception</button>
+        </footer>
+    </form>
 </main>
