@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component,inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
+import { StockReceiptsApiService } from '../../data-access/stock-receipts-api.service';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -10,6 +11,7 @@ import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
   styleUrl: './new-stock-receipt-page.scss',
 })
 export class NewStockReceiptPage {
+  private readonly stockReceiptsApi = inject(StockReceiptsApiService);
   readonly form = new FormGroup({
     productReference: new FormControl('', {
       nonNullable: true,
@@ -76,7 +78,16 @@ export class NewStockReceiptPage {
         },
       ].filter((distribution) => distribution.quantity > 0),
     }
-    console.log(request);
+    this.stockReceiptsApi.receiveStock(request).subscribe({
+      next: (acknowledgement) => {
+        console.log('Stock receipt acknowledged:', acknowledgement);
+        alert(`Stock receipt acknowledged for product ID: ${acknowledgement.productId}, total received: ${acknowledgement.totalReceived}`);
+      },
+      error: (error) => {
+        console.error('Error receiving stock:', error);
+        alert('An error occurred while receiving stock. Please try again.');
+      },
+    })
 
   }
 }
