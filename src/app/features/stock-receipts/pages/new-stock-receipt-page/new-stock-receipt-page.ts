@@ -53,6 +53,11 @@ export class NewStockReceiptPage {
 
 
   onSubmit(): void {
+
+    if (this.isSubmitting) {
+      return
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
