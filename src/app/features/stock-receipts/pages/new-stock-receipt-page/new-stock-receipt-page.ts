@@ -5,6 +5,7 @@ import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
 import { StockReceiptsApiService } from '../../data-access/stock-receipts-api.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -22,9 +23,11 @@ export class NewStockReceiptPage {
   constructor() {
     this.updateProductInfoValidators(this.form.controls.isNewProduct.value);
 
-    this.form.controls.isNewProduct.valueChanges.subscribe((isNewProduct) => {
-      this.updateProductInfoValidators(isNewProduct);
-    })
+    this.form.controls.isNewProduct.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe((isNewProduct) => {
+        this.updateProductInfoValidators(isNewProduct);
+      });
   }
 
   readonly form = new FormGroup({
