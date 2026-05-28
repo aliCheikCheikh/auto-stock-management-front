@@ -14,7 +14,19 @@
                 <h2 id="product-section-title">Produit</h2>
             </div>
 
-            <div class="form-grid">
+            <div class="product-mode" role="radiogroup" aria-label="Type de réception produit">
+                <label class="mode-option">
+                    <input type="radio" formControlName="isNewProduct" [value]="true" />
+                    <span>Nouveau produit</span>
+                </label>
+
+                <label class="mode-option">
+                    <input type="radio" formControlName="isNewProduct" [value]="false" />
+                    <span>Produit existant</span>
+                </label>
+            </div>
+
+            <div class="form-grid form-grid--product">
                 <div class="field field--wide">
                     <label for="productReference">Référence produit</label>
                     <input id="productReference" type="text" formControlName="productReference" />
@@ -23,6 +35,7 @@
                     }
                 </div>
 
+                @if (form.controls.isNewProduct.value) {
                 <div class="field field--wide">
                     <label for="productName">Nom du produit</label>
                     <input id="productName" type="text" formControlName="productName" />
@@ -60,6 +73,7 @@
                     <p class="field-error">Seuil invalide.</p>
                     }
                 </div>
+                }
             </div>
         </section>
 

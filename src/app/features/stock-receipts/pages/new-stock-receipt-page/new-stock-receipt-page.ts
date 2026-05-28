@@ -19,7 +19,16 @@ export class NewStockReceiptPage {
   successMessage = '';
   errorMessage = '';
 
+  constructor() {
+    this.updateProductInfoValidators(this.form.controls.isNewProduct.value);
+
+    this.form.controls.isNewProduct.valueChanges.subscribe((isNewProduct) => {
+      this.updateProductInfoValidators(isNewProduct);
+    })
+  }
+
   readonly form = new FormGroup({
+    isNewProduct: new FormControl(true, { nonNullable: true }),
     productReference: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
@@ -74,16 +83,18 @@ export class NewStockReceiptPage {
 
     const request: ReceiveStockRequest = {
       productReference: formValue.productReference,
-      newProductInfo: {
-        name: formValue.productName,
-        reference: formValue.productReference,
-        categoryId: formValue.categoryId,
-        unitPrice: {
-          amount: formValue.unitPriceAmount,
-          currency: 'EUR',
+      ...(formValue.isNewProduct ? {
+        newProductInfo: {
+          name: formValue.productName,
+          reference: formValue.productReference,
+          categoryId: formValue.categoryId,
+          unitPrice: {
+            amount: formValue.unitPriceAmount,
+            currency: 'EUR'
+          },
+          minimumGlobalThreshold: formValue.minimumGlobalThreshold,
         },
-        minimumGlobalThreshold: formValue.minimumGlobalThreshold,
-      },
+      } : {}),
       shopId: DEV_SESSION_CONTEXT.shopId,
       userId: DEV_SESSION_CONTEXT.userId,
       distributions: [
@@ -139,5 +150,24 @@ export class NewStockReceiptPage {
       default:
         return 'Impossible d’enregistrer la réception pour le moment.';
     }
+  }
+
+  private updateProductInfoValidators(isNewProduct: boolean): void {
+    const productNameValidators = isNewProduct ? [Validators.required] : [];
+    const categoryIdValidators = isNewProduct ? [Validators.required] : [];
+    const unitPriceValidators = isNewProduct ? [Validators.required] : [];
+    const minimumGlobalThresholdValidators = isNewProduct ? [Validators.required, Validators.min(0)] : [];
+
+
+
+    this.form.controls.productName.setValidators(productNameValidators);
+    this.form.controls.categoryId.setValidators(categoryIdValidators);
+    this.form.controls.unitPriceAmount.setValidators(unitPriceValidators);
+    this.form.controls.minimumGlobalThreshold.setValidators(minimumGlobalThresholdValidators);
+
+    this.form.controls.productName.updateValueAndValidity();
+    this.form.controls.categoryId.updateValueAndValidity();
+    this.form.controls.unitPriceAmount.updateValueAndValidity();
+    this.form.controls.minimumGlobalThreshold.updateValueAndValidity();
   }
 }
