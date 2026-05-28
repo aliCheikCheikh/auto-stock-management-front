@@ -1,0 +1,72 @@
+.app-topbar {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 28px;
+  padding: 0 28px;
+  background: #173f3a;
+  color: #ffffff;
+}
+
+.app-brand {
+  color: #ffffff;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.app-nav a {
+  min-height: 58px;
+  display: grid;
+  align-items: center;
+  border-bottom: 3px solid transparent;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 17px;
+  font-weight: 650;
+  padding: 0 14px;
+  text-decoration: none;
+}
+
+.app-nav a:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.68);
+  color: #ffffff;
+}
+
+.app-session {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eef2f1;
+  color: #173f3a;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .app-topbar {
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    padding: 10px 16px;
+  }
+
+  .app-nav {
+    grid-column: 1 / -1;
+    overflow-x: auto;
+  }
+
+  .app-nav a {
+    min-height: 42px;
+    padding: 0 12px;
+    white-space: nowrap;
+  }
+}

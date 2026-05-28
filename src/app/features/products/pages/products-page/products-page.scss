@@ -1,6 +1,6 @@
 .products-page {
-  min-height: 100vh;
-  padding: 34px;
+  min-height: calc(100vh - 58px);
+  padding: 28px 36px 40px;
   background: var(--color-canvas);
 }
 
@@ -9,15 +9,16 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  max-width: 1240px;
-  margin: 0 auto 26px;
+  max-width: 1400px;
+  margin: 0 auto 22px;
 }
 
 .page-kicker {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: var(--color-petrol);
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 h1,
@@ -28,16 +29,16 @@ p {
 
 h1 {
   color: var(--color-ink);
-  font-size: 36px;
-  line-height: 1.08;
-  font-weight: 800;
+  font-size: 34px;
+  line-height: 1.12;
+  font-weight: 760;
 }
 
 h2 {
   color: var(--color-ink);
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.2;
-  font-weight: 800;
+  font-weight: 720;
 }
 
 .page-actions {
@@ -47,29 +48,29 @@ h2 {
 }
 
 .product-count {
-  min-height: 48px;
+  min-height: 42px;
   display: grid;
   align-items: center;
-  padding: 10px 16px;
+  padding: 8px 14px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 2px;
   background: var(--color-surface);
   color: var(--color-petrol);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
 }
 
 .primary-action {
-  min-height: 48px;
+  min-height: 42px;
   display: grid;
   align-items: center;
   border: 1px solid var(--color-petrol-dark);
-  border-radius: 6px;
+  border-radius: 2px;
   background: var(--color-petrol);
   color: var(--color-surface);
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
-  padding: 10px 16px;
+  padding: 8px 16px;
   text-decoration: none;
 }
 
@@ -79,10 +80,10 @@ h2 {
 
 .state-panel,
 .catalogue-section {
-  max-width: 1240px;
+  max-width: 1400px;
   margin: 0 auto;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 2px;
   background: var(--color-surface);
 }
 
@@ -100,8 +101,8 @@ h2 {
 .section-heading {
   display: flex;
   align-items: center;
-  min-height: 68px;
-  padding: 20px 24px;
+  min-height: 56px;
+  padding: 16px 22px;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-surface-strong);
 }
@@ -125,25 +126,25 @@ h2 {
 }
 
 .products-table__header {
-  min-height: 48px;
-  padding: 0 24px;
+  min-height: 44px;
+  padding: 0 22px;
   background: var(--color-canvas-soft);
   color: var(--color-muted);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .products-table__row {
-  min-height: 74px;
-  padding: 16px 24px;
+  min-height: 68px;
+  padding: 14px 22px;
   border-top: 1px solid var(--color-border);
   color: var(--color-ink);
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .products-table__row:hover {
-  background: #fff7e8;
+  background: #f8faf9;
 }
 
 .products-table__row:first-of-type {
@@ -156,18 +157,18 @@ h2 {
 }
 
 .product-main strong {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1.2;
 }
 
 .product-main span {
   color: var(--color-muted);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .price {
   color: var(--color-petrol);
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .stock-quantity {
@@ -177,22 +178,22 @@ h2 {
 
 .stock-quantity strong {
   color: var(--color-ink);
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1;
 }
 
 .stock-quantity span {
   color: var(--color-muted);
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .stock-badge {
   width: max-content;
-  min-width: 104px;
-  padding: 9px 12px;
+  min-width: 94px;
+  padding: 7px 10px;
   border: 1px solid transparent;
-  border-radius: 6px;
-  font-size: 16px;
+  border-radius: 2px;
+  font-size: 14px;
   font-weight: 800;
   line-height: 1;
   text-align: center;
@@ -234,13 +235,11 @@ h2 {
   }
 
   .page-actions {
-    width: 100%;
     align-items: stretch;
   }
 
   .product-count,
   .primary-action {
-    flex: 1;
     justify-content: center;
   }
 
@@ -286,6 +285,12 @@ h2 {
   }
 
   .page-actions {
+    width: 100%;
     flex-direction: column;
+  }
+
+  .product-count,
+  .primary-action {
+    width: 100%;
   }
 }
