@@ -111,7 +111,10 @@
         <footer class="form-actions">
             <div class="form-feedback" aria-live="polite">
                 @if (successMessage) {
-                <p class="submit-feedback submit-feedback--success">{{ successMessage }}</p>
+                <div class="submit-feedback submit-feedback--success success-feedback">
+                    <p>{{ successMessage }}</p>
+                    <a class="feedback-action" href="/products">Voir le catalogue</a>
+                </div>
                 }
 
                 @if (errorMessage) {

@@ -84,9 +84,42 @@ textarea {
   opacity: 0;
 }
 
+.success-feedback {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.feedback-action {
+  min-height: 42px;
+  display: grid;
+  align-items: center;
+  border: 1px solid rgba(49, 85, 36, 0.34);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: #315524;
+  font-size: 16px;
+  font-weight: 900;
+  padding: 8px 12px;
+  text-decoration: none;
+}
+
+.feedback-action:hover {
+  border-color: #315524;
+}
+
 @media (max-width: 960px) {
   .product-mode {
     grid-template-columns: 1fr;
     padding: 22px 22px 0;
+  }
+
+  .success-feedback {
+    grid-template-columns: 1fr;
+  }
+
+  .feedback-action {
+    justify-content: center;
   }
 }
