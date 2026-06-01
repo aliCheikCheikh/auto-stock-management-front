@@ -9,7 +9,7 @@ import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { StockLevel } from '../../../stock/models/stock-level.model';
 
 
-const STOCK_LEVELS_PAGE_SIZE = 200;
+const STOCK_LEVELS_PAGE_SIZE = 100;
 
 type ProductsPageState =
   | { readonly status: 'loading' }
