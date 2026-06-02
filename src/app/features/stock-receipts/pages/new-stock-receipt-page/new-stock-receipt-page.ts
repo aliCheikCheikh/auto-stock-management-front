@@ -19,6 +19,7 @@ export class NewStockReceiptPage {
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
+  currentIdempotencyKey: string | null = null;
 
   constructor() {
     this.updateProductInfoValidators(this.form.controls.isNewProduct.value);
@@ -112,13 +113,19 @@ export class NewStockReceiptPage {
       ].filter((distribution) => distribution.quantity > 0),
     }
 
+
+    if (this.currentIdempotencyKey === null) {
+      this.currentIdempotencyKey = crypto.randomUUID();
+    }
+
     this.isSubmitting = true;
     this.successMessage = '';
     this.errorMessage = '';
 
-    this.stockReceiptsApi.receiveStock(request).subscribe({
+    this.stockReceiptsApi.receiveStock(request, this.currentIdempotencyKey).subscribe({
       next: (acknowledgement) => {
         this.isSubmitting = false;
+        this.currentIdempotencyKey = null;
         this.successMessage = `Reception enregistrée : ${acknowledgement.totalReceived} pièce(s)`;
       },
       error: (error: unknown) => {
