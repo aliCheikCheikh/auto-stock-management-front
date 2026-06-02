@@ -1,0 +1,64 @@
+<main class="sale-page">
+    <header class="page-header">
+        <div>
+            <p class="page-kicker">Ventes</p>
+            <h1>Enregistrer une vente</h1>
+        </div>
+    </header>
+
+    <form class="sale-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <section class="form-section" aria-labelledby="sale-section-title">
+            <div class="section-heading">
+                <h2 id="sale-section-title">Produit vendu</h2>
+            </div>
+
+            <div class="form-grid">
+                <div class="field field--wide">
+                    <label for="productId">Produit</label>
+                    <select id="productId" formControlName="productId">
+                        <option value="" disabled>— Sélectionner un produit —</option>
+                        @for (product of products; track product.productId) {
+                        <option [value]="product.productId">{{ product.name }} ({{ product.reference }})</option>
+                        }
+                    </select>
+                    @if (form.controls['productId'].touched && form.controls['productId'].invalid) {
+                    <p class="field-error">Sélection d'un produit obligatoire.</p>
+                    }
+                </div>
+
+                <div class="field">
+                    <label for="quantity">Quantité vendue</label>
+                    <input id="quantity" type="number" formControlName="quantity" min="1" />
+                    @if (form.controls['quantity'].touched && form.controls['quantity'].hasError('required')) {
+                    <p class="field-error">Quantité obligatoire.</p>
+                    }
+                    @if (form.controls['quantity'].touched && form.controls['quantity'].hasError('min')) {
+                    <p class="field-error">Quantité minimum : 1.</p>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <footer class="form-actions">
+            <div class="form-feedback" aria-live="polite">
+                @if (successMessage) {
+                <div class="submit-feedback submit-feedback--success">
+                    <p>{{ successMessage }}</p>
+                </div>
+                }
+
+                @if (errorMessage) {
+                <p class="submit-feedback submit-feedback--error">{{ errorMessage }}</p>
+                }
+            </div>
+
+            <button class="submit-button" type="submit" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                Enregistrement...
+                } @else {
+                Enregistrer la vente
+                }
+            </button>
+        </footer>
+    </form>
+</main>
