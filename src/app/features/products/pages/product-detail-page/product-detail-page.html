@@ -1,0 +1,62 @@
+<main class="product-detail-page">
+  @if (summary) {
+    <a routerLink="/products" class="back-link">← Retour au catalogue</a>
+
+    <div class="product-header">
+      <h1>{{ summary.productName || '—' }}</h1>
+
+      <div class="stat-tiles">
+        <div class="stat-tile">
+          <span class="stat-label">Stock global</span>
+          <strong class="stat-value">{{ summary.globalQuantity }}</strong>
+        </div>
+
+        <div class="stat-tile">
+          <span class="stat-label">Seuil minimum</span>
+          <strong class="stat-value">{{ summary.minimumGlobalThreshold }}</strong>
+        </div>
+
+        <div class="stat-tile">
+          <span class="stat-label">État</span>
+          @if (summary.belowGlobalThreshold) {
+            <span class="stock-badge stock-badge--low">Sous seuil</span>
+          } @else {
+            <span class="stock-badge stock-badge--ok">OK</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-body">
+      <section class="form-section" aria-labelledby="location-section-title">
+        <div class="section-heading">
+          <h2 id="location-section-title">Stock par emplacement</h2>
+        </div>
+
+        <div class="location-table" role="table" aria-label="Stock par emplacement">
+          <div class="location-table__header" role="row">
+            <span role="columnheader">Emplacement</span>
+            <span role="columnheader">Quantité</span>
+          </div>
+
+          @for (location of summary.byLocation; track location.locationId) {
+            <div class="location-table__row" role="row">
+              <span class="location-name" role="cell">
+                {{ location.locationName || (location.locationType === 'SHOP_FLOOR' ? 'Surface de vente' : 'Réserve') }}
+              </span>
+              <strong class="location-quantity" role="cell">{{ location.quantity }}</strong>
+            </div>
+          } @empty {
+            <div class="location-empty">
+              <p>Aucun stock enregistré pour ce produit.</p>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  } @else {
+    <div class="loading-state">
+      <p>Chargement…</p>
+    </div>
+  }
+</main>
