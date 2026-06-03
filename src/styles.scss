@@ -238,24 +238,42 @@ select option[disabled] {
 }
 
 .submit-feedback {
-  border: 1px solid;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.4;
-  padding: 10px 16px;
+  line-height: 1.5;
+  padding: 12px 16px;
+}
+
+.submit-feedback::before {
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .submit-feedback--success {
-  border-color: var(--color-state-ok);
-  background: var(--color-state-ok-bg);
-  color: var(--color-state-ok-text);
+  border: 1px solid #BBD9C5;
+  border-left: 4px solid #1E9E5A;
+  background: #ECF6EF;
+  color: #1E6B3A;
+}
+
+.submit-feedback--success::before {
+  content: '✓';
 }
 
 .submit-feedback--error {
-  border-color: var(--color-state-error);
-  background: var(--color-state-error-bg);
-  color: var(--color-state-error-text);
+  border: 1px solid #E3B7B7;
+  border-left: 4px solid #C0392B;
+  background: #FCF0F0;
+  color: #9B2C2C;
+}
+
+.submit-feedback--error::before {
+  content: '⚠';
 }
 
 .submit-button {
@@ -405,10 +423,12 @@ select option[disabled] {
 
   .form-actions {
     grid-template-columns: 1fr;
+    justify-items: end;
   }
 
   .submit-button {
-    width: 100%;
+    width: auto;
+    min-width: 200px;
   }
 
   .success-feedback {

@@ -2,12 +2,14 @@
   <a class="app-brand" href="/products">AutoStock</a>
 
   <nav class="app-nav" aria-label="Navigation principale">
-    <a href="/products">Catalogue</a>
-    <a href="/stock-receipts/new">Réception stock</a>
-    <a href="/sales/new">Ventes</a>
+    <a routerLink="/products">Catalogue</a>
+    <a routerLink="/stock-receipts/new">Réception stock</a>
+    <a routerLink="/sales/new">Ventes</a>
+    <a routerLink="/stock-transfers/new">Transferts stock</a>
   </nav>
 
   <div class="app-session" aria-label="Session active">DEV</div>
 </header>
 
 <router-outlet></router-outlet>
+<app-toast-container />
