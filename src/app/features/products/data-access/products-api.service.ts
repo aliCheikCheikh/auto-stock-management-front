@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Page } from "../../../core/api/page.model";
-import { Product } from "../models/product.model";
+import { Product, ProductStockSummary } from "../models/product.model";
 
 
 
@@ -15,5 +15,11 @@ export class ProductsApiService {
 
     public listProducts(): Observable<Page<Product>> {
         return this.http.get<Page<Product>>(`${this.apiBaseUrl}/products`);
+    }
+
+    public getProductStockSummary(productId: string): Observable<ProductStockSummary> {
+        return this.http
+            .get<ProductStockSummary>
+            (`${this.apiBaseUrl}/products/${productId}/stock-levels`);
     }
 }

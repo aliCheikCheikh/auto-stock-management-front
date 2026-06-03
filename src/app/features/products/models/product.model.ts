@@ -1,4 +1,5 @@
 import { Money } from '../../../core/api/money.model';
+import { StockLevel } from '../../stock/models/stock-level.model';
 
 export interface Product {
   readonly productId: string;
@@ -7,4 +8,13 @@ export interface Product {
   readonly categoryId: string;
   readonly unitPrice: Money;
   readonly minimumGlobalThreshold: number;
+}
+
+export interface ProductStockSummary {
+  readonly productId: string;
+  readonly productName: string;
+  readonly globalQuantity: number;
+  readonly minimumGlobalThreshold: number;
+  readonly belowGlobalThreshold: boolean;
+  readonly byLocation: readonly StockLevel[];
 }

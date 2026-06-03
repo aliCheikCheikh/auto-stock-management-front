@@ -1,27 +1,75 @@
+// ─── Design Tokens ───────────────────────────────────────────────────────────
 :root {
-  --color-canvas: #f6f7f5;
-  --color-canvas-soft: #f0f3f1;
-  --color-surface: #ffffff;
-  --color-surface-strong: #f8faf9;
-  --color-ink: #202523;
-  --color-muted: #5d6662;
-  --color-border: #d7ddda;
-  --color-border-strong: #bcc8c3;
-  --color-petrol: #315f58;
-  --color-petrol-dark: #173f3a;
-  --color-terracotta: #a85c3a;
-  --color-ochre: #9b7627;
-  --color-sage: #5f7d51;
-  --color-brick: #9f4135;
+  // Identité marque (bleu institutionnel)
+  --color-brand:      #1B3A6B;
+  --color-brand-dark: #142D56;
+
+  // Action / CTA
+  --color-action:       #2563EB;
+  --color-action-hover: #1D4ED8;
+
+  // Canvas & surfaces
+  --color-canvas:       #F4F6F9;
+  --color-canvas-soft:  #EEF1F6;
+  --color-surface:      #FFFFFF;
+  --color-surface-strong: #F4F6F9;
+
+  // Texte
+  --color-ink:         #1F2933;
+  --color-muted:       #6B7280;
+  --color-placeholder: #9AA1AC;
+
+  // Bordures
+  --color-border:        #E2E6EC;
+  --color-field-border:  #D5DBE3;
+  --color-border-strong: #C4CAD4;
+
+  // État OK
+  --color-state-ok:      #1E6B3A;
+  --color-state-ok-bg:   #E7F2EB;
+  --color-state-ok-text: #1E6B3A;
+
+  // État bas
+  --color-state-low:      #8A6100;
+  --color-state-low-bg:   #FBF1DE;
+  --color-state-low-text: #8A6100;
+
+  // État erreur
+  --color-state-error:      #9B2C2C;
+  --color-state-error-bg:   #FAE8E8;
+  --color-state-error-text: #9B2C2C;
+
+  // Contrôle désactivé
+  --color-control-disabled: #9CA3AF;
+
+  // Aliases rétrocompatibilité
+  --color-petrol:      #1B3A6B;
+  --color-petrol-dark: #142D56;
+  --color-nav-bg:      #1B3A6B;
+
+  // Layout
+  --nav-height: 56px;
+
+  // Radii
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  // Ombres
+  --shadow-card:  0 2px 10px rgba(27, 58, 107, 0.06);
+  --shadow-tab:   0 1px 6px rgba(27, 58, 107, 0.12);
+  --shadow-input: 0 0 0 4px rgba(37, 99, 235, 0.15);
 
   color: var(--color-ink);
   background: var(--color-canvas);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
+// ─── Reset ───────────────────────────────────────────────────────────────────
 * {
   box-sizing: border-box;
 }
@@ -45,27 +93,225 @@ textarea {
   font: inherit;
 }
 
+// ─── Typographie ─────────────────────────────────────────────────────────────
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  color: var(--color-brand);
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+h2 {
+  color: var(--color-ink);
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+// ─── En-tête de page ─────────────────────────────────────────────────────────
+.page-kicker {
+  margin: 0 0 4px;
+  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0 auto 24px;
+}
+
+// ─── Sections / cartes ───────────────────────────────────────────────────────
+.form-section {
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-canvas-soft);
+}
+
+// ─── Grille de champs ────────────────────────────────────────────────────────
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  padding: 24px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field--wide {
+  grid-column: 1 / -1;
+}
+
+// ─── Éléments de formulaire ──────────────────────────────────────────────────
+label {
+  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--color-field-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1.4;
+  padding: 11px 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+
+input::placeholder {
+  color: var(--color-placeholder);
+}
+
+input:focus,
+select:focus {
+  border-color: var(--color-action);
+  box-shadow: var(--shadow-input);
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236B7280' d='M4 6L8 10L12 6Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+select option[disabled] {
+  color: var(--color-placeholder);
+}
+
+.field-error {
+  color: var(--color-state-error-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+// ─── Actions & retours formulaire ────────────────────────────────────────────
+.form-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 0 0;
+}
+
+.form-feedback {
+  min-height: 46px;
+  display: grid;
+  align-items: center;
+}
+
+.submit-feedback {
+  border: 1px solid;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 10px 16px;
+}
+
+.submit-feedback--success {
+  border-color: var(--color-state-ok);
+  background: var(--color-state-ok-bg);
+  color: var(--color-state-ok-text);
+}
+
+.submit-feedback--error {
+  border-color: var(--color-state-error);
+  background: var(--color-state-error-bg);
+  color: var(--color-state-error-text);
+}
+
+.submit-button {
+  min-height: 44px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-action);
+  color: var(--color-surface);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 24px;
+  transition: background 0.12s;
+}
+
+.submit-button:hover {
+  background: var(--color-action-hover);
+}
+
+.submit-button:disabled {
+  background: var(--color-control-disabled);
+  cursor: wait;
+}
+
+.submit-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.4);
+  outline-offset: 2px;
+}
+
+// ─── Onglets segmentés (réception stock) ─────────────────────────────────────
 .product-mode {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0;
-  padding: 18px 22px 0;
+  gap: 4px;
+  padding: 4px;
+  margin: 16px 24px 0;
+  background: var(--color-canvas-soft);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
 }
 
 .mode-option {
   position: relative;
-  min-height: 52px;
+  min-height: 40px;
   display: grid;
   align-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: 0;
-  background: var(--color-surface);
-  color: var(--color-ink);
+  border: 1px solid transparent;
+  border-radius: calc(var(--radius-md) - 3px);
+  background: transparent;
+  color: var(--color-muted);
   cursor: pointer;
-  font-size: 17px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 1.2;
-  padding: 12px 16px;
+  padding: 8px 14px;
+  transition: all 0.12s;
 }
 
 .mode-option + .mode-option {
@@ -73,14 +319,14 @@ textarea {
 }
 
 .mode-option:has(input:checked) {
-  border-color: var(--color-petrol);
-  background: #f1f6f4;
-  box-shadow: inset 0 -3px 0 var(--color-petrol);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-tab);
+  color: var(--color-brand);
+  font-weight: 600;
 }
 
 .mode-option:focus-within {
-  border-color: var(--color-petrol);
-  box-shadow: 0 0 0 3px rgba(25, 91, 74, 0.14);
+  border-color: var(--color-action);
 }
 
 .mode-option input {
@@ -88,6 +334,31 @@ textarea {
   opacity: 0;
 }
 
+// ─── Badges d'état (point + libellé) ────────────────────────────────────────
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.stock-badge::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.stock-badge--ok::before       { background: #1E9E5A; }
+.stock-badge--low::before      { background: #C98A0E; }
+.stock-badge--critical::before { background: #C0392B; }
+
+// ─── Bandeau succès avec lien d'action ───────────────────────────────────────
 .success-feedback {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -96,32 +367,48 @@ textarea {
 }
 
 .feedback-action {
-  min-height: 42px;
+  min-height: 36px;
   display: grid;
   align-items: center;
-  border: 1px solid rgba(49, 85, 36, 0.34);
-  border-radius: 2px;
+  border: 1px solid var(--color-field-border);
+  border-radius: var(--radius-md);
   background: var(--color-surface);
-  color: #315524;
-  font-size: 16px;
-  font-weight: 900;
-  padding: 8px 12px;
+  color: var(--color-ink);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
   text-decoration: none;
+  transition: background 0.12s, border-color 0.12s;
 }
 
 .feedback-action:hover {
-  border-color: #315524;
+  background: var(--color-canvas);
+  border-color: var(--color-border-strong);
 }
 
+// ─── Responsive ──────────────────────────────────────────────────────────────
 @media (max-width: 960px) {
-  .product-mode {
-    grid-template-columns: 1fr;
-    padding: 22px 22px 0;
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
-  .mode-option + .mode-option {
-    border-top: 0;
-    border-left: 1px solid var(--color-border);
+  .product-mode {
+    margin: 16px 24px 0;
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .form-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .submit-button {
+    width: 100%;
   }
 
   .success-feedback {
@@ -130,5 +417,12 @@ textarea {
 
   .feedback-action {
     justify-content: center;
+  }
+}
+
+@media (max-width: 560px) {
+  input,
+  select {
+    min-height: 46px;
   }
 }

@@ -7,6 +7,7 @@ import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { StockLevel } from '../../../stock/models/stock-level.model';
+import { RouterLink } from '@angular/router';
 
 
 const STOCK_LEVELS_PAGE_SIZE = 100;
@@ -28,7 +29,7 @@ interface ProductListItem {
 
 @Component({
   selector: 'app-products-page',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, RouterLink],
   templateUrl: './products-page.html',
   styleUrl: './products-page.scss',
 })
