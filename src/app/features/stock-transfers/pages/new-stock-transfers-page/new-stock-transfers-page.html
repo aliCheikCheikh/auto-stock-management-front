@@ -1,0 +1,87 @@
+<main class="transfer-page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Stock</p>
+      <h1>Transfert de stock</h1>
+    </div>
+  </header>
+
+  <form class="transfer-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <section class="form-section" aria-labelledby="product-section-title">
+      <div class="section-heading">
+        <h2 id="product-section-title">Produit</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="field field--wide">
+          <label for="productId">Produit</label>
+          <select id="productId" formControlName="productId">
+            <option value="" disabled>— Sélectionner un produit —</option>
+            @for (product of products; track product.productId) {
+              <option [value]="product.productId">{{ product.name }} ({{ product.reference }})</option>
+            }
+          </select>
+          @if (form.controls['productId'].touched && form.controls['productId'].invalid) {
+            <p class="field-error">Sélection d'un produit obligatoire.</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section" aria-labelledby="transfer-section-title">
+      <div class="section-heading">
+        <h2 id="transfer-section-title">Mouvement</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="sourceLocationId">Emplacement source</label>
+          <select id="sourceLocationId" formControlName="sourceLocationId">
+            <option value="" disabled>— Sélectionner —</option>
+            @for (location of locations; track location.locationId) {
+              <option [value]="location.locationId">{{ location.label }}</option>
+            }
+          </select>
+          @if (form.controls['sourceLocationId'].touched && form.controls['sourceLocationId'].invalid) {
+            <p class="field-error">Emplacement source obligatoire.</p>
+          }
+        </div>
+
+        <div class="field">
+          <label for="destinationLocationId">Emplacement destination</label>
+          <select id="destinationLocationId" formControlName="destinationLocationId">
+            <option value="" disabled>— Sélectionner —</option>
+            @for (location of locations; track location.locationId) {
+              <option [value]="location.locationId">{{ location.label }}</option>
+            }
+          </select>
+          @if (form.controls['destinationLocationId'].touched && form.controls['destinationLocationId'].invalid) {
+            <p class="field-error">Emplacement destination obligatoire.</p>
+          }
+          @if (form.hasError('sameLocation')) {
+            <p class="field-error">La source et la destination doivent être différentes.</p>
+          }
+        </div>
+
+        <div class="field field--quantity">
+          <label for="quantity">Quantité à transférer</label>
+          <input id="quantity" type="number" formControlName="quantity" min="1" />
+          @if (form.controls['quantity'].touched && form.controls['quantity'].hasError('required')) {
+            <p class="field-error">Quantité obligatoire.</p>
+          }
+          @if (form.controls['quantity'].touched && form.controls['quantity'].hasError('min')) {
+            <p class="field-error">Quantité minimum : 1.</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <footer class="form-actions">
+      <button class="submit-button" type="submit" [disabled]="isSubmitting">
+        @if (isSubmitting) { Enregistrement... } @else { Enregistrer le transfert }
+      </button>
+    </footer>
+
+  </form>
+</main>
