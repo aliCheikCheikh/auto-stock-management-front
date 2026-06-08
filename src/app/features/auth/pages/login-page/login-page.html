@@ -1,0 +1,65 @@
+<main class="login">
+  <!-- Panneau marque -->
+  <aside class="login-brand">
+    <div class="login-brand__inner">
+      <p class="login-brand__logo">AutoStock</p>
+      <p class="login-brand__slogan">La gestion de stock de votre atelier</p>
+      <ul class="login-brand__values">
+        <li>Réception</li>
+        <li>Ventes</li>
+        <li>Transferts</li>
+        <li>Suivi du stock</li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Panneau formulaire -->
+  <section class="login-panel">
+    <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <header class="login-form__head">
+        <h1>Connexion</h1>
+        <p class="login-form__lead">Accédez à votre espace de gestion.</p>
+      </header>
+
+      <div class="field login-field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="vous@entreprise.com"
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          @if (form.controls.email.hasError('required')) {
+            <p class="field-error">Email requis</p>
+          } @else if (form.controls.email.hasError('email')) {
+            <p class="field-error">Format d'email invalide</p>
+          }
+        }
+      </div>
+
+      <div class="field login-field">
+        <label for="password">Mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+          placeholder="••••••••"
+        />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <p class="field-error">Mot de passe requis</p>
+        }
+      </div>
+
+      <button class="submit-button login-submit" type="submit" [disabled]="isSubmitting">
+        @if (isSubmitting) {
+          Connexion…
+        } @else {
+          Se connecter
+        }
+      </button>
+    </form>
+  </section>
+</main>

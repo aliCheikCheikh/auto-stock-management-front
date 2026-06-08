@@ -1,0 +1,164 @@
+// ─── Écran de connexion split-screen ─────────────────────────────────────────
+.login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 45% 55%;
+}
+
+// ─── Panneau marque (gauche) ─────────────────────────────────────────────────
+.login-brand {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 64px 56px;
+  background: var(--color-brand);
+  color: var(--color-surface);
+}
+
+// Motif mécanique en filigrane (engrenages, écrou, boulon, clé) — traits fins blancs
+.login-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate(50 52)'%3E%3Ccircle r='20'/%3E%3Ccircle r='8'/%3E%3Cline x1='20' y1='0' x2='27' y2='0'/%3E%3Cline x1='14.1' y1='14.1' x2='19.1' y2='19.1'/%3E%3Cline x1='0' y1='20' x2='0' y2='27'/%3E%3Cline x1='-14.1' y1='14.1' x2='-19.1' y2='19.1'/%3E%3Cline x1='-20' y1='0' x2='-27' y2='0'/%3E%3Cline x1='-14.1' y1='-14.1' x2='-19.1' y2='-19.1'/%3E%3Cline x1='0' y1='-20' x2='0' y2='-27'/%3E%3Cline x1='14.1' y1='-14.1' x2='19.1' y2='-19.1'/%3E%3C/g%3E%3Cg transform='translate(185 175)'%3E%3Ccircle r='14'/%3E%3Ccircle r='5.5'/%3E%3Cline x1='14' y1='0' x2='20' y2='0'/%3E%3Cline x1='9.9' y1='9.9' x2='14.1' y2='14.1'/%3E%3Cline x1='0' y1='14' x2='0' y2='20'/%3E%3Cline x1='-9.9' y1='9.9' x2='-14.1' y2='14.1'/%3E%3Cline x1='-14' y1='0' x2='-20' y2='0'/%3E%3Cline x1='-9.9' y1='-9.9' x2='-14.1' y2='-14.1'/%3E%3Cline x1='0' y1='-14' x2='0' y2='-20'/%3E%3Cline x1='9.9' y1='-9.9' x2='14.1' y2='-14.1'/%3E%3C/g%3E%3Cg transform='translate(180 55)'%3E%3Cpolygon points='16,0 8,13.9 -8,13.9 -16,0 -8,-13.9 8,-13.9'/%3E%3Ccircle r='7'/%3E%3C/g%3E%3Cg transform='translate(120 118) rotate(20)'%3E%3Cpolygon points='9,0 4.5,7.8 -4.5,7.8 -9,0 -4.5,-7.8 4.5,-7.8'/%3E%3Cline x1='0' y1='8' x2='0' y2='24'/%3E%3Cline x1='-5' y1='13' x2='5' y2='13'/%3E%3Cline x1='-5' y1='18' x2='5' y2='18'/%3E%3C/g%3E%3Cg transform='translate(58 168) rotate(35)'%3E%3Ccircle cx='0' cy='-15' r='9'/%3E%3Cpolygon points='5,-15 2.5,-10.7 -2.5,-10.7 -5,-15 -2.5,-19.3 2.5,-19.3'/%3E%3Crect x='-3.5' y='-7' width='7' height='28' rx='3.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 240px 240px;
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+.login-brand__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 380px;
+}
+
+.login-brand__logo {
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.login-brand__slogan {
+  margin-top: 16px;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.login-brand__values {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.login-brand__values li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.login-brand__values li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-action);
+}
+
+// ─── Panneau formulaire (droite) ─────────────────────────────────────────────
+.login-panel {
+  display: grid;
+  place-items: center;
+  padding: 48px 32px;
+  background: var(--color-surface);
+}
+
+.login-form {
+  display: grid;
+  gap: 20px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-form__head {
+  margin-bottom: 4px;
+}
+
+.login-form__head h1 {
+  font-size: 26px;
+}
+
+.login-form__lead {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+// ─── Champs (réutilise .field / label / input / .field-error globaux) ────────
+.login-field {
+  gap: 7px;
+}
+
+// ─── Bouton pleine largeur ───────────────────────────────────────────────────
+.login-submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+// ─── Responsive : panneau marque en bandeau réduit en haut ───────────────────
+@media (max-width: 860px) {
+  .login {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+  }
+
+  .login-brand {
+    padding: 32px 28px;
+  }
+
+  .login-brand__slogan {
+    margin-top: 8px;
+    font-size: 15px;
+  }
+
+  .login-brand__values {
+    margin-top: 20px;
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+
+  .login-brand__values li {
+    font-size: 13px;
+  }
+
+  .login-panel {
+    padding: 40px 24px;
+    align-items: start;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-brand__logo {
+    font-size: 30px;
+  }
+
+  .login-brand__values {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, auto);
+  }
+}
