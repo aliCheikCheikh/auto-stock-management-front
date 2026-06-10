@@ -15,7 +15,7 @@
 
   <!-- Panneau formulaire -->
   <section class="login-panel">
-    <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <form class="login-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit()" novalidate>
       <header class="login-form__head">
         <h1>Connexion</h1>
         <p class="login-form__lead">Accédez à votre espace de gestion.</p>
@@ -31,7 +31,7 @@
           placeholder="vous@entreprise.com"
           autofocus
         />
-        @if (form.controls.email.touched && form.controls.email.invalid) {
+        @if ((form.controls.email.dirty && form.controls.email.touched || fgd.submitted) && form.controls.email.invalid) {
           @if (form.controls.email.hasError('required')) {
             <p class="field-error">Email requis</p>
           } @else if (form.controls.email.hasError('email')) {
@@ -49,7 +49,7 @@
           autocomplete="current-password"
           placeholder="••••••••"
         />
-        @if (form.controls.password.touched && form.controls.password.invalid) {
+        @if ((form.controls.password.dirty && form.controls.password.touched || fgd.submitted) && form.controls.password.invalid) {
           <p class="field-error">Mot de passe requis</p>
         }
       </div>
