@@ -1,11 +1,11 @@
 .toast-stack {
   position: fixed;
-  top: calc(var(--nav-height) + 16px);
-  right: 16px;
+  top: calc(var(--nav-height) + var(--space-4));
+  right: var(--space-4);
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-2);
   width: 340px;
   pointer-events: none;
 }
@@ -13,9 +13,10 @@
 .toast {
   display: flex;
   align-items: flex-start;
-  border-radius: 10px;
-  background: #ffffff;
-  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.14);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-0);
+  box-shadow: var(--shadow-overlay);
   overflow: hidden;
   pointer-events: all;
   animation: toast-in 0.18s ease-out both;
@@ -35,37 +36,37 @@
 // ─── Barre d'accent gauche ────────────────────────────────────────────────────
 .toast-accent {
   flex-shrink: 0;
-  width: 4px;
+  width: 3px;
   align-self: stretch;
 }
 
-.toast--success .toast-accent { background: #1E9E5A; }
-.toast--error   .toast-accent { background: #C0392B; }
+.toast--success .toast-accent { background: var(--success-600); }
+.toast--error   .toast-accent { background: var(--danger-600); }
 
 // ─── Icône ronde ─────────────────────────────────────────────────────────────
 .toast-icon {
   flex-shrink: 0;
   width: 26px;
   height: 26px;
-  margin: 13px 0 13px 12px;
+  margin: var(--space-3) 0 var(--space-3) var(--space-3);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 800;
   line-height: 1;
 }
 
 .toast--success .toast-icon {
-  background: #E7F2EB;
-  color: #1E9E5A;
+  background: var(--success-bg);
+  color: var(--success-600);
 }
 
 .toast--success .toast-icon::before { content: '✓'; }
 
 .toast--error .toast-icon {
-  background: #FAE8E8;
-  color: #C0392B;
+  background: var(--danger-bg);
+  color: var(--danger-600);
 }
 
 .toast--error .toast-icon::before { content: '!'; }
@@ -74,9 +75,9 @@
 .toast-message {
   flex: 1;
   margin: 0;
-  padding: 14px 8px 14px 10px;
-  color: #1F2933;
-  font-size: 14px;
+  padding: var(--space-3) var(--space-2) var(--space-3) var(--space-2);
+  color: var(--gray-900);
+  font-size: var(--text-base);
   font-weight: 500;
   line-height: 1.45;
 }
@@ -85,11 +86,11 @@
 .toast-dismiss {
   flex-shrink: 0;
   align-self: flex-start;
-  margin: 8px 10px 0 0;
-  padding: 2px 4px;
+  margin: var(--space-2) var(--space-2) 0 0;
+  padding: var(--space-1);
   border: none;
   background: none;
-  color: #9AA1AC;
+  color: var(--gray-400);
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
@@ -97,14 +98,20 @@
 }
 
 .toast-dismiss:hover {
-  color: #1F2933;
+  color: var(--gray-900);
+}
+
+.toast-dismiss:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
 }
 
 // ─── Responsive ──────────────────────────────────────────────────────────────
-@media (max-width: 420px) {
+@media (max-width: 600px) {
   .toast-stack {
-    right: 12px;
-    left: 12px;
+    right: var(--space-3);
+    left: var(--space-3);
     width: auto;
   }
 }
