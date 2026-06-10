@@ -16,6 +16,8 @@
   // ─── Marque (chrome uniquement : topbar, panneau login) ────────────────────
   --brand-900: #1B3A6B;
   --brand-950: #142D56;
+  --on-brand:      #FFFFFF;             // texte principal sur navy
+  --on-brand-soft: rgba(255, 255, 255, 0.75); // texte secondaire sur navy (AA sur brand-900)
 
   // ─── Accent (tout l'interactif) ─────────────────────────────────────────────
   --accent-600: #2563EB; // fonds de boutons (texte blanc dessus)
@@ -51,6 +53,8 @@
   --space-6: 24px;
   --space-7: 32px;
   --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
 
   // ─── Rayons ─────────────────────────────────────────────────────────────────
   --radius-sm: 4px;

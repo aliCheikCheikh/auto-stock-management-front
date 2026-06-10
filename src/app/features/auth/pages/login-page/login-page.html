@@ -29,6 +29,7 @@
           formControlName="email"
           autocomplete="email"
           placeholder="vous@entreprise.com"
+          autofocus
         />
         @if (form.controls.email.touched && form.controls.email.invalid) {
           @if (form.controls.email.hasError('required')) {
@@ -53,7 +54,12 @@
         }
       </div>
 
-      <button class="submit-button login-submit" type="submit" [disabled]="isSubmitting">
+      <button
+        class="btn btn--primary btn--lg login-submit"
+        type="submit"
+        [disabled]="isSubmitting"
+        [attr.aria-busy]="isSubmitting"
+      >
         @if (isSubmitting) {
           Connexion…
         } @else {
