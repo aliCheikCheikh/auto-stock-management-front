@@ -6,7 +6,7 @@
     </div>
   </header>
 
-  <form class="transfer-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form class="transfer-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit()">
 
     <section class="form-section" aria-labelledby="product-section-title">
       <div class="section-heading">
@@ -16,13 +16,13 @@
       <div class="form-grid">
         <div class="field field--wide">
           <label for="productId">Produit</label>
-          <select id="productId" formControlName="productId">
+          <select id="productId" formControlName="productId" autofocus>
             <option value="" disabled>— Sélectionner un produit —</option>
             @for (product of products; track product.productId) {
               <option [value]="product.productId">{{ product.name }} ({{ product.reference }})</option>
             }
           </select>
-          @if (form.controls['productId'].touched && form.controls['productId'].invalid) {
+          @if ((form.controls['productId'].dirty && form.controls['productId'].touched || fgd.submitted) && form.controls['productId'].invalid) {
             <p class="field-error">Sélection d'un produit obligatoire.</p>
           }
         </div>
@@ -43,7 +43,7 @@
               <option [value]="location.locationId">{{ location.label }}</option>
             }
           </select>
-          @if (form.controls['sourceLocationId'].touched && form.controls['sourceLocationId'].invalid) {
+          @if ((form.controls['sourceLocationId'].dirty && form.controls['sourceLocationId'].touched || fgd.submitted) && form.controls['sourceLocationId'].invalid) {
             <p class="field-error">Emplacement source obligatoire.</p>
           }
         </div>
@@ -56,10 +56,10 @@
               <option [value]="location.locationId">{{ location.label }}</option>
             }
           </select>
-          @if (form.controls['destinationLocationId'].touched && form.controls['destinationLocationId'].invalid) {
+          @if ((form.controls['destinationLocationId'].dirty && form.controls['destinationLocationId'].touched || fgd.submitted) && form.controls['destinationLocationId'].invalid) {
             <p class="field-error">Emplacement destination obligatoire.</p>
           }
-          @if (form.hasError('sameLocation')) {
+          @if ((form.controls['destinationLocationId'].dirty || fgd.submitted) && form.hasError('sameLocation')) {
             <p class="field-error">La source et la destination doivent être différentes.</p>
           }
         </div>
@@ -67,10 +67,10 @@
         <div class="field field--quantity">
           <label for="quantity">Quantité à transférer</label>
           <input id="quantity" type="number" formControlName="quantity" min="1" />
-          @if (form.controls['quantity'].touched && form.controls['quantity'].hasError('required')) {
+          @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('required')) {
             <p class="field-error">Quantité obligatoire.</p>
           }
-          @if (form.controls['quantity'].touched && form.controls['quantity'].hasError('min')) {
+          @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('min')) {
             <p class="field-error">Quantité minimum : 1.</p>
           }
         </div>
@@ -78,7 +78,12 @@
     </section>
 
     <footer class="form-actions">
-      <button class="submit-button" type="submit" [disabled]="isSubmitting">
+      <button
+        class="btn btn--primary btn--lg"
+        type="submit"
+        [disabled]="isSubmitting"
+        [attr.aria-busy]="isSubmitting"
+      >
         @if (isSubmitting) { Enregistrement... } @else { Enregistrer le transfert }
       </button>
     </footer>
