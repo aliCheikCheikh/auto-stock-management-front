@@ -6,7 +6,7 @@
         </div>
     </header>
 
-    <form class="receipt-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form class="receipt-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit()">
         <section class="form-section" aria-labelledby="product-section-title">
             <div class="section-heading">
                 <h2 id="product-section-title">Produit</h2>
@@ -27,8 +27,8 @@
             <div class="form-grid form-grid--product">
                 <div class="field field--wide">
                     <label for="productReference">Référence produit</label>
-                    <input id="productReference" type="text" formControlName="productReference" />
-                    @if (form.controls.productReference.touched && form.controls.productReference.invalid) {
+                    <input id="productReference" type="text" formControlName="productReference" autofocus />
+                    @if ((form.controls.productReference.dirty && form.controls.productReference.touched || fgd.submitted) && form.controls.productReference.invalid) {
                     <p class="field-error">Référence obligatoire.</p>
                     }
                 </div>
@@ -37,7 +37,7 @@
                 <div class="field field--wide">
                     <label for="productName">Nom du produit</label>
                     <input id="productName" type="text" formControlName="productName" />
-                    @if (form.controls.productName.touched && form.controls.productName.invalid) {
+                    @if ((form.controls.productName.dirty && form.controls.productName.touched || fgd.submitted) && form.controls.productName.invalid) {
                     <p class="field-error">Nom obligatoire.</p>
                     }
                 </div>
@@ -45,7 +45,7 @@
                 <div class="field field--wide">
                     <label for="categoryId">Catégorie</label>
                     <input id="categoryId" type="text" formControlName="categoryId" />
-                    @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
+                    @if ((form.controls.categoryId.dirty && form.controls.categoryId.touched || fgd.submitted) && form.controls.categoryId.invalid) {
                     <p class="field-error">Catégorie obligatoire.</p>
                     }
                 </div>
@@ -56,7 +56,7 @@
                         <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
                         <span>EUR</span>
                     </div>
-                    @if (form.controls.unitPriceAmount.touched && form.controls.unitPriceAmount.invalid) {
+                    @if ((form.controls.unitPriceAmount.dirty && form.controls.unitPriceAmount.touched || fgd.submitted) && form.controls.unitPriceAmount.invalid) {
                     <p class="field-error">Prix obligatoire.</p>
                     }
                 </div>
@@ -65,7 +65,7 @@
                     <label for="minimumGlobalThreshold">Seuil minimum</label>
                     <input id="minimumGlobalThreshold" type="number" formControlName="minimumGlobalThreshold" />
                     @if (
-                    form.controls.minimumGlobalThreshold.touched &&
+                    (form.controls.minimumGlobalThreshold.dirty && form.controls.minimumGlobalThreshold.touched || fgd.submitted) &&
                     form.controls.minimumGlobalThreshold.invalid
                     ) {
                     <p class="field-error">Seuil invalide.</p>
@@ -84,7 +84,7 @@
                 <div class="distribution-card">
                     <label for="shopFloorQuantity">Surface de vente</label>
                     <input id="shopFloorQuantity" type="number" formControlName="shopFloorQuantity" />
-                    @if (form.controls.shopFloorQuantity.touched && form.controls.shopFloorQuantity.invalid) {
+                    @if ((form.controls.shopFloorQuantity.dirty && form.controls.shopFloorQuantity.touched || fgd.submitted) && form.controls.shopFloorQuantity.invalid) {
                     <p class="field-error">Quantité surface invalide.</p>
                     }
                 </div>
@@ -92,13 +92,13 @@
                 <div class="distribution-card">
                     <label for="backstockQuantity">Réserve</label>
                     <input id="backstockQuantity" type="number" formControlName="backstockQuantity" />
-                    @if (form.controls.backstockQuantity.touched && form.controls.backstockQuantity.invalid) {
+                    @if ((form.controls.backstockQuantity.dirty && form.controls.backstockQuantity.touched || fgd.submitted) && form.controls.backstockQuantity.invalid) {
                     <p class="field-error">Quantité réserve invalide.</p>
                     }
                 </div>
 
                 @if (
-                (form.controls.shopFloorQuantity.touched || form.controls.backstockQuantity.touched) &&
+                (form.controls.shopFloorQuantity.dirty || form.controls.backstockQuantity.dirty || fgd.submitted) &&
                 form.controls.shopFloorQuantity.value + form.controls.backstockQuantity.value <= 0
                 ) {
                 <p class="distribution-error">Saisis au moins une quantité à réceptionner.</p>
@@ -120,7 +120,12 @@
                 }
             </div>
 
-            <button class="submit-button" type="submit" [disabled]="isSubmitting">
+            <button
+                class="btn btn--primary btn--lg"
+                type="submit"
+                [disabled]="isSubmitting"
+                [attr.aria-busy]="isSubmitting"
+            >
                 @if (isSubmitting) {
                 Enregistrement...
                 } @else {
