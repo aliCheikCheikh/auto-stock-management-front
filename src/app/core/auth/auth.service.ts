@@ -15,9 +15,9 @@ export class AuthService {
 
     login(credentials: LoginRequest): Observable<AuthenticatedUser> {
         return this.http.post<AuthenticatedUser>(`${this.apiUrl}/auth/login`,
-            credentials,
-            { withCredentials: true }).pipe(
-                tap(user => this._currentUser.set(user))
-            );
+            credentials
+        ).pipe(
+            tap((user) => this._currentUser.set(user))
+        );
     }
 }
