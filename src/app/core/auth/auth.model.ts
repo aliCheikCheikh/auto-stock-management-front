@@ -7,5 +7,5 @@ export type UserRole = 'OWNER' | 'SELLER';
 
 export interface AuthenticatedUser {
     readonly userId: string;
-    readonly userRole: UserRole;
+    readonly role: UserRole;
 }

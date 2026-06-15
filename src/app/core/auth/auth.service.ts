@@ -20,4 +20,9 @@ export class AuthService {
             tap((user) => this._currentUser.set(user))
         );
     }
+    me(): Observable<AuthenticatedUser> {
+        return this.http.get<AuthenticatedUser>(`${this.apiUrl}/auth/me`).pipe(
+            tap((user) => this._currentUser.set(user))
+        );
+    }
 }
