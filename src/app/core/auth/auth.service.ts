@@ -25,4 +25,10 @@ export class AuthService {
             tap((user) => this._currentUser.set(user))
         );
     }
+
+    logout(): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/auth/logout`, {}).pipe(
+            tap(() => this._currentUser.set(null))
+        )
+    }
 }
