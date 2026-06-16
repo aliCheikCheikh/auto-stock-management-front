@@ -10,8 +10,8 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(req).pipe(
         catchError((error: HttpErrorResponse) => {
-            const isAuthRequest = req.url.includes('/auth/');
-            if (error.status === 401 && !isAuthRequest) {
+            const noRefreshPaths = ['/auth/refresh','/auth/login','/auth/logout'];
+            if (error.status === 401 && !noRefreshPaths.some((path)=>req.url.includes(path))) {
                 return authService.refresh().pipe(
                     switchMap(() => next(req)),
                     catchError((refreshError) => {
