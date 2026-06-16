@@ -59,5 +59,33 @@ describe('refreshInterceptor', () => {
         expect(navSpy).toHaveBeenCalledWith('/login');
         expect(errored).toBe(true);
 
-    })
+    });
+
+    it('sur un 401 de /auth/me, déclenche aussi le refresh puis rejoue', () => {
+        let result: unknown;
+        http.get('/api/v1/auth/me').subscribe((res) => (result = res));
+
+        // /auth/me n'est PAS exclu → un 401 doit déclencher le refresh
+        httpMock.expectOne('/api/v1/auth/me')
+            .flush(null, { status: 401, statusText: 'Unauthorized' });
+
+        httpMock.expectOne('/api/v1/auth/refresh').flush(null);
+
+        // me() est rejoué après le refresh réussi
+        httpMock.expectOne('/api/v1/auth/me').flush({ userId: '1', role: 'OWNER' });
+
+        expect(result).toEqual({ userId: '1', role: 'OWNER' });
+    });
+
+    it('ne déclenche PAS de refresh sur un 401 de /auth/refresh (pas de boucle)', () => {
+        let errored = false;
+        http.post('/api/v1/auth/refresh', {}).subscribe({ error: () => (errored = true) });
+
+        // /auth/refresh est exclu → aucune 2e requête de refresh ne doit partir
+        httpMock.expectOne('/api/v1/auth/refresh')
+            .flush(null, { status: 401, statusText: 'Unauthorized' });
+
+        expect(errored).toBe(true);
+        // afterEach -> httpMock.verify() échouerait s'il y avait eu une 2e requête
+    });
 });
