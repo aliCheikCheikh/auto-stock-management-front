@@ -6,6 +6,7 @@ import { StockReceiptsApiService } from '../../data-access/stock-receipts-api.se
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NotificationService } from '../../../../core/notifications/notification.service';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -15,10 +16,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class NewStockReceiptPage {
   private readonly stockReceiptsApi = inject(StockReceiptsApiService);
+  private readonly notificationService = inject(NotificationService);
 
   isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
   currentIdempotencyKey: string | null = null;
 
   constructor() {
@@ -119,19 +119,17 @@ export class NewStockReceiptPage {
     }
 
     this.isSubmitting = true;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     this.stockReceiptsApi.receiveStock(request, this.currentIdempotencyKey).subscribe({
-      next: (acknowledgement) => {
+      next: () => {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
-        this.successMessage = `Reception enregistrée : ${acknowledgement.totalReceived} pièce(s)`;
+        this.notificationService.success('Réception enregistrée');
+        this.form.reset();
       },
       error: (error: unknown) => {
         this.isSubmitting = false;
-        this.errorMessage = this.getReceiptErrorMessage(error);
-
+        this.notificationService.error(this.getReceiptErrorMessage(error));
       },
     })
 

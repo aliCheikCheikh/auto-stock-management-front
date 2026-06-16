@@ -107,19 +107,6 @@
         </section>
 
         <footer class="form-actions">
-            <div class="form-feedback" aria-live="polite">
-                @if (successMessage) {
-                <div class="submit-feedback submit-feedback--success success-feedback">
-                    <p>{{ successMessage }}</p>
-                    <a class="feedback-action" href="/products">Voir le catalogue</a>
-                </div>
-                }
-
-                @if (errorMessage) {
-                <p class="submit-feedback submit-feedback--error">{{ errorMessage }}</p>
-                }
-            </div>
-
             <button
                 class="btn btn--primary btn--lg"
                 type="submit"
