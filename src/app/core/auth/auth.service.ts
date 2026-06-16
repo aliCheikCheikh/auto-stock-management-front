@@ -15,9 +15,28 @@ export class AuthService {
 
     login(credentials: LoginRequest): Observable<AuthenticatedUser> {
         return this.http.post<AuthenticatedUser>(`${this.apiUrl}/auth/login`,
-            credentials,
-            { withCredentials: true }).pipe(
-                tap(user => this._currentUser.set(user))
-            );
+            credentials
+        ).pipe(
+            tap((user) => this._currentUser.set(user))
+        );
+    }
+    me(): Observable<AuthenticatedUser> {
+        return this.http.get<AuthenticatedUser>(`${this.apiUrl}/auth/me`).pipe(
+            tap((user) => this._currentUser.set(user))
+        );
+    }
+
+    logout(): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/auth/logout`, {}).pipe(
+            tap(() => this._currentUser.set(null))
+        )
+    }
+
+    refresh(): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/auth/refresh`, {});
+    }
+
+    clearSession(): void {
+        this._currentUser.set(null);
     }
 }

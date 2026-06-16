@@ -5,33 +5,39 @@ import { NewSalePage } from './features/sales/pages/new-sale-page/new-sale-page'
 import { ProductDetailPage } from './features/products/pages/product-detail-page/product-detail-page';
 import { NewStockTransfersPage } from './features/stock-transfers/pages/new-stock-transfers-page/new-stock-transfers-page';
 import { LoginPage } from './features/auth/pages/login-page/login-page';
+import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
     {
         path: 'products',
-        component: ProductsPage
+        component: ProductsPage,
+        canActivate: [authGuard]
     },
 
     {
         path: 'stock-receipts/new',
-        component: NewStockReceiptPage
+        component: NewStockReceiptPage,
+        canActivate: [authGuard]
 
     },
 
     {
         path: 'sales/new',
-        component: NewSalePage
+        component: NewSalePage,
+        canActivate: [authGuard]
     },
 
     {
         path: 'products/:productId',
-        component: ProductDetailPage
+        component: ProductDetailPage,
+        canActivate: [authGuard]
 
     },
 
     {
         path: 'stock-transfers/new',
-        component: NewStockTransfersPage
+        component: NewStockTransfersPage,
+        canActivate: [authGuard]
     },
 
     {
@@ -42,6 +48,6 @@ export const routes: Routes = [
     {
         path: '',
         redirectTo: 'products',
-        pathMatch: 'full'
+        pathMatch: 'full',
     }
 ];
