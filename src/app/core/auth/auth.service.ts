@@ -31,4 +31,12 @@ export class AuthService {
             tap(() => this._currentUser.set(null))
         )
     }
+
+    refresh(): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/auth/refresh`, {});
+    }
+
+    clearSession(): void {
+        this._currentUser.set(null);
+    }
 }
