@@ -93,10 +93,10 @@ export class NewStockTransfersPage implements OnInit {
 
 
     this.stockTransfersApi.transferStock(request, this.currentIdempotencyKey).subscribe({
-      next: (response) => {
+      next: () => {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
-        this.notificationService.success(`Transfert réussi (mouvement ${response.movementId})`);
+        this.notificationService.success('Transfert effectué');
         this.form.reset({
           productId: '',
           sourceLocationId: '',
