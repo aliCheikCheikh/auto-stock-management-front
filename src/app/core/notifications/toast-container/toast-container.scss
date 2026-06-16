@@ -1,82 +1,90 @@
 .toast-stack {
   position: fixed;
-  top: calc(var(--nav-height) + 16px);
-  right: 16px;
+  top: calc(var(--nav-height) + var(--space-4));
+  right: var(--space-4);
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 340px;
+  gap: var(--space-2);
+  width: min(360px, calc(100vw - 2 * var(--space-4)));
   pointer-events: none;
 }
 
+// Couleur sémantique portée par une custom property : accent, icône et
+// progression la consomment — zéro couleur en dur dans le composant.
 .toast {
+  --toast-color: var(--gray-500);
+
+  position: relative;
   display: flex;
   align-items: flex-start;
-  border-radius: 10px;
-  background: #ffffff;
-  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.14);
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--gray-0);
+  box-shadow: var(--shadow-overlay);
   overflow: hidden;
   pointer-events: all;
-  animation: toast-in 0.18s ease-out both;
+  animation: toast-in 140ms ease-out both;
+}
+
+.toast--success { --toast-color: var(--success-600); }
+.toast--error   { --toast-color: var(--danger-600); }
+.toast--info    { --toast-color: var(--accent-700); }
+
+// Liseré gauche 3px — seul aplat de couleur sémantique
+.toast::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--toast-color);
 }
 
 @keyframes toast-in {
   from {
     opacity: 0;
-    transform: translateX(16px);
+    transform: translateY(-6px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
-// ─── Barre d'accent gauche ────────────────────────────────────────────────────
-.toast-accent {
-  flex-shrink: 0;
-  width: 4px;
-  align-self: stretch;
+.toast--leaving {
+  animation: toast-out 140ms ease-in both;
 }
 
-.toast--success .toast-accent { background: #1E9E5A; }
-.toast--error   .toast-accent { background: #C0392B; }
+@keyframes toast-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
 
-// ─── Icône ronde ─────────────────────────────────────────────────────────────
+// ─── Icône de statut (trait, 16px) ───────────────────────────────────────────
 .toast-icon {
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
-  margin: 13px 0 13px 12px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: var(--toast-color);
 }
 
-.toast--success .toast-icon {
-  background: #E7F2EB;
-  color: #1E9E5A;
+.toast-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
-
-.toast--success .toast-icon::before { content: '✓'; }
-
-.toast--error .toast-icon {
-  background: #FAE8E8;
-  color: #C0392B;
-}
-
-.toast--error .toast-icon::before { content: '!'; }
 
 // ─── Message ─────────────────────────────────────────────────────────────────
 .toast-message {
   flex: 1;
   margin: 0;
-  padding: 14px 8px 14px 10px;
-  color: #1F2933;
-  font-size: 14px;
+  color: var(--gray-900);
+  font-size: var(--text-sm);
   font-weight: 500;
   line-height: 1.45;
 }
@@ -84,27 +92,68 @@
 // ─── Bouton fermeture ─────────────────────────────────────────────────────────
 .toast-dismiss {
   flex-shrink: 0;
-  align-self: flex-start;
-  margin: 8px 10px 0 0;
-  padding: 2px 4px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin: -2px -2px 0 0;
+  padding: 0;
   border: none;
+  border-radius: var(--radius-sm);
   background: none;
-  color: #9AA1AC;
-  font-size: 18px;
-  line-height: 1;
+  color: var(--gray-400);
   cursor: pointer;
-  transition: color 0.1s;
+  transition: color 0.12s, background 0.12s;
+}
+
+.toast-dismiss svg {
+  width: 12px;
+  height: 12px;
 }
 
 .toast-dismiss:hover {
-  color: #1F2933;
+  background: var(--gray-100);
+  color: var(--gray-900);
 }
 
-// ─── Responsive ──────────────────────────────────────────────────────────────
-@media (max-width: 420px) {
-  .toast-stack {
-    right: 12px;
-    left: 12px;
-    width: auto;
+.toast-dismiss:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+// ─── Barre de progression du temps restant ───────────────────────────────────
+// Porte le compte à rebours : sa fin d'animation déclenche la fermeture,
+// et le survol du toast met le timer en pause.
+.toast-progress {
+  position: absolute;
+  left: 3px;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--toast-color);
+  opacity: 0.3;
+  transform-origin: left;
+  animation: toast-countdown linear both;
+}
+
+@keyframes toast-countdown {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+.toast:hover .toast-progress,
+.toast:focus-within .toast-progress {
+  animation-play-state: paused;
+}
+
+// Sortie déjà engagée : on fige la barre
+.toast--leaving .toast-progress {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .toast--leaving {
+    animation-duration: 1ms;
   }
 }

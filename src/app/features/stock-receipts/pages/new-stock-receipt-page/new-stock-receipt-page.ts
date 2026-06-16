@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
 import { StockReceiptsApiService } from '../../data-access/stock-receipts-api.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NotificationService } from '../../../../core/notifications/notification.service';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -15,10 +16,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class NewStockReceiptPage {
   private readonly stockReceiptsApi = inject(StockReceiptsApiService);
+  private readonly notificationService = inject(NotificationService);
 
   isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
   currentIdempotencyKey: string | null = null;
 
   constructor() {
@@ -65,7 +65,7 @@ export class NewStockReceiptPage {
 
 
 
-  onSubmit(): void {
+  onSubmit(formDirective: FormGroupDirective): void {
 
     if (this.isSubmitting) {
       return
@@ -119,19 +119,28 @@ export class NewStockReceiptPage {
     }
 
     this.isSubmitting = true;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     this.stockReceiptsApi.receiveStock(request, this.currentIdempotencyKey).subscribe({
-      next: (acknowledgement) => {
+      next: () => {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
-        this.successMessage = `Reception enregistrée : ${acknowledgement.totalReceived} pièce(s)`;
+        this.notificationService.success('Réception enregistrée');
+        // resetForm() avec les valeurs initiales : champs vierges, pristine,
+        // untouched ET submitted=false → pas d'erreur "requis" qui reflashe.
+        formDirective.resetForm({
+          isNewProduct: true,
+          productReference: '',
+          productName: '',
+          categoryId: '',
+          unitPriceAmount: '',
+          minimumGlobalThreshold: 0,
+          shopFloorQuantity: 0,
+          backstockQuantity: 1,
+        });
       },
       error: (error: unknown) => {
         this.isSubmitting = false;
-        this.errorMessage = this.getReceiptErrorMessage(error);
-
+        this.notificationService.error(this.getReceiptErrorMessage(error));
       },
     })
 

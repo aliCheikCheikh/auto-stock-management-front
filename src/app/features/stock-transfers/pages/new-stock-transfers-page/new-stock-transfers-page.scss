@@ -1,16 +1,18 @@
 .transfer-page {
   min-height: calc(100vh - var(--nav-height));
-  padding: 28px 32px 40px;
-  background: var(--color-canvas);
-  color: var(--color-ink);
+  padding: var(--space-6) var(--space-7) var(--space-8);
+  background: var(--gray-50);
+  color: var(--gray-900);
 }
 
-.page-header { max-width: 1180px; }
+.page-header {
+  max-width: var(--content-md);
+}
 
 .transfer-form {
   display: grid;
-  gap: 20px;
-  max-width: 1180px;
+  gap: var(--space-5);
+  max-width: var(--content-md);
   margin: 0 auto;
 }
 
@@ -18,10 +20,14 @@
   max-width: 180px;
 }
 
-@media (max-width: 960px) {
-  .transfer-page { padding: 20px; }
+@media (max-width: 900px) {
+  .transfer-page {
+    padding: var(--space-5);
+  }
 }
 
-@media (max-width: 560px) {
-  .transfer-page { padding: 16px 14px; }
+@media (max-width: 600px) {
+  .transfer-page {
+    padding: var(--space-4) var(--space-3);
+  }
 }

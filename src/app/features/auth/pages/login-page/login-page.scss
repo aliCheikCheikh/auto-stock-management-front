@@ -2,18 +2,18 @@
 .login {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 45% 55%;
+  grid-template-columns: 44% 56%;
 }
 
-// ─── Panneau marque (gauche) ─────────────────────────────────────────────────
+// ─── Panneau marque (gauche) — chrome navy, réservé à l'identité ─────────────
 .login-brand {
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
-  padding: 64px 56px;
-  background: var(--color-brand);
-  color: var(--color-surface);
+  padding: var(--space-10) var(--space-9);
+  background: var(--brand-900);
+  color: var(--on-brand);
 }
 
 // Motif mécanique en filigrane (engrenages, écrou, boulon, clé) — traits fins blancs
@@ -35,33 +35,33 @@
 }
 
 .login-brand__logo {
-  font-size: 38px;
+  font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .login-brand__slogan {
-  margin-top: 16px;
-  font-size: 18px;
+  margin-top: var(--space-3);
+  font-size: var(--text-md);
   font-weight: 400;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--on-brand-soft);
 }
 
 .login-brand__values {
   list-style: none;
-  margin: 40px 0 0;
+  margin: var(--space-8) 0 0;
   padding: 0;
   display: grid;
-  gap: 14px;
+  gap: var(--space-3);
 }
 
 .login-brand__values li {
   position: relative;
-  padding-left: 22px;
-  font-size: 15px;
+  padding-left: var(--space-5);
+  font-size: var(--text-base);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--on-brand);
 }
 
 .login-brand__values li::before {
@@ -73,51 +73,51 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-action);
+  background: var(--accent-600);
 }
 
 // ─── Panneau formulaire (droite) ─────────────────────────────────────────────
 .login-panel {
   display: grid;
   place-items: center;
-  padding: 48px 32px;
-  background: var(--color-surface);
+  padding: var(--space-9) var(--space-7);
+  background: var(--gray-0);
 }
 
 .login-form {
   display: grid;
-  gap: 20px;
+  gap: var(--space-5);
   width: 100%;
   max-width: 360px;
 }
 
 .login-form__head {
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 }
 
 .login-form__head h1 {
-  font-size: 26px;
+  font-size: var(--text-xl);
 }
 
 .login-form__lead {
-  margin-top: 8px;
-  font-size: 14px;
-  color: var(--color-muted);
+  margin-top: var(--space-2);
+  font-size: var(--text-base);
+  color: var(--gray-500);
 }
 
 // ─── Champs (réutilise .field / label / input / .field-error globaux) ────────
 .login-field {
-  gap: 7px;
+  gap: var(--space-2);
 }
 
 // ─── Bouton pleine largeur ───────────────────────────────────────────────────
 .login-submit {
   width: 100%;
-  margin-top: 4px;
+  margin-top: var(--space-1);
 }
 
 // ─── Responsive : panneau marque en bandeau réduit en haut ───────────────────
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .login {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
@@ -125,36 +125,33 @@
   }
 
   .login-brand {
-    padding: 32px 28px;
+    padding: var(--space-7) var(--space-6);
   }
 
   .login-brand__slogan {
-    margin-top: 8px;
-    font-size: 15px;
+    margin-top: var(--space-2);
+    font-size: var(--text-base);
   }
 
   .login-brand__values {
-    margin-top: 20px;
+    margin-top: var(--space-5);
     grid-auto-flow: column;
     grid-template-columns: none;
-    gap: 18px;
-    flex-wrap: wrap;
-    font-size: 13px;
+    gap: var(--space-4);
   }
 
   .login-brand__values li {
-    font-size: 13px;
+    font-size: var(--text-sm);
   }
 
   .login-panel {
-    padding: 40px 24px;
-    align-items: start;
+    padding: var(--space-8) var(--space-6);
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 600px) {
   .login-brand__logo {
-    font-size: 30px;
+    font-size: var(--text-lg);
   }
 
   .login-brand__values {

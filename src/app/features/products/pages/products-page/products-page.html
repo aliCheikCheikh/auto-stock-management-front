@@ -11,50 +11,54 @@
       <p class="product-count">{{ state.products.length }} produit(s)</p>
       }
 
-      <a class="primary-action" href="/stock-receipts/new">Nouvelle réception</a>
+      <a class="btn btn--primary" href="/stock-receipts/new">Nouvelle réception</a>
     </div>
   </header>
 
   @if (state.status === 'loading') {
-  <section class="state-panel" aria-live="polite">
+  <section class="state-block catalogue-state" aria-live="polite">
     <p>Chargement des produits...</p>
   </section>
   }
 
   @if (state.status === 'error') {
-  <section class="state-panel state-panel--error" aria-live="polite">
+  <section class="state-block state-block--error catalogue-state" aria-live="polite">
     <p>{{ state.message }}</p>
   </section>
   }
 
   @if (state.status === 'success') {
-  <section class="catalogue-section" aria-labelledby="catalogue-title">
+  <section class="catalogue-section card" aria-labelledby="catalogue-title">
     <div class="section-heading">
       <h2 id="catalogue-title">Produits disponibles</h2>
     </div>
 
-    <div class="products-table" role="table" aria-label="Catalogue produits">
-      <div class="products-table__header" role="row">
+    <div class="data-table catalogue-table" role="table" aria-label="Catalogue produits">
+      <div class="data-table__header" role="row">
         <span role="columnheader">Produit</span>
         <span role="columnheader">Reference</span>
-        <span role="columnheader">Prix</span>
-        <span role="columnheader">Stock global</span>
+        <span role="columnheader" class="data-table__num">Prix</span>
+        <span role="columnheader" class="data-table__num">Stock global</span>
         <span role="columnheader">Etat</span>
       </div>
 
       @for (item of state.products; track item.product.productId) {
-      <article class="products-table__row" role="row" [routerLink]="['/products',item.product.productId]">
+      <article
+        class="data-table__row data-table__row--link"
+        role="row"
+        [routerLink]="['/products', item.product.productId]"
+      >
         <div class="product-main" role="cell">
           <strong>{{ item.product.name }}</strong>
         </div>
 
         <span role="cell" data-label="Référence">{{ item.product.reference }}</span>
 
-        <strong class="price" role="cell" data-label="Prix">
+        <strong class="price data-table__num" role="cell" data-label="Prix">
           {{ item.product.unitPrice.amount }} {{ item.product.unitPrice.currency }}
         </strong>
 
-        <div class="stock-quantity" role="cell" data-label="Stock global">
+        <div class="stock-quantity data-table__num" role="cell" data-label="Stock global">
           <strong>{{ item.globalQuantity }}</strong>
           <span>Seuil {{ item.product.minimumGlobalThreshold }}</span>
         </div>

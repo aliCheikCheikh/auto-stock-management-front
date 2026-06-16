@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { StockTransfersApiService } from '../../data-access/stock-transfers-api.service';
 import { TransferStockRequest } from '../../models/stock-transfers.model';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -64,7 +64,7 @@ export class NewStockTransfersPage implements OnInit {
   }
 
 
-  onSubmit(): void {
+  onSubmit(formDirective: FormGroupDirective): void {
     if (this.isSubmitting) {
       return;
     }
@@ -93,11 +93,12 @@ export class NewStockTransfersPage implements OnInit {
 
 
     this.stockTransfersApi.transferStock(request, this.currentIdempotencyKey).subscribe({
-      next: (response) => {
+      next: () => {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
-        this.notificationService.success(`Transfert réussi (mouvement ${response.movementId})`);
-        this.form.reset({
+        this.notificationService.success('Transfert effectué');
+        // resetForm() remet aussi submitted=false → aucune erreur ne reflashe.
+        formDirective.resetForm({
           productId: '',
           sourceLocationId: '',
           destinationLocationId: '',

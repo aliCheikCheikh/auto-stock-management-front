@@ -1,12 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SalesApiService } from '../../data-access/sales-api.service';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateSaleRequest } from '../../models/sales.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { ProductsApiService } from '../../../products/data-access/products-api.service';
 import { Product } from '../../../products/models/product.model';
+import { NotificationService } from '../../../../core/notifications/notification.service';
 
 @Component({
   selector: 'app-new-sale-page',
@@ -17,12 +18,11 @@ import { Product } from '../../../products/models/product.model';
 export class NewSalePage implements OnInit {
   private readonly salesApi = inject(SalesApiService);
   private readonly productsApi = inject(ProductsApiService);
+  private readonly notificationService = inject(NotificationService);
   products: readonly Product[] = [];
 
   currentIdempotencyKey: string | null = null;
   isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
 
   readonly form = new FormGroup({
     productId: new FormControl('',
@@ -45,7 +45,7 @@ export class NewSalePage implements OnInit {
     })
   }
 
-  onSubmit(): void {
+  onSubmit(formDirective: FormGroupDirective): void {
     if (this.isSubmitting) {
       return;
     }
@@ -73,18 +73,18 @@ export class NewSalePage implements OnInit {
     }
 
     this.isSubmitting = true;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     this.salesApi.sellProduct(request, this.currentIdempotencyKey).subscribe({
-      next: (response) => {
+      next: () => {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
-        this.successMessage = `Vente enregistrée (ID: ${response.saleId})`;
+        this.notificationService.success('Vente enregistrée');
+        // resetForm() remet aussi submitted=false → aucune erreur ne reflashe.
+        formDirective.resetForm({ productId: '', quantity: 1 });
       },
       error: (error: unknown) => {
         this.isSubmitting = false;
-        this.errorMessage = this.getSaleErrorMessage(error);
+        this.notificationService.error(this.getSaleErrorMessage(error));
       }
     })
 
