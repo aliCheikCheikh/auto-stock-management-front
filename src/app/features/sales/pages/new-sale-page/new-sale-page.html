@@ -6,7 +6,7 @@
         </div>
     </header>
 
-    <form class="sale-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit()">
+    <form class="sale-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit(fgd)">
         <section class="form-section" aria-labelledby="sale-section-title">
             <div class="section-heading">
                 <h2 id="sale-section-title">Produit vendu</h2>

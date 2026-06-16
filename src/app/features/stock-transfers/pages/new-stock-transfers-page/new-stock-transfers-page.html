@@ -6,7 +6,7 @@
     </div>
   </header>
 
-  <form class="transfer-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit()">
+  <form class="transfer-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit(fgd)">
 
     <section class="form-section" aria-labelledby="product-section-title">
       <div class="section-heading">

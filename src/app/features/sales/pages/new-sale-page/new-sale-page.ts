@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SalesApiService } from '../../data-access/sales-api.service';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateSaleRequest } from '../../models/sales.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -45,7 +45,7 @@ export class NewSalePage implements OnInit {
     })
   }
 
-  onSubmit(): void {
+  onSubmit(formDirective: FormGroupDirective): void {
     if (this.isSubmitting) {
       return;
     }
@@ -79,7 +79,8 @@ export class NewSalePage implements OnInit {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
         this.notificationService.success('Vente enregistrée');
-        this.form.reset({ productId: '', quantity: 1 });
+        // resetForm() remet aussi submitted=false → aucune erreur ne reflashe.
+        formDirective.resetForm({ productId: '', quantity: 1 });
       },
       error: (error: unknown) => {
         this.isSubmitting = false;

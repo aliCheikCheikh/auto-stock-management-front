@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
 import { StockReceiptsApiService } from '../../data-access/stock-receipts-api.service';
@@ -65,7 +65,7 @@ export class NewStockReceiptPage {
 
 
 
-  onSubmit(): void {
+  onSubmit(formDirective: FormGroupDirective): void {
 
     if (this.isSubmitting) {
       return
@@ -125,7 +125,18 @@ export class NewStockReceiptPage {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
         this.notificationService.success('Réception enregistrée');
-        this.form.reset();
+        // resetForm() avec les valeurs initiales : champs vierges, pristine,
+        // untouched ET submitted=false → pas d'erreur "requis" qui reflashe.
+        formDirective.resetForm({
+          isNewProduct: true,
+          productReference: '',
+          productName: '',
+          categoryId: '',
+          unitPriceAmount: '',
+          minimumGlobalThreshold: 0,
+          shopFloorQuantity: 0,
+          backstockQuantity: 1,
+        });
       },
       error: (error: unknown) => {
         this.isSubmitting = false;
