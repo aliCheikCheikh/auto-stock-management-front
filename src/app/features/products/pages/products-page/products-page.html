@@ -87,6 +87,14 @@
 
         @if (isOwner()) {
         <div class="catalogue-actions-col" role="cell" data-label="Actions">
+          <a
+            class="btn-edit"
+            [routerLink]="['/products', item.product.productId, 'edit']"
+            [attr.aria-label]="'Modifier ' + item.product.name"
+            (click)="$event.stopPropagation()"
+          >
+            Modifier
+          </a>
           <button
             class="btn-deactivate"
             type="button"

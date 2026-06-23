@@ -32,6 +32,10 @@ export class ProductsApiService {
         return this.http.delete<void>(`${this.apiBaseUrl}/products/${productId}`);
     }
 
+    public getProduct(productId: string): Observable<Product> {
+        return this.http.get<Product>(`${this.apiBaseUrl}/products/${productId}`);
+    }
+
 
 
 }
