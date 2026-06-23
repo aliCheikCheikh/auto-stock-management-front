@@ -1,0 +1,42 @@
+<!--
+  Modal de confirmation réutilisable.
+  Contrat (porté par confirm-dialog.ts) :
+    entrées  : title(), message(), confirmLabel() = « Confirmer », cancelLabel() = « Annuler »
+    sorties  : confirmed, cancelled
+  Backdrop / Échap → cancelled.emit().
+-->
+<div
+  class="cd-backdrop"
+  (click)="cancelled.emit()"
+  (keydown.escape)="cancelled.emit()"
+>
+  <div
+    class="cd-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cd-title"
+    aria-describedby="cd-message"
+    (click)="$event.stopPropagation()"
+  >
+    <h2 class="cd-title" id="cd-title">{{ title() }}</h2>
+    <p class="cd-message" id="cd-message">{{ message() }}</p>
+
+    <div class="cd-actions">
+      <button
+        class="btn btn--secondary"
+        type="button"
+        (click)="cancelled.emit()"
+        autofocus
+      >
+        {{ cancelLabel() }}
+      </button>
+      <button
+        class="btn btn--danger"
+        type="button"
+        (click)="confirmed.emit()"
+      >
+        {{ confirmLabel() }}
+      </button>
+    </div>
+  </div>
+</div>

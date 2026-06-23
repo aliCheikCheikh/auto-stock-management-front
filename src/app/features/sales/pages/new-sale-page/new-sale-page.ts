@@ -38,7 +38,7 @@ export class NewSalePage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.productsApi.listProducts().subscribe({
+    this.productsApi.listProducts(true).subscribe({
       next: (page) => {
         this.products = page.content;
       }

@@ -1,8 +1,8 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Page } from "../../../core/api/page.model";
-import { Product, ProductStockSummary } from "../models/product.model";
+import { Product, ProductStockSummary, UpdateProductRequest } from "../models/product.model";
 
 
 
@@ -13,8 +13,9 @@ export class ProductsApiService {
     private readonly http = inject(HttpClient);
     private readonly apiBaseUrl = '/api/v1';
 
-    public listProducts(): Observable<Page<Product>> {
-        return this.http.get<Page<Product>>(`${this.apiBaseUrl}/products`);
+    public listProducts(activeOnly = false): Observable<Page<Product>> {
+        const params = new HttpParams().set('activeOnly', activeOnly);
+        return this.http.get<Page<Product>>(`${this.apiBaseUrl}/products`, { params });
     }
 
     public getProductStockSummary(productId: string): Observable<ProductStockSummary> {
@@ -22,4 +23,15 @@ export class ProductsApiService {
             .get<ProductStockSummary>
             (`${this.apiBaseUrl}/products/${productId}/stock-levels`);
     }
+
+    public updateProduct(productId: string, request: UpdateProductRequest): Observable<Product> {
+        return this.http.put<Product>(`${this.apiBaseUrl}/products/${productId}`, request);
+    }
+
+    public deactivateProduct(productId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiBaseUrl}/products/${productId}`);
+    }
+
+
+
 }

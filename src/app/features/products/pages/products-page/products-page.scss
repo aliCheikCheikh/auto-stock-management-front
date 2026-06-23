@@ -45,6 +45,48 @@
     minmax(110px, 0.7fr);
 }
 
+// Variante propriétaire : colonne Actions (Désactiver) en plus.
+.catalogue-table--owner .data-table__header,
+.catalogue-table--owner .data-table__row {
+  grid-template-columns:
+    minmax(200px, 1.8fr)
+    minmax(130px, 0.9fr)
+    minmax(110px, 0.7fr)
+    minmax(150px, 1fr)
+    minmax(110px, 0.7fr)
+    minmax(120px, 0.7fr);
+}
+
+.catalogue-actions-col {
+  justify-self: end;
+}
+
+// Bouton destructif discret : texte/bordure danger, fond transparent.
+.btn-deactivate {
+  min-height: var(--control-h-sm);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--danger-600);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.btn-deactivate:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger-600);
+}
+
+.btn-deactivate:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.25);
+}
+
 .product-main {
   display: grid;
   gap: var(--space-1);

@@ -33,13 +33,21 @@
       <h2 id="catalogue-title">Produits disponibles</h2>
     </div>
 
-    <div class="data-table catalogue-table" role="table" aria-label="Catalogue produits">
+    <div
+      class="data-table catalogue-table"
+      [class.catalogue-table--owner]="isOwner()"
+      role="table"
+      aria-label="Catalogue produits"
+    >
       <div class="data-table__header" role="row">
         <span role="columnheader">Produit</span>
         <span role="columnheader">Reference</span>
         <span role="columnheader" class="data-table__num">Prix</span>
         <span role="columnheader" class="data-table__num">Stock global</span>
         <span role="columnheader">Etat</span>
+        @if (isOwner()) {
+        <span role="columnheader" class="catalogue-actions-col">Actions</span>
+        }
       </div>
 
       @for (item of state.products; track item.product.productId) {
@@ -76,6 +84,19 @@
           }
           }
         </span>
+
+        @if (isOwner()) {
+        <div class="catalogue-actions-col" role="cell" data-label="Actions">
+          <button
+            class="btn-deactivate"
+            type="button"
+            [attr.aria-label]="'Désactiver ' + item.product.name"
+            (click)="askDeactivation(item.product); $event.stopPropagation()"
+          >
+            Désactiver
+          </button>
+        </div>
+        }
       </article>
       } @empty {
       <div class="empty-state">
@@ -85,5 +106,14 @@
     </div>
   </section>
   }
+  }
+
+  @if (productToDeactivate(); as product) {
+  <app-confirm-dialog
+    [title]="'Désactiver le produit ?'"
+    [message]="'Le produit « ' + product.name + ' » sera retiré du catalogue actif. Il restera dans l\'historique.'"
+    confirmLabel="Désactiver"
+    (confirmed)="confirmDeactivation()"
+    (cancelled)="cancelDeactivation()" />
   }
 </main>
