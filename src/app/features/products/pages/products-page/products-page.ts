@@ -1,14 +1,16 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ProductsApiService } from '../../data-access/products-api.service';
 import { StockLevelsApiService } from '../../../stock/data-access/stock-levels-api.service';
 import { Product } from '../../models/product.model';
-import { forkJoin, catchError, map, of, startWith } from 'rxjs';
+import { forkJoin, catchError, map, of, startWith, BehaviorSubject, switchMap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { StockLevel } from '../../../stock/models/stock-level.model';
 import { RouterLink } from '@angular/router';
-
+import { AuthService } from '../../../../core/auth/auth.service';
+import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
+import { NotificationService } from '../../../../core/notifications/notification.service';
 
 const STOCK_LEVELS_PAGE_SIZE = 100;
 
@@ -29,40 +31,75 @@ interface ProductListItem {
 
 @Component({
   selector: 'app-products-page',
-  imports: [AsyncPipe, RouterLink],
+  imports: [AsyncPipe, RouterLink, ConfirmDialog],
   templateUrl: './products-page.html',
   styleUrl: './products-page.scss',
 })
 export class ProductsPage {
   private readonly productsApi = inject(ProductsApiService);
   private readonly stockLevelsApi = inject(StockLevelsApiService);
+  private readonly authService = inject(AuthService);
+  readonly isOwner = computed(() => this.authService.currentUser()?.role === 'OWNER');
+  readonly productToDeactivate = signal<Product | null>(null);
+  private readonly notifications = inject(NotificationService);
+  private readonly reload$ = new BehaviorSubject<void>(undefined);
 
-  readonly state$ = forkJoin({
-    productsPage: this.productsApi.listProducts(),
-    stockLevelsPage: this.stockLevelsApi.listStockLevels({ size: STOCK_LEVELS_PAGE_SIZE })
-  }).pipe(
-    map(({ productsPage, stockLevelsPage }): ProductsPageState => {
-      const globalQuantityByProductId = buildGlobalQuantityByProductId(stockLevelsPage.content);
 
-      return {
-        status: 'success',
-        products: productsPage.content.map((product): ProductListItem => {
-          const globalQuantity = globalQuantityByProductId.get(product.productId) ?? 0;
+  readonly state$ = this.reload$.pipe(
+    switchMap(() => forkJoin({
+      productsPage: this.productsApi.listProducts(true),
+      stockLevelsPage: this.stockLevelsApi.listStockLevels({ size: STOCK_LEVELS_PAGE_SIZE })
+    }).pipe(
+      map(({ productsPage, stockLevelsPage }): ProductsPageState => {
+        const globalQuantityByProductId = buildGlobalQuantityByProductId(stockLevelsPage.content);
 
-          return {
-            product,
-            globalQuantity,
-            stockStatus: getStockStatus(product, globalQuantity),
-          };
-        }),
-      };
-    }),
-    startWith({ status: 'loading' } satisfies ProductsPageState),
-    catchError((error: unknown) => of({
-      status: 'error',
-      message: getProductsErrorMessage(error)
-    } satisfies ProductsPageState))
-  );
+        return {
+          status: 'success',
+          products: productsPage.content.map((product): ProductListItem => {
+            const globalQuantity = globalQuantityByProductId.get(product.productId) ?? 0;
+
+            return {
+              product,
+              globalQuantity,
+              stockStatus: getStockStatus(product, globalQuantity),
+            };
+          }),
+        };
+      }),
+      startWith({ status: 'loading' } satisfies ProductsPageState),
+      catchError((error: unknown) => of({
+        status: 'error',
+        message: getProductsErrorMessage(error)
+      } satisfies ProductsPageState)))
+
+    ));
+
+  askDeactivation(product: Product): void {
+    this.productToDeactivate.set(product);
+  }
+
+  cancelDeactivation(): void {
+    this.productToDeactivate.set(null);
+  }
+
+  confirmDeactivation(): void {
+    const product = this.productToDeactivate();
+    if (!product) {
+      return;
+    }
+    this.productsApi.deactivateProduct(product.productId).subscribe({
+      next: () => {
+        this.notifications.success(`Le produit « ${product.name} » a été désactivé.`);
+        this.productToDeactivate.set(null);
+        this.reload$.next();
+      },
+      error: () => {
+        this.notifications.error(`La désactivation du produit « ${product.name} » a échoué.`);
+        this.productToDeactivate.set(null);
+      }
+
+    })
+  }
 
 
 }

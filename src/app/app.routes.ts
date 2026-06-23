@@ -6,6 +6,7 @@ import { ProductDetailPage } from './features/products/pages/product-detail-page
 import { NewStockTransfersPage } from './features/stock-transfers/pages/new-stock-transfers-page/new-stock-transfers-page';
 import { LoginPage } from './features/auth/pages/login-page/login-page';
 import { authGuard } from './core/auth/auth.guard';
+import { ProductEditPage } from './features/products/pages/product-edit-page/product-edit-page';
 
 export const routes: Routes = [
     {
@@ -32,6 +33,12 @@ export const routes: Routes = [
         component: ProductDetailPage,
         canActivate: [authGuard]
 
+    },
+
+    {
+        path: 'products/:productId/edit',
+        component: ProductEditPage,
+        canActivate: [authGuard]
     },
 
     {

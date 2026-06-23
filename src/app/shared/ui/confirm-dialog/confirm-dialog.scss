@@ -1,0 +1,86 @@
+// ─── Backdrop : voile sombre, centre la carte ────────────────────────────────
+// z-index au-dessus des toasts (1000) pour capter le focus/clic.
+.cd-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: rgba(16, 24, 40, 0.45);
+  animation: cd-fade 140ms ease-out both;
+}
+
+// ─── Carte ───────────────────────────────────────────────────────────────────
+.cd-card {
+  width: 100%;
+  max-width: 440px;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-0);
+  box-shadow: var(--shadow-overlay);
+  animation: cd-pop 140ms ease-out both;
+}
+
+// Titre : neutralise l'uppercase global du h2, registre « dialogue ».
+.cd-title {
+  margin: 0;
+  color: var(--gray-900);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.cd-message {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+// ─── Actions : alignées à droite, annuler puis confirmer ─────────────────────
+.cd-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+// ─── Animations discrètes ────────────────────────────────────────────────────
+@keyframes cd-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes cd-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cd-backdrop,
+  .cd-card {
+    animation-duration: 1ms;
+  }
+}
+
+@media (max-width: 600px) {
+  .cd-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cd-actions .btn {
+    width: 100%;
+  }
+}

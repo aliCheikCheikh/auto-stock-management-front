@@ -1,0 +1,68 @@
+<main class="edit-page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Catalogue</p>
+      <h1>Modifier le produit</h1>
+    </div>
+  </header>
+
+  <form class="edit-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <section class="form-section" aria-labelledby="edit-section-title">
+      <div class="section-heading">
+        <h2 id="edit-section-title">Informations produit</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="field field--wide">
+          <label for="name">Nom</label>
+          <input id="name" type="text" formControlName="name" autofocus />
+          @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="field-error">Nom obligatoire.</p>
+          }
+        </div>
+
+        <ng-container formGroupName="unitPrice">
+          <div class="field">
+            <label for="amount">Prix unitaire</label>
+            <input id="amount" type="text" formControlName="amount" inputmode="decimal" />
+            @if (form.controls.unitPrice.controls.amount.invalid && form.controls.unitPrice.controls.amount.touched) {
+            <p class="field-error">Montant obligatoire.</p>
+            }
+          </div>
+
+          <div class="field">
+            <label for="currency">Devise</label>
+            <input id="currency" type="text" formControlName="currency" />
+            @if (form.controls.unitPrice.controls.currency.invalid && form.controls.unitPrice.controls.currency.touched) {
+            <p class="field-error">Devise obligatoire.</p>
+            }
+          </div>
+        </ng-container>
+
+        <div class="field">
+          <label for="minimumGlobalThreshold">Seuil minimum</label>
+          <input id="minimumGlobalThreshold" type="number" formControlName="minimumGlobalThreshold" min="0" />
+          @if (form.controls.minimumGlobalThreshold.invalid && form.controls.minimumGlobalThreshold.touched) {
+          <p class="field-error">Seuil invalide.</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <footer class="form-actions edit-actions">
+      <a class="btn btn--secondary" routerLink="..">Annuler</a>
+      <button
+        class="btn btn--primary btn--lg"
+        type="submit"
+        [disabled]="isSubmitting"
+        [attr.aria-busy]="isSubmitting"
+      >
+        @if (isSubmitting) {
+        Enregistrement...
+        } @else {
+        Enregistrer
+        }
+      </button>
+    </footer>
+  </form>
+</main>

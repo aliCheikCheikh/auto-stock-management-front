@@ -18,3 +18,9 @@ export interface ProductStockSummary {
   readonly belowGlobalThreshold: boolean;
   readonly byLocation: readonly StockLevel[];
 }
+
+export interface UpdateProductRequest {
+  readonly name: string;
+  readonly unitPrice: Money;
+  readonly minimumGlobalThreshold: number;
+}
