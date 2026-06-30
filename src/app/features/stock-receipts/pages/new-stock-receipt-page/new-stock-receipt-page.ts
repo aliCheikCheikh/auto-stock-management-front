@@ -101,7 +101,7 @@ export class NewStockReceiptPage {
           categoryId: formValue.categoryId,
           unitPrice: {
             amount: formValue.unitPriceAmount,
-            currency: 'EUR'
+            currency: 'XAF'
           },
           minimumGlobalThreshold: formValue.minimumGlobalThreshold,
         },
