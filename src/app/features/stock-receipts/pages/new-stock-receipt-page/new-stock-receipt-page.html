@@ -44,7 +44,12 @@
 
                 <div class="field field--wide">
                     <label for="categoryId">Catégorie</label>
-                    <input id="categoryId" type="text" formControlName="categoryId" />
+                    <select id="categoryId" formControlName="categoryId">
+                        <option value="" disabled>Choisir une famille</option>
+                        @for (category of categories; track category.id) {
+                        <option [value]="category.id">{{ category.name }}</option>
+                        }
+                    </select>
                     @if ((form.controls.categoryId.dirty && form.controls.categoryId.touched || fgd.submitted) && form.controls.categoryId.invalid) {
                     <p class="field-error">Catégorie obligatoire.</p>
                     }
@@ -54,7 +59,7 @@
                     <label for="unitPriceAmount">Prix unitaire</label>
                     <div class="price-input">
                         <input id="unitPriceAmount" type="text" formControlName="unitPriceAmount" />
-                        <span>EUR</span>
+                        <span>XAF</span>
                     </div>
                     @if ((form.controls.unitPriceAmount.dirty && form.controls.unitPriceAmount.touched || fgd.submitted) && form.controls.unitPriceAmount.invalid) {
                     <p class="field-error">Prix obligatoire.</p>

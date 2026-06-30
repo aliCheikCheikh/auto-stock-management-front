@@ -7,6 +7,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { CategoriesApiService } from '../../../categories/data-access/categories-api.service';
+import { Category } from '../../../categories/models/category.model';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -17,6 +19,8 @@ import { NotificationService } from '../../../../core/notifications/notification
 export class NewStockReceiptPage {
   private readonly stockReceiptsApi = inject(StockReceiptsApiService);
   private readonly notificationService = inject(NotificationService);
+  private readonly categoriesApi = inject(CategoriesApiService);
+  categories:Category[] = [];
 
   isSubmitting = false;
   currentIdempotencyKey: string | null = null;
@@ -29,6 +33,9 @@ export class NewStockReceiptPage {
       .subscribe((isNewProduct) => {
         this.updateProductInfoValidators(isNewProduct);
       });
+      this.categoriesApi.listCategories().pipe(takeUntilDestroyed()).subscribe((categories)=>{
+        this.categories = categories;
+      })
   }
 
   readonly form = new FormGroup({
@@ -94,7 +101,7 @@ export class NewStockReceiptPage {
           categoryId: formValue.categoryId,
           unitPrice: {
             amount: formValue.unitPriceAmount,
-            currency: 'EUR'
+            currency: 'XAF'
           },
           minimumGlobalThreshold: formValue.minimumGlobalThreshold,
         },
