@@ -9,6 +9,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { CategoriesApiService } from '../../../categories/data-access/categories-api.service';
 import { Category } from '../../../categories/models/category.model';
+import { ProductsApiService } from '../../../products/data-access/products-api.service';
+import { Product } from '../../../products/models/product.model';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
@@ -21,6 +23,8 @@ export class NewStockReceiptPage {
   private readonly notificationService = inject(NotificationService);
   private readonly categoriesApi = inject(CategoriesApiService);
   categories:Category[] = [];
+  private readonly productsApi = inject(ProductsApiService);
+  products: readonly Product[] = [];
 
   isSubmitting = false;
   currentIdempotencyKey: string | null = null;
@@ -32,9 +36,15 @@ export class NewStockReceiptPage {
       .pipe(takeUntilDestroyed())
       .subscribe((isNewProduct) => {
         this.updateProductInfoValidators(isNewProduct);
+        // Au changement de mode, on repart d'une référence vierge : évite qu'une
+        // valeur saisie/choisie dans l'autre mode ne reste collée dans le champ.
+        this.form.controls.productReference.reset('');
       });
       this.categoriesApi.listCategories().pipe(takeUntilDestroyed()).subscribe((categories)=>{
         this.categories = categories;
+      })
+      this.productsApi.listProducts(true).pipe(takeUntilDestroyed()).subscribe((page)=>{
+        this.products = page.content;
       })
   }
 
