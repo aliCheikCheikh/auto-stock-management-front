@@ -6,37 +6,42 @@
       [attr.role]="toast.type === 'error' ? 'alert' : 'status'"
       [attr.aria-live]="toast.type === 'error' ? 'assertive' : 'polite'"
     >
-      <span class="toast-icon" aria-hidden="true">
+      <span class="toast__icon" aria-hidden="true">
         @switch (toast.type) {
           @case ('success') {
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="8" cy="8" r="6.25" />
-              <path d="M5.4 8.2l1.8 1.8 3.4-3.8" />
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 8.4l2.6 2.6L12 5.4" />
             </svg>
           }
           @case ('error') {
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 2.4 14.2 13.2H1.8L8 2.4Z" />
-              <line x1="8" y1="6.6" x2="8" y2="9.4" />
-              <circle cx="8" cy="11.3" r="0.55" fill="currentColor" stroke="none" />
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 5l6 6M11 5l-6 6" />
             </svg>
           }
           @case ('info') {
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="8" cy="8" r="6.25" />
-              <line x1="8" y1="7.4" x2="8" y2="11" />
-              <circle cx="8" cy="4.9" r="0.55" fill="currentColor" stroke="none" />
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="7.2" x2="8" y2="11.4" />
+              <circle cx="8" cy="4.6" r="0.6" fill="currentColor" stroke="none" />
             </svg>
           }
         }
       </span>
 
-      <p class="toast-message">{{ toast.message }}</p>
+      <div class="toast__body">
+        <p class="toast__title">
+          @switch (toast.type) {
+            @case ('success') { Succès }
+            @case ('error') { Erreur }
+            @case ('info') { Information }
+          }
+        </p>
+        <p class="toast__message">{{ toast.message }}</p>
+      </div>
 
       <button
-        class="toast-dismiss"
+        class="toast__close"
         type="button"
-        aria-label="Fermer"
+        aria-label="Fermer la notification"
         (click)="close(toast.id)"
       >
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
@@ -45,7 +50,7 @@
       </button>
 
       <span
-        class="toast-progress"
+        class="toast__progress"
         [style.animation-duration.ms]="toast.duration"
         (animationend)="close(toast.id)"
         aria-hidden="true"
