@@ -42,13 +42,35 @@
 
       <div class="field login-field">
         <label for="password">Mot de passe</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          autocomplete="current-password"
-          placeholder="••••••••"
-        />
+        <div class="field__control">
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="••••••••"
+          />
+          <button
+            class="field__toggle"
+            type="button"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          >
+            @if (!showPassword()) {
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1.5 8s2.4-4.5 6.5-4.5S14.5 8 14.5 8s-2.4 4.5-6.5 4.5S1.5 8 1.5 8Z" />
+                <circle cx="8" cy="8" r="2" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6.3 3.7A6 6 0 0 1 8 3.5c4.1 0 6.5 4.5 6.5 4.5a11 11 0 0 1-1.7 2.3" />
+                <path d="M4.2 4.9A11 11 0 0 0 1.5 8S3.9 12.5 8 12.5a6 6 0 0 0 2.6-.6" />
+                <path d="M6.6 6.6a2 2 0 0 0 2.8 2.8" />
+                <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" />
+              </svg>
+            }
+          </button>
+        </div>
         @if ((form.controls.password.dirty && form.controls.password.touched || fgd.submitted) && form.controls.password.invalid) {
           <p class="field-error">Mot de passe requis</p>
         }

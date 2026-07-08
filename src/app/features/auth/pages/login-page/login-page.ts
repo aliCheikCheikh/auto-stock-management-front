@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
@@ -16,6 +16,7 @@ export class LoginPage {
   private readonly router = inject(Router);
 
   isSubmitting = false;
+  readonly showPassword = signal(false);
 
 
   readonly form = new FormGroup({
@@ -30,6 +31,10 @@ export class LoginPage {
         validators: [Validators.required]
       }),
   });
+
+  togglePassword(): void {
+    this.showPassword.update((visible) => !visible);
+  }
 
   onSubmit(): void {
     if (this.isSubmitting) {

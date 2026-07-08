@@ -23,38 +23,276 @@
   gap: var(--space-1);
 }
 
+// Onglet de navigation — repos neutre, actif « allumé » (façon OVHcloud).
+// Chrome navy : les couleurs de marque n'y seraient pas lisibles, l'état actif
+// s'appuie donc sur un fond translucide + un indicateur clair, contraste AA.
 .app-nav a {
+  position: relative;
   min-height: var(--nav-height);
   display: grid;
   align-items: center;
-  border-bottom: 2px solid transparent;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
   color: var(--on-brand-soft);
   font-size: var(--text-base);
   font-weight: 500;
-  padding: 0 var(--space-3);
   text-decoration: none;
-  transition: color 0.12s, border-color 0.12s;
+  transition: color 0.12s, background 0.12s;
+}
+
+// Indicateur de bas d'onglet (soulignement épais) — piloté par les états
+.app-nav a::after {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: transparent;
+  transition: background 0.12s;
 }
 
 .app-nav a:hover {
-  border-bottom-color: rgba(255, 255, 255, 0.4);
   color: var(--on-brand);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-// ─── Déconnexion : .btn--ghost adapté au chrome navy (discret) ───────────────
-.app-logout {
+.app-nav a:hover::after {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+// État actif : texte pleine intensité + gras, pastille légère et soulignement net
+.app-nav a.is-active {
+  color: var(--on-brand);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.app-nav a.is-active::after {
+  background: var(--on-brand);
+}
+
+// Focus visible — anneau clair adapté au chrome navy (cf. .app-logout)
+.app-nav a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+// ─── Bascule de thème : bouton icône (soleil/lune) sur le chrome navy ────────
+// Le texte « Clair/Sombre » du template est masqué (font-size:0) ; l'icône est
+// rendue en ::before via mask-image (suit currentColor). Lune en thème clair
+// (« passer en sombre »), soleil en thème sombre (« repasser en clair »).
+.app-theme-toggle {
+  --icon-moon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z'/%3E%3C/svg%3E");
+  --icon-sun: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cline x1='12' y1='2' x2='12' y2='4'/%3E%3Cline x1='12' y1='20' x2='12' y2='22'/%3E%3Cline x1='4.9' y1='4.9' x2='6.3' y2='6.3'/%3E%3Cline x1='17.7' y1='17.7' x2='19.1' y2='19.1'/%3E%3Cline x1='2' y1='12' x2='4' y2='12'/%3E%3Cline x1='20' y1='12' x2='22' y2='12'/%3E%3Cline x1='4.9' y1='19.1' x2='6.3' y2='17.7'/%3E%3Cline x1='17.7' y1='6.3' x2='19.1' y2='4.9'/%3E%3C/svg%3E");
+
   justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 0; // masque le libellé texte du template
   color: var(--on-brand-soft);
-  font-weight: 500;
 }
 
-.app-logout:hover {
+.app-theme-toggle::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-moon) center / contain no-repeat;
+  mask: var(--icon-moon) center / contain no-repeat;
+}
+
+[data-theme="dark"] .app-theme-toggle::before {
+  -webkit-mask-image: var(--icon-sun);
+  mask-image: var(--icon-sun);
+}
+
+.app-theme-toggle:hover {
   background: rgba(255, 255, 255, 0.12);
   color: var(--on-brand);
 }
 
-.app-logout:focus-visible {
+.app-theme-toggle:focus-visible {
+  outline: none;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+// ─── Groupe d'actions à droite de la topbar (thème + compte) ─────────────────
+.app-topbar__actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+// ─── Menu utilisateur (façon volet compte OVHcloud) ──────────────────────────
+.app-user {
+  position: relative;
+}
+
+// Déclencheur : avatar + rôle, discret sur le chrome navy
+.app-user__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: var(--space-1) var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--on-brand-soft);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.app-user__trigger:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--on-brand);
+}
+
+.app-user__trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+.app-user__label {
+  font-size: var(--text-base);
+  white-space: nowrap;
+}
+
+.app-user__chevron {
+  width: 14px;
+  height: 14px;
+  opacity: 0.85;
+  transition: transform 0.15s ease;
+}
+
+.app-user__trigger[aria-expanded='true'] .app-user__chevron {
+  transform: rotate(180deg);
+}
+
+// Avatar rond générique (lettre du rôle P/V ou icône personne)
+.app-user__avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--on-brand);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.app-user__avatar svg {
+  width: 16px;
+  height: 16px;
+}
+
+// ─── Carte flottante ─────────────────────────────────────────────────────────
+.app-user__menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 1100; // au-dessus du contenu (toasts = 1000)
+  min-width: 220px;
+  padding: var(--space-2);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-0);
+  // Reset indispensable : la topbar impose color:on-brand (blanc) en héritage.
+  color: var(--gray-900);
+  box-shadow: var(--shadow-overlay);
+  animation: app-user-menu-in 120ms ease-out;
+}
+
+@keyframes app-user-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-user__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-2) var(--space-3);
+}
+
+// Avatar de la carte : pastille accent (lisible clair ET sombre)
+.app-user__avatar--lg {
+  width: 36px;
+  height: 36px;
+  background: var(--accent-600);
+  color: var(--on-brand);
+  font-size: var(--text-base);
+}
+
+.app-user__avatar--lg svg {
+  width: 20px;
+  height: 20px;
+}
+
+// Badge de rôle en tête
+.app-user__role {
+  margin: 0;
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.app-user__sep {
+  height: 1px;
+  margin: 0 calc(-1 * var(--space-2)) var(--space-2);
+  background: var(--gray-200);
+}
+
+// Déconnexion : ligne discrète, icône + libellé
+.app-user__logout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--gray-900);
+  font: inherit;
+  font-size: var(--text-base);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.app-user__logout svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--gray-500);
+}
+
+.app-user__logout:hover {
+  background: var(--gray-100);
+}
+
+.app-user__logout:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 @media (max-width: 900px) {

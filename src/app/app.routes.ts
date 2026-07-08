@@ -6,7 +6,8 @@ import { ProductDetailPage } from './features/products/pages/product-detail-page
 import { NewStockTransfersPage } from './features/stock-transfers/pages/new-stock-transfers-page/new-stock-transfers-page';
 import { LoginPage } from './features/auth/pages/login-page/login-page';
 import { ChangePasswordPage } from './features/auth/pages/change-password-page/change-password-page';
-import { authGuard, forcePasswordChangeGuard } from './core/auth/auth.guard';
+import { UsersAdminPage } from './features/users/pages/users-admin-page/users-admin-page';
+import { authGuard, forcePasswordChangeGuard, ownerGuard } from './core/auth/auth.guard';
 import { ProductEditPage } from './features/products/pages/product-edit-page/product-edit-page';
 
 export const routes: Routes = [
@@ -57,6 +58,12 @@ export const routes: Routes = [
         path: 'change-password',
         component: ChangePasswordPage,
         canActivate: [forcePasswordChangeGuard]
+    },
+
+    {
+        path: 'admin/users',
+        component: UsersAdminPage,
+        canActivate: [ownerGuard]
     },
 
     {
