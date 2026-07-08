@@ -10,7 +10,9 @@ export const refreshInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(req).pipe(
         catchError((error: HttpErrorResponse) => {
-            const noRefreshPaths = ['/auth/refresh','/auth/login','/auth/logout'];
+            // change-password : un 401 y signifie "mauvais mot de passe actuel",
+            // pas "session expirée" → ne pas tenter de refresh (sinon on déconnecte l'utilisateur).
+            const noRefreshPaths = ['/auth/refresh', '/auth/login', '/auth/logout', '/auth/change-password'];
             if (error.status === 401 && !noRefreshPaths.some((path)=>req.url.includes(path))) {
                 return authService.refresh().pipe(
                     switchMap(() => next(req)),
