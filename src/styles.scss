@@ -352,11 +352,16 @@ a {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-5);
   padding: var(--space-6);
+  // Champs alignés en haut : un champ avec aide/erreur ne doit pas étirer son
+  // voisin (sinon l'input voisin grandit et les champs se désalignent).
+  align-items: start;
 }
 
+// Gouttière label→champ→erreur : valeur unique du design system (harmonisée
+// sur tous les écrans). Les composants ne redéfinissent plus ce gap.
 .field {
   display: grid;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .field--wide {

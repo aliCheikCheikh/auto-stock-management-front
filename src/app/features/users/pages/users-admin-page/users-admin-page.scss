@@ -1,26 +1,27 @@
 // ─── Écran admin — gestion des comptes ───────────────────────────────────────
 // Réutilise .card / .section-heading / .field / .btn / .data-table du design
 // system. Accent marque navy porté par le chrome ; ici surfaces claires.
+// Même gabarit de page que les écrans de formulaire (réception, vente, édition) :
+// canvas pleine largeur + contenu centré à --content-md.
 .users-admin-page {
-  max-width: var(--content-lg);
+  min-height: calc(100vh - var(--nav-height));
+  padding: var(--space-6) var(--space-7) var(--space-8);
+  background: var(--gray-50);
+  color: var(--gray-900);
+}
+
+.users-admin-page .page-header {
+  max-width: var(--content-md);
+}
+
+.users-admin__content {
+  max-width: var(--content-md);
   margin: 0 auto;
-  padding: var(--space-7) var(--space-6);
   display: grid;
   gap: var(--space-6);
 }
 
-.users-admin-page .page-header {
-  margin: 0;
-}
-
-// ─── Carte « Créer un vendeur » ──────────────────────────────────────────────
-.users-create__form {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-5);
-  padding: var(--space-6);
-}
-
+// ─── Carte « Créer un vendeur » (grille = .form-grid du design system) ───────
 .users-create__hint {
   margin: 0;
   color: var(--gray-500);
@@ -117,11 +118,7 @@
 // ─── Responsive ──────────────────────────────────────────────────────────────
 @media (max-width: 900px) {
   .users-admin-page {
-    padding: var(--space-6) var(--space-4);
-  }
-
-  .users-create__form {
-    grid-template-columns: 1fr;
+    padding: var(--space-5);
   }
 
   // Tableau compacté (colonnes plus serrées) mais toutes les actions restent
@@ -135,5 +132,11 @@
 
   .reset-inline__form {
     align-items: stretch;
+  }
+}
+
+@media (max-width: 600px) {
+  .users-admin-page {
+    padding: var(--space-4) var(--space-3);
   }
 }

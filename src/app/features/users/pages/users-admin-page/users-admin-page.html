@@ -6,6 +6,7 @@
     </div>
   </header>
 
+  <div class="users-admin__content">
   <!-- ─── Créer un vendeur ─────────────────────────────────────────────────── -->
   <section class="card users-create" aria-labelledby="create-title">
     <div class="section-heading">
@@ -13,7 +14,7 @@
     </div>
 
     <form
-      class="users-create__form"
+      class="form-grid users-create__form"
       [formGroup]="createForm"
       #createDirective="ngForm"
       (ngSubmit)="createSeller(createDirective)"
@@ -145,4 +146,5 @@
       }
     </div>
   </section>
+  </div>
 </main>
