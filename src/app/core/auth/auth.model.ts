@@ -8,4 +8,10 @@ export type UserRole = 'OWNER' | 'SELLER';
 export interface AuthenticatedUser {
     readonly userId: string;
     readonly role: UserRole;
+    readonly passwordTemporary: boolean;
+}
+
+export interface ChangePasswordRequest {
+    readonly currentPassword: string;
+    readonly newPassword: string;
 }

@@ -20,6 +20,24 @@ describe('authGuard', () => {
         expect(runGuard()).toBe(true);
     });
 
+    it('utilisateur temporaire → redirige vers /change-password', () => {
+        TestBed.configureTestingModule({
+            providers: [
+                {
+                    provide: AuthService,
+                    useValue: {
+                        currentUser: () => ({ userId: '1', role: 'OWNER', passwordTemporary: true }),
+                    },
+                },
+                provideRouter([]),
+            ],
+        });
+
+        const result = runGuard();
+        expect(result instanceof UrlTree).toBe(true);
+        expect((result as UrlTree).toString()).toBe('/change-password');
+    });
+
     it('utilisateur inconnu + me() réussit → laisse passer (true)', (done) => {
         TestBed.configureTestingModule({
             providers: [
