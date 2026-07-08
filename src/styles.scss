@@ -117,6 +117,59 @@
   text-rendering: optimizeLegibility;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// Thème sombre — piloté par [data-theme="dark"] sur <html>.
+// On ne redéfinit QUE les tokens de base : les alias (--color-*, --border-*,
+// composites) pointent vers eux via var() et se mettent à jour tout seuls.
+// Même échelle sémantique (0 = surface, 50 = fond appli, 500 = texte
+// secondaire, 900 = texte principal), inversée pour le sombre. Contraste AA.
+//
+// Compromis assumé : --gray-0 sert à la fois de surface ET de texte des boutons
+// pleins (.btn--primary/.btn--danger utilisent color: var(--gray-0)). En sombre
+// il devient une surface foncée ; les valeurs d'accent/danger ci-dessous sont
+// choisies pour que ce libellé foncé reste lisible AA (≥ 4.5:1) sur le bouton.
+// ═══════════════════════════════════════════════════════════════════════════
+[data-theme="dark"] {
+  // ─── Neutres (rôles conservés, valeurs sombres) ────────────────────────────
+  --gray-0:   #1B2431; // surfaces (cartes, champs, bouton secondaire)
+  --gray-50:  #0F1621; // fond application (le plus sombre)
+  --gray-100: #232E3D; // fonds discrets (en-têtes tableau, onglets)
+  --gray-200: #2E3A4B; // bordures
+  --gray-300: #3E4B5E; // bordures de champs / fortes
+  --gray-400: #7A8797; // placeholders
+  --gray-500: #A2AEBD; // texte secondaire (AA sur surfaces sombres)
+  --gray-900: #EAEEF3; // texte principal
+
+  // ─── Marque (chrome navy) — un cran plus profond en sombre ─────────────────
+  --brand-900: #16294A;
+  --brand-950: #0E1D38;
+  --on-brand:      #FFFFFF;
+  --on-brand-soft: rgba(255, 255, 255, 0.72);
+
+  // ─── Accent — éclairci pour ressortir sur fond sombre ──────────────────────
+  --accent-600: #3B82F6; // fonds de boutons
+  --accent-700: #6EA8FF; // liens/texte accentué + hover bouton (AA en texte et en fond)
+
+  // ─── Sémantique — versions lisibles sur fond sombre ────────────────────────
+  --success-600:    #3FBF7F;
+  --success-bg:     #14291E;
+  --success-border: #21402E;
+  --warning-600:    #E0A64B;
+  --warning-bg:     #2E2413;
+  --warning-border: #45371C;
+  --danger-600:     #F26B6B;
+  --danger-bg:      #3A1E22;
+  --danger-border:  #5A2A2E;
+
+  // ─── Ombres renforcées + focus plus lumineux sur fond sombre ───────────────
+  --shadow-xs:      0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-overlay: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --focus-ring:     0 0 0 3px rgba(110, 168, 255, 0.5);
+
+  color: var(--gray-900);
+  background: var(--gray-50);
+}
+
 // Souris/trackpad uniquement : densité desktop tolérée
 @media (pointer: fine) {
   :root {

@@ -3,12 +3,23 @@
   <a class="app-brand" href="/products">AutoStock</a>
 
   <nav class="app-nav" aria-label="Navigation principale">
-    <a routerLink="/products">Catalogue</a>
-    <a routerLink="/stock-receipts/new">Réception stock</a>
-    <a routerLink="/sales/new">Ventes</a>
-    <a routerLink="/stock-transfers/new">Transferts stock</a>
+    <a routerLink="/products" routerLinkActive="is-active">Catalogue</a>
+    <a routerLink="/stock-receipts/new" routerLinkActive="is-active">Réception stock</a>
+    <a routerLink="/sales/new" routerLinkActive="is-active">Ventes</a>
+    <a routerLink="/stock-transfers/new" routerLinkActive="is-active">Transferts stock</a>
+    @if (isOwner()) {
+      <a routerLink="/admin/users" routerLinkActive="is-active">Administration</a>
+    }
   </nav>
 
+  <button
+    class="app-theme-toggle btn btn--ghost"
+    type="button"
+    (click)="toggleTheme()"
+    [attr.aria-label]="theme() === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'"
+  >
+    @if (theme() === 'dark') { Clair } @else { Sombre }
+  </button>
   <button class="btn btn--ghost app-logout" type="button" (click)="logout()">Se déconnecter</button>
 </header>
 }
