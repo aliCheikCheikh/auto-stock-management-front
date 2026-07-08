@@ -1,0 +1,139 @@
+// ─── Écran admin — gestion des comptes ───────────────────────────────────────
+// Réutilise .card / .section-heading / .field / .btn / .data-table du design
+// system. Accent marque navy porté par le chrome ; ici surfaces claires.
+.users-admin-page {
+  max-width: var(--content-lg);
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-6);
+  display: grid;
+  gap: var(--space-6);
+}
+
+.users-admin-page .page-header {
+  margin: 0;
+}
+
+// ─── Carte « Créer un vendeur » ──────────────────────────────────────────────
+.users-create__form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  padding: var(--space-6);
+}
+
+.users-create__hint {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+
+.users-create__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+// ─── Tableau des comptes ─────────────────────────────────────────────────────
+.users-table__row {
+  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.6fr);
+}
+
+.users-table__email {
+  font-weight: 500;
+  color: var(--gray-900);
+  overflow-wrap: anywhere;
+}
+
+.users-table__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.users-table__muted {
+  color: var(--gray-400);
+}
+
+// ─── Badge de statut (point + libellé), calqué sur .stock-badge ──────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--gray-900);
+  white-space: nowrap;
+}
+
+.status-badge::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-badge--active::before  { background: var(--success-600); }
+.status-badge--pending::before { background: var(--warning-600); }
+.status-badge--off {
+  color: var(--gray-500);
+}
+.status-badge--off::before { background: var(--gray-400); }
+
+// ─── Formulaire de réinitialisation en ligne ─────────────────────────────────
+.reset-inline {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  border-top: var(--border-subtle);
+  background: var(--gray-50);
+}
+
+.reset-inline__form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.reset-inline__field {
+  flex: 1;
+  min-width: 240px;
+}
+
+.reset-inline__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+// ─── Bouton compact (absent du design system global) ─────────────────────────
+.btn--sm {
+  min-height: var(--control-h-sm);
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .users-admin-page {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .users-create__form {
+    grid-template-columns: 1fr;
+  }
+
+  // Tableau compacté (colonnes plus serrées) mais toutes les actions restent
+  // accessibles : les boutons passent à la ligne via flex-wrap.
+  .users-table__row {
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: var(--space-3);
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .reset-inline__form {
+    align-items: stretch;
+  }
+}

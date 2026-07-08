@@ -1,0 +1,148 @@
+<main class="users-admin-page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Administration</p>
+      <h1>Comptes utilisateurs</h1>
+    </div>
+  </header>
+
+  <!-- ─── Créer un vendeur ─────────────────────────────────────────────────── -->
+  <section class="card users-create" aria-labelledby="create-title">
+    <div class="section-heading">
+      <h2 id="create-title">Créer un vendeur</h2>
+    </div>
+
+    <form
+      class="users-create__form"
+      [formGroup]="createForm"
+      #createDirective="ngForm"
+      (ngSubmit)="createSeller(createDirective)"
+      novalidate
+    >
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="off"
+          placeholder="vendeur@entreprise.com"
+          [attr.aria-invalid]="createForm.controls.email.touched && createForm.controls.email.invalid"
+        />
+        @if (createForm.controls.email.touched && createForm.controls.email.invalid) {
+          <p class="field-error">Email valide requis.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="temporaryPassword">Mot de passe temporaire</label>
+        <input
+          id="temporaryPassword"
+          type="text"
+          formControlName="temporaryPassword"
+          autocomplete="off"
+          [attr.aria-invalid]="createForm.controls.temporaryPassword.touched && createForm.controls.temporaryPassword.invalid"
+          [attr.aria-describedby]="createForm.controls.temporaryPassword.touched && createForm.controls.temporaryPassword.invalid ? null : 'temporaryPassword-hint'"
+        />
+        @if (createForm.controls.temporaryPassword.touched && createForm.controls.temporaryPassword.invalid) {
+          <p class="field-error">Au moins 8 caractères.</p>
+        } @else {
+          <p id="temporaryPassword-hint" class="users-create__hint">
+            Affiché en clair : communiquez-le au vendeur, il le changera à sa première connexion.
+          </p>
+        }
+      </div>
+
+      <div class="users-create__actions">
+        <button class="btn btn--primary" type="submit" [disabled]="isSubmitting" [attr.aria-busy]="isSubmitting">
+          @if (isSubmitting) { Création… } @else { Créer le vendeur }
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ─── Comptes existants ────────────────────────────────────────────────── -->
+  <section class="card users-list" aria-labelledby="list-title">
+    <div class="section-heading">
+      <h2 id="list-title">Comptes existants</h2>
+    </div>
+
+    <div class="data-table users-table" role="table" aria-labelledby="list-title">
+      <div class="data-table__header users-table__row" role="row">
+        <span role="columnheader">Email</span>
+        <span role="columnheader">Rôle</span>
+        <span role="columnheader">Statut</span>
+        <span role="columnheader">Actions</span>
+      </div>
+
+      @for (user of users(); track user.userId) {
+        <div class="data-table__row users-table__row" role="row">
+          <span class="users-table__email" role="cell">{{ user.email }}</span>
+
+          <span role="cell">
+            @switch (user.role) {
+              @case ('OWNER') { Propriétaire }
+              @case ('SELLER') { Vendeur }
+            }
+          </span>
+
+          <span role="cell">
+            @if (!user.active) {
+              <span class="status-badge status-badge--off">Désactivé</span>
+            } @else if (user.passwordTemporary) {
+              <span class="status-badge status-badge--pending">En attente</span>
+            } @else {
+              <span class="status-badge status-badge--active">Actif</span>
+            }
+          </span>
+
+          <span class="users-table__actions" role="cell">
+            @if (user.role === 'SELLER') {
+              @if (user.active) {
+                <button class="btn btn--secondary btn--sm" type="button" (click)="startReset(user)">
+                  Réinitialiser
+                </button>
+                <button class="btn btn--danger btn--sm" type="button" (click)="deactivate(user)">
+                  Désactiver
+                </button>
+              } @else {
+                <span class="users-table__muted">—</span>
+              }
+            } @else {
+              <span class="users-table__muted">—</span>
+            }
+          </span>
+        </div>
+
+        @if (resettingUserId() === user.userId) {
+          <div class="reset-inline">
+            <form class="reset-inline__form" [formGroup]="resetForm" (ngSubmit)="submitReset()" novalidate>
+              <div class="field reset-inline__field">
+                <label [attr.for]="'reset-' + user.userId">
+                  Nouveau mot de passe temporaire — {{ user.email }}
+                </label>
+                <input
+                  [id]="'reset-' + user.userId"
+                  type="text"
+                  formControlName="temporaryPassword"
+                  autocomplete="off"
+                  [attr.aria-invalid]="resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid"
+                />
+                @if (resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid) {
+                  <p class="field-error">Au moins 8 caractères.</p>
+                }
+              </div>
+
+              <div class="reset-inline__actions">
+                <button class="btn btn--primary btn--sm" type="submit">Valider</button>
+                <button class="btn btn--ghost btn--sm" type="button" (click)="cancelReset()">Annuler</button>
+              </div>
+            </form>
+          </div>
+        }
+      } @empty {
+        <div class="state-block">Aucun compte pour le moment.</div>
+      }
+    </div>
+  </section>
+</main>
