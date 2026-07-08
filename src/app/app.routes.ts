@@ -5,7 +5,8 @@ import { NewSalePage } from './features/sales/pages/new-sale-page/new-sale-page'
 import { ProductDetailPage } from './features/products/pages/product-detail-page/product-detail-page';
 import { NewStockTransfersPage } from './features/stock-transfers/pages/new-stock-transfers-page/new-stock-transfers-page';
 import { LoginPage } from './features/auth/pages/login-page/login-page';
-import { authGuard } from './core/auth/auth.guard';
+import { ChangePasswordPage } from './features/auth/pages/change-password-page/change-password-page';
+import { authGuard, forcePasswordChangeGuard } from './core/auth/auth.guard';
 import { ProductEditPage } from './features/products/pages/product-edit-page/product-edit-page';
 
 export const routes: Routes = [
@@ -50,6 +51,12 @@ export const routes: Routes = [
     {
         path: 'login',
         component: LoginPage
+    },
+
+    {
+        path: 'change-password',
+        component: ChangePasswordPage,
+        canActivate: [forcePasswordChangeGuard]
     },
 
     {

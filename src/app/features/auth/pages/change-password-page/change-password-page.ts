@@ -5,30 +5,27 @@ import { NotificationService } from '../../../../core/notifications/notification
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login-page',
+  selector: 'app-change-password-page',
   imports: [ReactiveFormsModule],
-  templateUrl: './login-page.html',
-  styleUrl: './login-page.scss',
+  templateUrl: './change-password-page.html',
+  styleUrl: './change-password-page.scss',
 })
-export class LoginPage {
+export class ChangePasswordPage {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
 
   isSubmitting = false;
 
-
   readonly form = new FormGroup({
-    email: new FormControl('',
-      {
-        nonNullable: true,
-        validators: [Validators.required, Validators.email]
-      }),
-    password: new FormControl('',
-      {
-        nonNullable: true,
-        validators: [Validators.required]
-      }),
+    currentPassword: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    newPassword: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(8), Validators.maxLength(72)],
+    }),
   });
 
   onSubmit(): void {
@@ -41,19 +38,19 @@ export class LoginPage {
       return;
     }
 
-    const credentials = this.form.getRawValue();
     this.isSubmitting = true;
-    this.authService.login(credentials).subscribe({
-      next: (user) => {
-        this.notificationService.success(`Connexion reussie`);
+    this.authService.changePassword(this.form.getRawValue()).subscribe({
+      next: () => {
         this.isSubmitting = false;
-        this.router.navigate([user.passwordTemporary ? '/change-password' : '/products']);
+        this.notificationService.success('Mot de passe mis à jour');
+        this.router.navigate(['/products']);
       },
-      error: (error:unknown) => {
-        this.notificationService.error('Connexion échouée. Veuillez vérifier vos identifiants et réessayer.');
+      error: () => {
         this.isSubmitting = false;
-      }
+        this.notificationService.error(
+          'Impossible de changer le mot de passe. Vérifiez votre mot de passe actuel.'
+        );
+      },
     });
-
   }
 }

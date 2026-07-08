@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from "@angular/core";
-import { AuthenticatedUser, LoginRequest } from "./auth.model";
+import { AuthenticatedUser, ChangePasswordRequest, LoginRequest } from "./auth.model";
 import { Observable, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 
@@ -23,6 +23,18 @@ export class AuthService {
     me(): Observable<AuthenticatedUser> {
         return this.http.get<AuthenticatedUser>(`${this.apiUrl}/auth/me`).pipe(
             tap((user) => this._currentUser.set(user))
+        );
+    }
+
+    changePassword(request: ChangePasswordRequest): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/auth/change-password`, request).pipe(
+            tap(() => {
+                const user = this._currentUser();
+                if (user) {
+                    // Le mot de passe n'est plus temporaire : la garde laissera passer.
+                    this._currentUser.set({ ...user, passwordTemporary: false });
+                }
+            })
         );
     }
 
