@@ -68,15 +68,29 @@
                 }
               }
             </span>
-            <span class="app-user__role">
-              @switch (currentUser()?.role) {
-                @case ('OWNER') { Propriétaire }
-                @case ('SELLER') { Vendeur }
-              }
-            </span>
+            <div class="app-user__identity">
+              <span class="app-user__email">{{ currentUser()?.email }}</span>
+              <span class="app-user__role">
+                @switch (currentUser()?.role) {
+                  @case ('OWNER') { Propriétaire }
+                  @case ('SELLER') { Vendeur }
+                }
+              </span>
+            </div>
           </div>
 
           <div class="app-user__sep" role="separator"></div>
+
+          @if (isOwner()) {
+            <a class="app-user__item" routerLink="/admin/users" role="menuitem">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="8" cy="8" r="2" />
+                <path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.5 3.5l1.3 1.3M11.2 11.2l1.3 1.3M12.5 3.5l-1.3 1.3M4.8 11.2l-1.3 1.3" />
+              </svg>
+              Administration
+            </a>
+            <div class="app-user__sep" role="separator"></div>
+          }
 
           <button class="app-user__logout" type="button" role="menuitem" (click)="logout()">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
