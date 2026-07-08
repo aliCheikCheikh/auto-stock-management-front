@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
@@ -16,6 +16,8 @@ export class ChangePasswordPage {
   private readonly router = inject(Router);
 
   isSubmitting = false;
+  readonly showCurrentPassword = signal(false);
+  readonly showNewPassword = signal(false);
 
   readonly form = new FormGroup({
     currentPassword: new FormControl('', {
@@ -27,6 +29,14 @@ export class ChangePasswordPage {
       validators: [Validators.required, Validators.minLength(8), Validators.maxLength(72)],
     }),
   });
+
+  toggleCurrentPassword(): void {
+    this.showCurrentPassword.update((visible) => !visible);
+  }
+
+  toggleNewPassword(): void {
+    this.showNewPassword.update((visible) => !visible);
+  }
 
   onSubmit(): void {
     if (this.isSubmitting) {
