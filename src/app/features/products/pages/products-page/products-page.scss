@@ -151,11 +151,7 @@
   font-size: var(--text-xs);
 }
 
-.empty-state {
-  padding: var(--space-6) var(--space-5);
-  color: var(--gray-500);
-  font-size: var(--text-base);
-}
+// État vide : styles portés par le design system (.empty-state global).
 
 // ─── Responsive : tableau replié en fiches ───────────────────────────────────
 @media (max-width: 900px) {

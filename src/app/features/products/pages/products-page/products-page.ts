@@ -10,6 +10,7 @@ import { StockLevel } from '../../../stock/models/stock-level.model';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
+import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 
 const STOCK_LEVELS_PAGE_SIZE = 100;
@@ -31,7 +32,7 @@ interface ProductListItem {
 
 @Component({
   selector: 'app-products-page',
-  imports: [AsyncPipe, RouterLink, ConfirmDialog],
+  imports: [AsyncPipe, RouterLink, ConfirmDialog, MoneyPipe],
   templateUrl: './products-page.html',
   styleUrl: './products-page.scss',
 })
