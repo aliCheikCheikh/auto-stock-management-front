@@ -377,6 +377,10 @@ label {
   letter-spacing: 0.05em;
 }
 
+// Typographie/gabarit commun à tous les contrôles de saisie (texte, number,
+// search, select). Source unique : aucun écran ne doit redéfinir ces valeurs —
+// les compteurs numériques restent au même corps et à la même graisse que le
+// reste (pas de gras, pas d'agrandissement).
 input,
 select {
   width: 100%;
@@ -386,6 +390,7 @@ select {
   background: var(--gray-0);
   color: var(--gray-900);
   font-size: var(--text-base);
+  font-weight: 400;
   line-height: 1.4;
   padding: var(--space-2) var(--space-3);
   outline: none;
