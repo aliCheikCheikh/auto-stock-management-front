@@ -1,1 +1,56 @@
-<input data-global-search [formControl]="searchControl" type="search" />
+<div class="product-search" (keydown)="onKeydown($event)">
+  <span class="product-search__icon" aria-hidden="true">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="7" cy="7" r="4.5" />
+      <path d="M10.5 10.5 14 14" />
+    </svg>
+  </span>
+
+  <input
+    data-global-search
+    class="product-search__input"
+    [formControl]="searchControl"
+    type="search"
+    placeholder="Rechercher un produit…  ( / )"
+    aria-label="Rechercher un produit"
+    role="combobox"
+    aria-autocomplete="list"
+    aria-controls="product-search-listbox"
+    [attr.aria-expanded]="showDropdown()"
+    [attr.aria-activedescendant]="activeIndex() >= 0 ? 'product-search-option-' + activeIndex() : null"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+  />
+
+  @if (showDropdown()) {
+    <div class="product-search__panel">
+      @if (results().length > 0) {
+        <ul
+          class="product-search__list"
+          id="product-search-listbox"
+          role="listbox"
+          aria-label="Résultats de recherche"
+        >
+          @for (item of results(); track item.productId; let i = $index) {
+            <li
+              class="product-search__option"
+              [class.is-active]="i === activeIndex()"
+              id="product-search-option-{{ i }}"
+              role="option"
+              [attr.aria-selected]="i === activeIndex()"
+              (mousedown)="$event.preventDefault()"
+              (mouseenter)="activeIndex.set(i)"
+              (click)="select(item)"
+            >
+              <span class="product-search__name">{{ item.name }}</span>
+              <span class="product-search__ref">{{ item.reference }}</span>
+              <span class="product-search__price">{{ item.unitPrice | money }}</span>
+            </li>
+          }
+        </ul>
+      } @else if (showEmpty()) {
+        <p class="product-search__empty" role="status">Aucun produit trouvé</p>
+      }
+    </div>
+  }
+</div>
