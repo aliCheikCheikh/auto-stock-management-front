@@ -24,3 +24,12 @@ export interface UpdateProductRequest {
   readonly unitPrice: Money;
   readonly minimumGlobalThreshold: number;
 }
+
+// Résultat léger de la recherche produit : uniquement ce qu'affiche la liste
+// déroulante. Le détail complet (catégorie, seuil...) passe par la fiche produit.
+export interface ProductSearchResult {
+  readonly productId: string;
+  readonly name: string;
+  readonly reference: string;
+  readonly unitPrice: Money;
+}
