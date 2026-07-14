@@ -10,6 +10,7 @@
       type="button"
       (click)="toggleFullscreen()"
       [attr.aria-pressed]="isFullscreen()"
+      [title]="isFullscreen() ? 'Quitter le plein écran' : 'Passer en plein écran'"
       [attr.aria-label]="isFullscreen() ? 'Quitter le plein écran' : 'Passer en plein écran'"
     >
       @if (isFullscreen()) {
@@ -24,9 +25,10 @@
     </button>
 
     <button
-      class="app-theme-toggle btn btn--ghost"
+      class="app-icon-btn app-theme-toggle"
       type="button"
       (click)="toggleTheme()"
+      [title]="theme() === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'"
       [attr.aria-label]="theme() === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'"
     >
       @if (theme() === 'dark') { Clair } @else { Sombre }
@@ -39,6 +41,7 @@
         (click)="toggleUserMenu($event)"
         [attr.aria-expanded]="userMenuOpen()"
         aria-haspopup="menu"
+        title="Menu du compte"
       >
         <span class="app-user__avatar" aria-hidden="true">
           @switch (currentUser()?.role) {
