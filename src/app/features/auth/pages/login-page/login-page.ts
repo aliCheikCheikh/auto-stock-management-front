@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { LoadingService } from '../../../../core/loading/loading.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 export class LoginPage {
   private readonly authService = inject(AuthService);
   private readonly notificationService = inject(NotificationService);
+  private readonly loading = inject(LoadingService);
   private readonly router = inject(Router);
 
   isSubmitting = false;
@@ -48,15 +50,19 @@ export class LoginPage {
 
     const credentials = this.form.getRawValue();
     this.isSubmitting = true;
+    // Action explicite → overlay bloquant (masque le formulaire pendant l'appel).
+    this.loading.startBlocking();
     this.authService.login(credentials).subscribe({
       next: (user) => {
         this.notificationService.success(`Connexion reussie`);
         this.isSubmitting = false;
+        this.loading.stopBlocking();
         this.router.navigate([user.passwordTemporary ? '/change-password' : '/products']);
       },
-      error: (error:unknown) => {
+      error: () => {
         this.notificationService.error('Connexion échouée. Veuillez vérifier vos identifiants et réessayer.');
         this.isSubmitting = false;
+        this.loading.stopBlocking();
       }
     });
 

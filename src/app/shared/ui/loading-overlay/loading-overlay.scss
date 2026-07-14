@@ -1,0 +1,98 @@
+// ─── Barre fine de progression (indicateur discret, non bloquant) ────────────
+// Segment accent qui traverse le haut de l'écran tant qu'une requête est en vol.
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1300;
+  height: 3px;
+  overflow: hidden;
+  background: transparent;
+}
+
+.loading-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 40%;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent-600);
+  animation: lo-bar 1.1s ease-in-out infinite;
+}
+
+@keyframes lo-bar {
+  0%   { left: -40%; width: 40%; }
+  50%  { left: 30%;  width: 45%; }
+  100% { left: 100%; width: 40%; }
+}
+
+// ─── Overlay bloquant : fond flouté + assombri, spinner centré ────────────────
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-4);
+  background: rgba(16, 24, 40, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  cursor: progress;
+}
+
+// Anneau de 8 points qui tourne (rotation par crans, effet « traînée »).
+.loading-overlay__spinner {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  animation: lo-spin 0.9s steps(8) infinite;
+}
+
+.loading-overlay__spinner span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.loading-overlay__spinner span:nth-child(1) { transform: rotate(0deg)   translateY(-19px); opacity: 1;    }
+.loading-overlay__spinner span:nth-child(2) { transform: rotate(45deg)  translateY(-19px); opacity: 0.85; }
+.loading-overlay__spinner span:nth-child(3) { transform: rotate(90deg)  translateY(-19px); opacity: 0.7;  }
+.loading-overlay__spinner span:nth-child(4) { transform: rotate(135deg) translateY(-19px); opacity: 0.55; }
+.loading-overlay__spinner span:nth-child(5) { transform: rotate(180deg) translateY(-19px); opacity: 0.4;  }
+.loading-overlay__spinner span:nth-child(6) { transform: rotate(225deg) translateY(-19px); opacity: 0.3;  }
+.loading-overlay__spinner span:nth-child(7) { transform: rotate(270deg) translateY(-19px); opacity: 0.2;  }
+.loading-overlay__spinner span:nth-child(8) { transform: rotate(315deg) translateY(-19px); opacity: 0.12; }
+
+.loading-overlay__label {
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+@keyframes lo-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-bar::before {
+    animation: none;
+    left: 0;
+    width: 100%;
+    opacity: 0.6;
+  }
+
+  .loading-overlay__spinner {
+    animation-duration: 2.4s;
+    animation-timing-function: linear;
+  }
+}

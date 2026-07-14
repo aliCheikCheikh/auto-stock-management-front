@@ -4,10 +4,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { UsersApiService } from '../../data-access/users-api.service';
 import { User } from '../../models/user.model';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-users-admin-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ConfirmDialog],
   templateUrl: './users-admin-page.html',
   styleUrl: './users-admin-page.scss',
 })
@@ -18,6 +19,8 @@ export class UsersAdminPage implements OnInit {
   readonly users = signal<User[]>([]);
   // Id du compte dont on est en train de réinitialiser le mot de passe (formulaire inline).
   readonly resettingUserId = signal<string | null>(null);
+  // Compte en attente de confirmation de désactivation (action destructive).
+  readonly userToDeactivate = signal<User | null>(null);
   isSubmitting = false;
 
   readonly createForm = new FormGroup({
@@ -66,13 +69,29 @@ export class UsersAdminPage implements OnInit {
     });
   }
 
-  deactivate(user: User): void {
+  askDeactivation(user: User): void {
+    this.userToDeactivate.set(user);
+  }
+
+  cancelDeactivation(): void {
+    this.userToDeactivate.set(null);
+  }
+
+  confirmDeactivation(): void {
+    const user = this.userToDeactivate();
+    if (!user) {
+      return;
+    }
     this.usersApi.deactivateUser(user.userId).subscribe({
       next: () => {
         this.notificationService.success(`Compte ${user.email} désactivé.`);
+        this.userToDeactivate.set(null);
         this.loadUsers();
       },
-      error: () => this.notificationService.error('Impossible de désactiver ce compte.'),
+      error: () => {
+        this.notificationService.error('Impossible de désactiver ce compte.');
+        this.userToDeactivate.set(null);
+      },
     });
   }
 

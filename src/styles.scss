@@ -503,6 +503,33 @@ select option[disabled] {
   color: var(--danger-600);
 }
 
+// ─── État vide soigné : titre + phrase + action (aucune illustration) ─────────
+// Usage : dans le corps d'une liste vide (bloc @empty), centré.
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-9) var(--space-6);
+  text-align: center;
+}
+
+.empty-state__title {
+  color: var(--gray-900);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.empty-state__text {
+  max-width: 46ch;
+  color: var(--gray-500);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.empty-state__action {
+  margin-top: var(--space-1);
+}
+
 // ─── Actions & retours formulaire ────────────────────────────────────────────
 // Pied de formulaire : action principale alignée à droite, cohérente sur
 // tous les écrans (vente / réception / transfert). Les retours succès/erreur

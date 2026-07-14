@@ -1,12 +1,20 @@
+// Navbar à deux niveaux : bandeau marque/actions au-dessus, rangée de
+// navigation en dessous. Fond navy commun, séparateur discret entre les deux.
 .app-topbar {
-  min-height: var(--nav-height);
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-7);
-  padding: 0 var(--space-7);
+  display: flex;
+  flex-direction: column;
   background: var(--brand-900);
   color: var(--on-brand);
+}
+
+// Bandeau haut : marque à gauche, actions (plein écran, thème, compte) à droite
+.app-topbar__band {
+  min-height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0 var(--space-7);
 }
 
 .app-brand {
@@ -17,10 +25,13 @@
   text-decoration: none;
 }
 
+// Rangée basse de navigation : même fond navy, séparée du bandeau par un filet
 .app-nav {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: var(--space-1);
+  padding: 0 var(--space-7);
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 // Onglet de navigation — repos neutre, actif « allumé » (façon OVHcloud).
@@ -28,7 +39,7 @@
 // s'appuie donc sur un fond translucide + un indicateur clair, contraste AA.
 .app-nav a {
   position: relative;
-  min-height: var(--nav-height);
+  min-height: 44px;
   display: grid;
   align-items: center;
   padding: 0 var(--space-4);
@@ -79,7 +90,38 @@
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
 }
 
-// ─── Bascule de thème : bouton icône (soleil/lune) sur le chrome navy ────────
+// ─── Bouton icône générique sur le chrome navy (plein écran, etc.) ───────────
+.app-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--on-brand-soft);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.app-icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.app-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--on-brand);
+}
+
+.app-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+// ─── Bascule de thème : variante de .app-icon-btn (même gabarit) ─────────────
 // Le texte « Clair/Sombre » du template est masqué (font-size:0) ; l'icône est
 // rendue en ::before via mask-image (suit currentColor). Lune en thème clair
 // (« passer en sombre »), soleil en thème sombre (« repasser en clair »).
@@ -87,19 +129,18 @@
   --icon-moon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z'/%3E%3C/svg%3E");
   --icon-sun: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cline x1='12' y1='2' x2='12' y2='4'/%3E%3Cline x1='12' y1='20' x2='12' y2='22'/%3E%3Cline x1='4.9' y1='4.9' x2='6.3' y2='6.3'/%3E%3Cline x1='17.7' y1='17.7' x2='19.1' y2='19.1'/%3E%3Cline x1='2' y1='12' x2='4' y2='12'/%3E%3Cline x1='20' y1='12' x2='22' y2='12'/%3E%3Cline x1='4.9' y1='19.1' x2='6.3' y2='17.7'/%3E%3Cline x1='17.7' y1='6.3' x2='19.1' y2='4.9'/%3E%3C/svg%3E");
 
-  justify-self: end;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  min-width: 40px;
-  height: 40px;
-  padding: 0;
+  position: relative;
   font-size: 0; // masque le libellé texte du template
-  color: var(--on-brand-soft);
 }
 
+// Icône positionnée en absolu (hors flux grid) : le libellé texte masqué ne
+// crée donc pas de seconde rangée qui décalerait la lune vers le haut.
 .app-theme-toggle::before {
   content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 20px;
   height: 20px;
   background-color: currentColor;
@@ -112,19 +153,9 @@
   mask-image: var(--icon-sun);
 }
 
-.app-theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--on-brand);
-}
-
-.app-theme-toggle:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
-}
-
-// ─── Groupe d'actions à droite de la topbar (thème + compte) ─────────────────
+// ─── Groupe d'actions à droite de la topbar (plein écran + thème + compte) ───
+// Tous les contrôles font 40px de haut, centrés sur la même ligne de base.
 .app-topbar__actions {
-  justify-self: end;
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -322,19 +353,24 @@
 }
 
 @media (max-width: 900px) {
-  .app-topbar {
-    grid-template-columns: 1fr auto;
-    gap: var(--space-3);
+  .app-topbar__band {
     padding: var(--space-2) var(--space-4);
   }
 
+  // Nav défilable horizontalement sur tablette : la boutique garde tous
+  // les onglets sans repli, glissables du doigt.
   .app-nav {
-    grid-column: 1 / -1;
+    padding: 0 var(--space-4);
     overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .app-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .app-nav a {
-    min-height: 40px;
+    min-height: 42px;
     padding: 0 var(--space-3);
     white-space: nowrap;
   }
