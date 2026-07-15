@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { ProductsPage } from './features/products/pages/products-page/products-page';
 import { NewStockReceiptPage } from './features/stock-receipts/pages/new-stock-receipt-page/new-stock-receipt-page';
 import { NewSalePage } from './features/sales/pages/new-sale-page/new-sale-page';
+import { SalesHistoryPage } from './features/sales/pages/sales-history-page/sales-history-page';
+import { StockMovementsHistoryPage } from './features/stock-movements/pages/stock-movements-history-page/stock-movements-history-page';
 import { ProductDetailPage } from './features/products/pages/product-detail-page/product-detail-page';
 import { NewStockTransfersPage } from './features/stock-transfers/pages/new-stock-transfers-page/new-stock-transfers-page';
 import { LoginPage } from './features/auth/pages/login-page/login-page';
@@ -27,6 +29,18 @@ export const routes: Routes = [
     {
         path: 'sales/new',
         component: NewSalePage,
+        canActivate: [authGuard]
+    },
+
+    {
+        path: 'sales',
+        component: SalesHistoryPage,
+        canActivate: [authGuard]
+    },
+
+    {
+        path: 'stock-movements',
+        component: StockMovementsHistoryPage,
         canActivate: [authGuard]
     },
 

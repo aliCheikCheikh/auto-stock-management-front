@@ -1,0 +1,138 @@
+// Page historique des mouvements : conteneur cohérent avec le catalogue.
+.history-page {
+  min-height: calc(100vh - var(--nav-height));
+  padding: var(--space-6) var(--space-7) var(--space-8);
+  background: var(--gray-50);
+  color: var(--gray-900);
+}
+
+.page-header,
+.history-section,
+.history-state,
+.history-page app-pagination {
+  max-width: var(--content-lg);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.history-page app-pagination {
+  display: block;
+}
+
+.history-count {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.history-error {
+  margin: 0;
+  font-weight: 600;
+}
+
+// ─── Colonnes du tableau des mouvements ──────────────────────────────────────
+.movements-table .data-table__header,
+.movements-table .data-table__row {
+  display: grid; 
+  align-items: center; // Aligne verticalement le texte et les badges
+  column-gap: var(--space-5, 24px); // Force l'espacement entre les colonnes
+
+  /* Nouvelle structure de grille pour régler l'entassement */
+  grid-template-columns: 
+    140px                  /* Date : largeur fixe minimum */
+    100px                  /* Type : largeur fixe (englobe le badge de 90px) */
+    minmax(0, 1.2fr)       /* Produit : prend l'espace central */
+    80px                   /* Quantité : largeur fixe pour aligner les chiffres */
+    minmax(0, 1fr);        /* Emplacement : prend l'espace restant */
+}
+
+// ─── Alignements des colonnes ────────────────────────────────────────────────
+.movement-date {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Force l'alignement parfait de la colonne Quantité à droite */
+// ─── Alignements des colonnes ────────────────────────────────────────────────
+/* Centre le titre et les chiffres de la colonne Quantité */
+.data-table__num {
+  text-align: center;
+  display: flex;
+  justify-content: center; /* Centre horizontalement */
+  align-items: center;     /* Centre verticalement */
+  width: 100%;
+}
+
+.movement-product {
+  overflow-wrap: anywhere;
+}
+
+.movement-location {
+  color: var(--gray-900);
+  overflow-wrap: anywhere;
+}
+
+.movement-location__arrow {
+  margin: 0 var(--space-1);
+  color: var(--gray-500);
+}
+
+// ─── Badge de type (via typeKind) ────────────────────────────────────────────
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; // Centre le texte dans le badge
+  width: 90px;             // FORCE LA MEME TAILLE POUR TOUS LES BADGES
+  padding: 2px var(--space-2);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+// Réception : entrée de stock → vert (succès).
+.type-badge--ENTRY {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success-600);
+}
+
+// Transfert : déplacement interne → ambre (avertissement neutre).
+.type-badge--TRANSFER {
+  background: var(--warning-bg);
+  border-color: var(--warning-border);
+  color: var(--warning-600);
+}
+
+// Vente : sortie « métier » → HARMONISÉ (Bleu pastel)
+.type-badge--EXIT {
+  background: var(--info-bg, #dbeafe); // Fond clair
+  border-color: var(--info-border, #bfdbfe); // Bordure discrète
+  color: var(--accent-600); // Texte coloré (plus lisible)
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .history-page {
+    padding: var(--space-5);
+  }
+
+  // Le tableau garde ses colonnes et défile horizontalement si besoin.
+  .movements-table {
+    overflow-x: auto;
+  }
+
+  .movements-table .data-table__header,
+  .movements-table .data-table__row {
+    min-width: 640px;
+  }
+}
+
+@media (max-width: 560px) {
+  .history-page {
+    padding: var(--space-4) var(--space-3);
+  }
+}

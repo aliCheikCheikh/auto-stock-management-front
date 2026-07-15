@@ -1,0 +1,23 @@
+<nav class="pagination" aria-label="Pagination">
+  <button
+    class="btn btn--secondary"
+    type="button"
+    (click)="prev()"
+    [disabled]="!hasPrev()"
+  >
+    <span aria-hidden="true">←</span> Précédent
+  </button>
+
+  <span class="pagination__status" aria-live="polite">
+    Page {{ current() + 1 }} / {{ total() }}
+  </span>
+
+  <button
+    class="btn btn--secondary"
+    type="button"
+    (click)="next()"
+    [disabled]="!hasNext()"
+  >
+    Suivant <span aria-hidden="true">→</span>
+  </button>
+</nav>

@@ -1,0 +1,104 @@
+<main class="history-page">
+  <header class="page-header">
+    <div class="page-header__content">
+      <div>
+        <p class="page-kicker">Ventes</p>
+        <h1>Historique des ventes</h1>
+      </div>
+      @if (state() === 'success') {
+        <div class="page-header__meta">
+          <p class="history-count">{{ pageDisplayCount() }} ventes</p>
+          <span class="history-separator">·</span>
+          <p class="history-total">{{ page().totalElements }} au total</p>
+        </div>
+      }
+    </div>
+  </header>
+
+  @if (state() === 'loading') {
+    <section class="state-block history-state" aria-live="polite">
+      <app-spinner label="Chargement de l'historique…" />
+    </section>
+  } @else if (state() === 'error') {
+    <section class="state-block state-block--error history-state" role="alert">
+      <p class="history-error">{{ errorMessage() }}</p>
+      <button class="btn btn--secondary" type="button" (click)="goToPage(page().page)">Réessayer</button>
+    </section>
+  } @else {
+    <section class="card history-section" aria-labelledby="sales-history-title">
+      <div class="section-heading">
+        <h2 id="sales-history-title">Historique des ventes</h2>
+      </div>
+
+      @if (sales().length === 0) {
+        <div class="empty-state">
+          <p class="empty-state__title">Aucun résultat</p>
+          <p class="empty-state__text">Aucune vente n'a encore été enregistrée.</p>
+        </div>
+      } @else {
+        <div class="sales-summary">
+          <div class="sales-summary__header">
+            <div class="sales-summary__label-group">
+              <span class="sales-summary__label">Total de la page</span>
+              <p class="sales-summary__count">{{ pageSummary().salesCount }} vente(s) · {{ pageSummary().articlesCount }} article(s)</p>
+            </div>
+            <div class="sales-summary__total">
+              <span class="sales-summary__total-label">Total</span>
+              <strong class="sales-summary__total-amount">{{ pageSummary().total | money }}</strong>
+            </div>
+          </div>
+
+          @if (pageSummary().dayTotals.length > 1) {
+            <div class="sales-summary__separator"></div>
+            <div class="sales-summary__days">
+              @for (day of pageSummary().dayTotals; track day.label) {
+                <div class="sales-summary__day">
+                  <span>{{ day.label }}</span>
+                  <span>{{ day.sales }} vente(s), {{ day.articles }} article(s)</span>
+                  <strong>{{ { amount: day.total.toString(), currency: pageSummary().total.currency } | money }}</strong>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        @for (sale of sales(); track sale.saleId) {
+          <article class="sale">
+            <header class="sale__head">
+              <div class="sale__meta">
+                <span class="sale__date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</span>
+                <span class="sale__count">{{ sale.lines.length }} article(s)</span>
+              </div>
+            </header>
+
+            <div class="data-table sale__lines" role="table" aria-label="Détail de la vente">
+              <div class="data-table__header" role="row">
+                <span role="columnheader">Produit</span>
+                <span role="columnheader" class="data-table__num">Quantité</span>
+                <span role="columnheader" class="data-table__num">PU</span>
+                <span role="columnheader" class="data-table__num">Sous-total</span>
+              </div>
+
+              @for (line of sale.lines; track $index) {
+                <div class="data-table__row" role="row">
+                  <span class="sale__product" role="cell" data-label="Produit">{{ line.productName }}</span>
+                  <span class="data-table__num" role="cell" data-label="Quantité">{{ line.quantity }}</span>
+                  <span class="data-table__num" role="cell" data-label="PU">{{ line.unitPrice | money }}</span>
+                  <span class="data-table__num" role="cell" data-label="Sous-total">{{ line.subtotal | money }}</span>
+                </div>
+              }
+            </div>
+
+            <footer class="sale__footer">
+              <strong class="sale__total">{{ sale.total | money }}</strong>
+            </footer>
+          </article>
+        }
+      }
+    </section>
+
+    @if (page().totalPages > 1) {
+      <app-pagination [meta]="page()" (goTo)="goToPage($event)" />
+    }
+  }
+</main>

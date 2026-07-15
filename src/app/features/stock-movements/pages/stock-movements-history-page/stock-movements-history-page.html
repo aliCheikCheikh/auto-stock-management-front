@@ -1,0 +1,74 @@
+<main class="history-page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Stock</p>
+      <h1>Historique des mouvements</h1>
+    </div>
+
+    @if (state() === 'success') {
+      <p class="history-count">{{ page().totalElements }} mouvement(s)</p>
+    }
+  </header>
+
+  @if (state() === 'loading') {
+    <section class="state-block history-state" aria-live="polite">
+      <app-spinner label="Chargement de l'historique…" />
+    </section>
+  } @else if (state() === 'error') {
+    <section class="state-block state-block--error history-state" role="alert">
+      <p class="history-error">{{ errorMessage() }}</p>
+      <button class="btn btn--secondary" type="button" (click)="goToPage(page().page)">Réessayer</button>
+    </section>
+  } @else {
+    <section class="card history-section" aria-labelledby="movements-history-title">
+      <div class="section-heading">
+        <h2 id="movements-history-title">Historique des mouvements</h2>
+      </div>
+
+      @if (movements().length === 0) {
+        <div class="empty-state">
+          <p class="empty-state__title">Aucun résultat</p>
+          <p class="empty-state__text">Aucun mouvement de stock n'a encore été enregistré.</p>
+        </div>
+      } @else {
+        <div class="data-table movements-table" role="table" aria-label="Historique des mouvements">
+          <div class="data-table__header" role="row">
+            <span role="columnheader">Date</span>
+            <span role="columnheader">Type</span>
+            <span role="columnheader">Produit</span>
+            <span role="columnheader" class="data-table__num">Quantité</span>
+            <span role="columnheader">Emplacement</span>
+          </div>
+
+          @for (movement of movements(); track movement.movementId) {
+            <div class="data-table__row" role="row">
+              <span class="movement-date" role="cell" data-label="Date">
+                {{ movement.date | date: 'dd/MM/yyyy HH:mm' }}
+              </span>
+
+              <span role="cell" data-label="Type">
+                <span class="type-badge type-badge--{{ movement.typeKind }}">{{ movement.typeLabel }}</span>
+              </span>
+
+              <span class="movement-product" role="cell" data-label="Produit">{{ movement.productName }}</span>
+
+              <span class="data-table__num" role="cell" data-label="Quantité">{{ movement.quantity }}</span>
+
+              <span class="movement-location" role="cell" data-label="Emplacement">
+                {{ movement.locationLabel }}
+                @if (movement.destinationLabel) {
+                  <span class="movement-location__arrow" aria-hidden="true">→</span>
+                  {{ movement.destinationLabel }}
+                }
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    @if (page().totalPages > 1) {
+      <app-pagination [meta]="page()" (goTo)="goToPage($event)" />
+    }
+  }
+</main>
