@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProductSearch } from './product-search';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 describe('ProductSearch', () => {
   let component: ProductSearch;
@@ -8,7 +11,12 @@ describe('ProductSearch', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProductSearch]
+      imports: [ProductSearch],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+      ]
     })
     .compileComponents();
 

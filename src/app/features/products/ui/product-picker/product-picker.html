@@ -1,0 +1,57 @@
+<div class="product-picker" (keydown)="onKeydown($event)">
+  <span class="product-picker__icon" aria-hidden="true">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="7" cy="7" r="4.5" />
+      <path d="M10.5 10.5 14 14" />
+    </svg>
+  </span>
+
+  <input
+    [attr.id]="inputId()"
+    [attr.data-global-search]="global() ? '' : null"
+    class="product-picker__input"
+    [formControl]="searchControl"
+    type="search"
+    [placeholder]="placeholder()"
+    [attr.aria-label]="ariaLabel()"
+    role="combobox"
+    aria-autocomplete="list"
+    aria-controls="product-picker-listbox"
+    [attr.aria-expanded]="showDropdown()"
+    [attr.aria-activedescendant]="activeIndex() >= 0 ? 'product-picker-option-' + activeIndex() : null"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+  />
+
+  @if (showDropdown()) {
+    <div class="product-picker__panel">
+      @if (results().length > 0) {
+        <ul
+          class="product-picker__list"
+          id="product-picker-listbox"
+          role="listbox"
+          aria-label="Résultats de recherche"
+        >
+          @for (item of results(); track item.productId; let i = $index) {
+            <li
+              class="product-picker__option"
+              [class.is-active]="i === activeIndex()"
+              id="product-picker-option-{{ i }}"
+              role="option"
+              [attr.aria-selected]="i === activeIndex()"
+              (mousedown)="$event.preventDefault()"
+              (mouseenter)="activeIndex.set(i)"
+              (click)="select(item)"
+            >
+              <span class="product-picker__name">{{ item.name }}</span>
+              <span class="product-picker__ref">{{ item.reference }}</span>
+              <span class="product-picker__price">{{ item.unitPrice | money }}</span>
+            </li>
+          }
+        </ul>
+      } @else if (showEmpty()) {
+        <p class="product-picker__empty" role="status">Aucun produit trouvé</p>
+      }
+    </div>
+  }
+</div>

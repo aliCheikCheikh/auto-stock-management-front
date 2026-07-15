@@ -1,0 +1,189 @@
+// Sélecteur de produit réutilisable. Deux apparences via [data-variant] :
+//  - 'field'  (défaut) : champ clair, intégré aux formulaires ;
+//  - 'navbar'          : champ translucide sur le chrome navy.
+// La déroulante flottante est identique dans les deux cas (surface neutre).
+.product-picker {
+  position: relative;
+  width: 100%;
+}
+
+// Loupe superposée à gauche dans le champ
+.product-picker__icon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  color: var(--gray-400);
+  pointer-events: none;
+}
+
+.product-picker__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+// ─── Variante 'field' (défaut) : reprend le gabarit d'input du thème ─────────
+.product-picker__input {
+  width: 100%;
+  min-height: var(--control-h);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-8);
+  border: var(--border-field);
+  border-radius: var(--radius-md);
+  background: var(--gray-0);
+  color: var(--gray-900);
+  font: inherit;
+  font-size: var(--text-base);
+  line-height: 1.4;
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+}
+
+.product-picker__input::placeholder {
+  color: var(--gray-400);
+}
+
+.product-picker__input:focus,
+.product-picker__input:focus-visible {
+  border-color: var(--accent-600);
+  box-shadow: var(--focus-ring);
+}
+
+// Masque la croix native de type="search" (incohérente avec le thème)
+.product-picker__input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+// ─── Variante 'navbar' : champ translucide lisible sur navy ──────────────────
+:host([data-variant='navbar']) .product-picker {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+:host([data-variant='navbar']) .product-picker__icon {
+  color: var(--on-brand-soft);
+}
+
+:host([data-variant='navbar']) .product-picker__input {
+  min-height: 40px;
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--on-brand);
+}
+
+:host([data-variant='navbar']) .product-picker__input::placeholder {
+  color: var(--on-brand-soft);
+}
+
+:host([data-variant='navbar']) .product-picker__input:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+:host([data-variant='navbar']) .product-picker__input:focus,
+:host([data-variant='navbar']) .product-picker__input:focus-visible {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+// ─── Déroulante flottante (commune aux deux variantes) ───────────────────────
+.product-picker__panel {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  z-index: 1100; // au-dessus du contenu (toasts = 1000)
+  overflow: hidden;
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-0);
+  // Reset : sur la navbar, color:on-brand (blanc) est hérité.
+  color: var(--gray-900);
+  box-shadow: var(--shadow-overlay);
+  animation: product-picker-in 120ms ease-out;
+}
+
+@keyframes product-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-picker__list {
+  max-height: min(60vh, 360px);
+  margin: 0;
+  padding: var(--space-1);
+  list-style: none;
+  overflow-y: auto;
+}
+
+// Option : nom (principal) + référence (secondaire) à gauche, prix à droite
+.product-picker__option {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+// Surlignage (survol + navigation clavier) : même repère visuel
+.product-picker__option:hover,
+.product-picker__option.is-active {
+  background: var(--gray-100);
+}
+
+.product-picker__name {
+  grid-column: 1;
+  color: var(--gray-900);
+  font-size: var(--text-base);
+  font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.product-picker__ref {
+  grid-column: 1;
+  grid-row: 2;
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.product-picker__price {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.product-picker__empty {
+  margin: 0;
+  padding: var(--space-4) var(--space-3);
+  color: var(--gray-500);
+  font-size: var(--text-base);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  :host([data-variant='navbar']) .product-picker {
+    max-width: none;
+    margin: 0;
+  }
+}
