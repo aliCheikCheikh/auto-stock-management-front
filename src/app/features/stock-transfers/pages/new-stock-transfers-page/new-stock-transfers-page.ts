@@ -99,7 +99,6 @@ export class NewStockTransfersPage implements OnInit {
       sourceLocationId: formValue.sourceLocationId,
       destinationLocationId: formValue.destinationLocationId,
       quantity: formValue.quantity,
-      userId: DEV_SESSION_CONTEXT.userId,
     };
 
     if (this.currentIdempotencyKey === null) {

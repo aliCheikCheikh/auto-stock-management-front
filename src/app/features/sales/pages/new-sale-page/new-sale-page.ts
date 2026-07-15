@@ -79,7 +79,6 @@ export class NewSalePage implements OnInit {
     const formValue = this.form.getRawValue();
 
     const request: CreateSaleRequest = {
-      sellerId: DEV_SESSION_CONTEXT.userId,
       shopId: DEV_SESSION_CONTEXT.shopId,
       lines: [
         {

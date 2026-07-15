@@ -17,7 +17,6 @@ export interface ReceiveStockRequest {
     readonly productReference: string;
     readonly newProductInfo?: ProductInfo | null;
     readonly shopId: string;
-    readonly userId: string;
     readonly distributions: readonly ReceivingDistribution[];
 }
 

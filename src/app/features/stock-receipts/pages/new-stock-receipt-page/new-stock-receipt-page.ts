@@ -142,7 +142,6 @@ export class NewStockReceiptPage {
         },
       } : {}),
       shopId: DEV_SESSION_CONTEXT.shopId,
-      userId: DEV_SESSION_CONTEXT.userId,
       distributions: [
         {
           locationId: DEV_SESSION_CONTEXT.locations.shopFloor.locationId,

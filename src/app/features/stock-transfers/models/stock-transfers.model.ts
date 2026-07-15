@@ -3,7 +3,6 @@ export interface TransferStockRequest {
     readonly sourceLocationId: string;
     readonly destinationLocationId: string;
     readonly quantity: number;
-    readonly userId: string;
 }
 
 export interface StockTransferAcknowledgement {
