@@ -6,6 +6,8 @@ import { ProductsApiService } from '../../../products/data-access/products-api.s
 import { SessionContextService } from '../../../../core/session/session-context.service';
 import { PageMeta } from '../../../../core/api/page.model';
 import { Spinner } from '../../../../shared/ui/spinner/spinner';
+import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { DatePipe } from '@angular/common';
 
 interface MovementRow {
   readonly movementId: string;
@@ -20,8 +22,9 @@ interface MovementRow {
 
 @Component({
   selector: 'app-stock-movements-history-page',
-  imports: [Spinner],
+  imports: [DatePipe, Spinner, Pagination],
   templateUrl: './stock-movements-history-page.html',
+  styleUrl: './stock-movements-history-page.scss',
 })
 export class StockMovementsHistoryPage implements OnInit {
   private static readonly PAGE_SIZE = 20;
