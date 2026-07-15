@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
 import { SessionContextService } from '../../../../core/session/session-context.service';
@@ -31,6 +31,7 @@ export class NewStockReceiptPage {
 
   // Libellé pré-rempli du picker « produit existant » (pré-sélection fiche).
   readonly preselectedLabel = signal('');
+  private readonly picker = viewChild(ProductPicker);
 
   isSubmitting = false;
   currentIdempotencyKey: string | null = null;
@@ -105,7 +106,7 @@ export class NewStockReceiptPage {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
-    backstockQuantity: new FormControl(1, {
+    backstockQuantity: new FormControl(0, {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
@@ -190,11 +191,17 @@ export class NewStockReceiptPage {
           unitPriceAmount: '',
           minimumGlobalThreshold: 0,
           shopFloorQuantity: 0,
-          backstockQuantity: 1,
+          backstockQuantity: 0,
         });
+        // Le picker n'est pas un contrôle du formulaire : on le vide à la main.
+        this.preselectedLabel.set('');
+        this.picker()?.reset();
       },
       error: (error: unknown) => {
         this.isSubmitting = false;
+        // Une soumission corrigée est une NOUVELLE opération → clé neuve
+        // (sinon « même clé, corps différent » = 422 IDEMPOTENCY_KEY_REUSED).
+        this.currentIdempotencyKey = null;
         this.notificationService.error(this.getReceiptErrorMessage(error));
       },
     })
@@ -217,6 +224,12 @@ export class NewStockReceiptPage {
 
       case 'LOCATION_NOT_FOUND':
         return 'Un emplacement de réception est introuvable.';
+
+      case 'PRODUCT_REFERENCE_ALREADY_USED':
+        return 'Cette référence est déjà utilisée par un produit existant.';
+
+      case 'PRODUCT_NAME_ALREADY_USED':
+        return 'Ce nom est déjà utilisé par un produit existant.';
 
       case 'BUSINESS_RULE_VIOLATION':
         return 'La réception ne respecte pas une règle métier.';
