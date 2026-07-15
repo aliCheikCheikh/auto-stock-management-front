@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { LoadingService } from '../../../core/loading/loading.service';
+import { Spinner } from '../spinner/spinner';
 
 /**
  * Rend les deux indicateurs de chargement globaux :
@@ -10,6 +11,7 @@ import { LoadingService } from '../../../core/loading/loading.service';
  */
 @Component({
   selector: 'app-loading-overlay',
+  imports: [Spinner],
   templateUrl: './loading-overlay.html',
   styleUrl: './loading-overlay.scss',
 })

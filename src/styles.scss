@@ -493,13 +493,18 @@ select option[disabled] {
 }
 
 // ─── États de liste : chargement / vide / erreur ─────────────────────────────
+// Contenu centré : accueille aussi bien un message qu'un <app-spinner>.
 .state-block {
-  padding: var(--space-6);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  padding: var(--space-8) var(--space-6);
   border: var(--border-subtle);
   border-radius: var(--radius-lg);
   background: var(--gray-0);
   color: var(--gray-500);
   font-size: var(--text-base);
+  text-align: center;
 }
 
 .state-block--error {

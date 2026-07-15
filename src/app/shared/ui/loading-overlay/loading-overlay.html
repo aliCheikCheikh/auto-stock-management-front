@@ -3,7 +3,7 @@
   <div class="loading-bar" aria-hidden="true"></div>
 }
 
-<!-- Overlay bloquant : fond flouté/assombri + spirale de points, centré -->
+<!-- Overlay bloquant : fond flouté/assombri + spinner centré -->
 @if (loading.blocking()) {
   <div
     class="loading-overlay"
@@ -11,10 +11,6 @@
     aria-busy="true"
     aria-live="polite"
   >
-    <div class="loading-overlay__spinner" aria-hidden="true">
-      <span></span><span></span><span></span><span></span>
-      <span></span><span></span><span></span><span></span>
-    </div>
-    <p class="loading-overlay__label">Chargement…</p>
+    <app-spinner [size]="48" label="Chargement…" class="loading-overlay__spinner" />
   </div>
 }

@@ -1,0 +1,69 @@
+// Spinner « anneau de points » — dimension pilotée par --spinner-size (host),
+// couleur héritée via currentColor (donc adaptée au thème et au contexte).
+:host {
+  display: inline-grid;
+  place-items: center;
+  gap: var(--space-3);
+}
+
+// Anneau de 8 points qui tourne (rotation par crans, effet « traînée »).
+.spinner {
+  position: relative;
+  width: var(--spinner-size, 40px);
+  height: var(--spinner-size, 40px);
+  animation: spinner-spin 0.9s steps(8) infinite;
+}
+
+.spinner span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  // Point et rayon proportionnels au diamètre pour rester nets à toute taille.
+  width: calc(var(--spinner-size, 40px) * 0.15);
+  height: calc(var(--spinner-size, 40px) * 0.15);
+  margin: calc(var(--spinner-size, 40px) * -0.075);
+  border-radius: 50%;
+  background: currentColor;
+}
+
+$offset: calc(var(--spinner-size, 40px) * -0.4);
+
+.spinner span:nth-child(1) { transform: rotate(0deg)   translateY($offset); opacity: 1;    }
+.spinner span:nth-child(2) { transform: rotate(45deg)  translateY($offset); opacity: 0.85; }
+.spinner span:nth-child(3) { transform: rotate(90deg)  translateY($offset); opacity: 0.7;  }
+.spinner span:nth-child(4) { transform: rotate(135deg) translateY($offset); opacity: 0.55; }
+.spinner span:nth-child(5) { transform: rotate(180deg) translateY($offset); opacity: 0.4;  }
+.spinner span:nth-child(6) { transform: rotate(225deg) translateY($offset); opacity: 0.3;  }
+.spinner span:nth-child(7) { transform: rotate(270deg) translateY($offset); opacity: 0.2;  }
+.spinner span:nth-child(8) { transform: rotate(315deg) translateY($offset); opacity: 0.12; }
+
+.spinner__label {
+  color: currentColor;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+// Libellé réservé aux lecteurs d'écran quand l'anneau est purement décoratif.
+.spinner__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes spinner-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+    animation-timing-function: linear;
+  }
+}
