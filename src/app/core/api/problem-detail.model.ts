@@ -5,7 +5,9 @@ export type ProblemCode =
   | 'LOCATION_NOT_FOUND'
   | 'STOCK_INSUFFICIENT'
   | 'INVALID_TRANSFER'
-  | 'BUSINESS_RULE_VIOLATION';
+  | 'BUSINESS_RULE_VIOLATION'
+  | 'PRODUCT_REFERENCE_ALREADY_USED'
+  | 'PRODUCT_NAME_ALREADY_USED';
 
 export interface ProblemValidationError {
   readonly field: string;
