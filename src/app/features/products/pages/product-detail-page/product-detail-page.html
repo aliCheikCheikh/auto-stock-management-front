@@ -1,5 +1,14 @@
 <main class="product-detail-page">
-  @if (summary) {
+  @if (state().status === 'loading') {
+    <div class="state-block" aria-live="polite">
+      <app-spinner label="Chargement de la fiche…" />
+    </div>
+  } @else if (state().status === 'error') {
+    <div class="state-block state-block--error" role="alert">
+      <p class="state-block__message">{{ errorMessage() }}</p>
+      <button class="btn btn--secondary" type="button" (click)="load()">Réessayer</button>
+    </div>
+  } @else if (summary(); as summary) {
     <a routerLink="/products" class="back-link">← Retour au catalogue</a>
 
     <div class="product-header">
@@ -28,6 +37,23 @@
     </div>
 
     <div class="detail-body">
+      <section class="form-section" aria-labelledby="actions-section-title">
+        <div class="section-heading">
+          <h2 id="actions-section-title">Actions</h2>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn btn--primary" type="button" (click)="goToSale()">Vendre</button>
+          <button class="btn btn--secondary" type="button" (click)="goToReceipt()">Réceptionner</button>
+          <button class="btn btn--secondary" type="button" (click)="goToTransfer()">Transférer</button>
+
+          @if (isOwner()) {
+            <a class="btn btn--secondary" [routerLink]="['/products', productId, 'edit']">Modifier</a>
+            <button class="btn btn--danger" type="button" (click)="askDeactivation()">Désactiver</button>
+          }
+        </div>
+      </section>
+
       <section class="form-section" aria-labelledby="location-section-title">
         <div class="section-heading">
           <h2 id="location-section-title">Stock par emplacement</h2>
@@ -54,9 +80,14 @@
         </div>
       </section>
     </div>
-  } @else {
-    <div class="loading-state">
-      <p>Chargement…</p>
-    </div>
+  }
+
+  @if (confirmingDeactivation() && summary(); as product) {
+    <app-confirm-dialog
+      title="Désactiver le produit ?"
+      [message]="'Le produit « ' + product.productName + ' » sera retiré du catalogue actif. Il restera dans l\'historique.'"
+      confirmLabel="Désactiver"
+      (confirmed)="confirmDeactivation()"
+      (cancelled)="cancelDeactivation()" />
   }
 </main>
