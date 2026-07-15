@@ -1,0 +1,31 @@
+<!-- Stub fonctionnel : Claude Code habillera selon le brief (table + thème). -->
+<main class="page">
+  <h1>Historique des ventes</h1>
+
+  @if (state() === 'loading') {
+    <app-spinner label="Chargement…" />
+  } @else if (state() === 'error') {
+    <p>{{ errorMessage() }}</p>
+    <button type="button" (click)="goToPage(page().page)">Réessayer</button>
+  } @else {
+    @if (sales().length === 0) {
+      <p>Aucune vente.</p>
+    }
+    @for (sale of sales(); track sale.saleId) {
+      <section>
+        <strong>{{ sale.date }}</strong> — {{ sale.total | money }}
+        <ul>
+          @for (line of sale.lines; track $index) {
+            <li>{{ line.productName }} × {{ line.quantity }} = {{ line.subtotal | money }}</li>
+          }
+        </ul>
+      </section>
+    }
+
+    <nav class="pagination">
+      <button type="button" (click)="goToPage(page().page - 1)" [disabled]="page().page === 0">Précédent</button>
+      <span>Page {{ page().page + 1 }} / {{ page().totalPages }}</span>
+      <button type="button" (click)="goToPage(page().page + 1)" [disabled]="page().page + 1 >= page().totalPages">Suivant</button>
+    </nav>
+  }
+</main>

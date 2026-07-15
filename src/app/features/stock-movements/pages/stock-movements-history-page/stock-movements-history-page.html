@@ -1,0 +1,37 @@
+<!-- Stub fonctionnel : Claude Code habillera selon le brief (table + badges + thème). -->
+<main class="page">
+  <h1>Historique des mouvements</h1>
+
+  @if (state() === 'loading') {
+    <app-spinner label="Chargement…" />
+  } @else if (state() === 'error') {
+    <p>{{ errorMessage() }}</p>
+    <button type="button" (click)="goToPage(page().page)">Réessayer</button>
+  } @else {
+    @if (movements().length === 0) {
+      <p>Aucun mouvement.</p>
+    }
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Type</th><th>Produit</th><th>Quantité</th><th>Emplacement</th></tr>
+      </thead>
+      <tbody>
+        @for (m of movements(); track m.movementId) {
+          <tr>
+            <td>{{ m.date }}</td>
+            <td>{{ m.typeLabel }}</td>
+            <td>{{ m.productName }}</td>
+            <td>{{ m.quantity }}</td>
+            <td>{{ m.locationLabel }}@if (m.destinationLabel) { → {{ m.destinationLabel }} }</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <nav class="pagination">
+      <button type="button" (click)="goToPage(page().page - 1)" [disabled]="page().page === 0">Précédent</button>
+      <span>Page {{ page().page + 1 }} / {{ page().totalPages }}</span>
+      <button type="button" (click)="goToPage(page().page + 1)" [disabled]="page().page + 1 >= page().totalPages">Suivant</button>
+    </nav>
+  }
+</main>
