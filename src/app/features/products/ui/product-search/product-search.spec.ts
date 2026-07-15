@@ -1,26 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NewStockTransfersPage } from './new-stock-transfers-page';
+import { ProductSearch } from './product-search';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
-describe('NewStockTransfersPage', () => {
-  let component: NewStockTransfersPage;
-  let fixture: ComponentFixture<NewStockTransfersPage>;
+describe('ProductSearch', () => {
+  let component: ProductSearch;
+  let fixture: ComponentFixture<ProductSearch>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NewStockTransfersPage],
+      imports: [ProductSearch],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([]),
       ]
     })
-      .compileComponents();
+    .compileComponents();
 
-    fixture = TestBed.createComponent(NewStockTransfersPage);
+    fixture = TestBed.createComponent(ProductSearch);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -55,10 +55,9 @@
   padding: var(--space-5);
 }
 
-.distribution-card input {
-  font-size: var(--text-lg);
-  font-weight: 700;
-}
+// Les compteurs de quantité héritent de la typographie de champ commune
+// (cf. `input, select` dans styles.scss) : même corps et même graisse que
+// les champs texte, pas de gras ni d'agrandissement.
 
 .distribution-error {
   grid-column: 1 / -1;

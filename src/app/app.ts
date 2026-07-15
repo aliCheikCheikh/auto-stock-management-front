@@ -6,10 +6,11 @@ import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from './core/auth/auth.service';
 import { ThemeService } from './core/theme/theme.service';
+import { ProductSearch } from './features/products/ui/product-search/product-search';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastContainer, LoadingOverlay],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastContainer, LoadingOverlay, ProductSearch],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

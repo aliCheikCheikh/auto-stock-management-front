@@ -135,13 +135,36 @@
   font-size: 14px;
 }
 
-// ─── Chargement ──────────────────────────────────────────────────────────────
-.loading-state {
+// ─── Barre d'actions (fiche = hub) ───────────────────────────────────────────
+.action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-6);
+}
+
+// ─── États loading / error (centrés, spinner adapté au thème) ────────────────
+.state-block {
   max-width: 960px;
   margin: 0 auto;
-  padding: 48px 0;
-  color: var(--color-muted);
-  font-size: 15px;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  padding: var(--space-10) var(--space-4);
+  // Le spinner hérite de currentColor → teinte accent, adaptée clair/sombre.
+  color: var(--accent-600);
+}
+
+.state-block--error {
+  color: var(--gray-500);
+}
+
+.state-block__message {
+  margin: 0;
+  color: var(--danger-600);
+  font-size: var(--text-md);
+  font-weight: 600;
+  text-align: center;
 }
 
 // ─── Responsive ──────────────────────────────────────────────────────────────

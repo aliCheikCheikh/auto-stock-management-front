@@ -1,0 +1,10 @@
+<span class="spinner" aria-hidden="true">
+  <span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span>
+</span>
+
+@if (label()) {
+  <span class="spinner__label">{{ label() }}</span>
+} @else {
+  <span class="spinner__sr">Chargement…</span>
+}

@@ -14,13 +14,11 @@
 
             <div class="form-grid">
                 <div class="field field--wide">
-                    <label for="productId">Produit</label>
-                    <select id="productId" formControlName="productId" autofocus>
-                        <option value="" disabled>— Sélectionner un produit —</option>
-                        @for (product of products; track product.productId) {
-                        <option [value]="product.productId">{{ product.name }} ({{ product.reference }})</option>
-                        }
-                    </select>
+                    <label for="sale-product">Produit</label>
+                    <app-product-picker
+                        inputId="sale-product"
+                        [initialLabel]="preselectedLabel()"
+                        (selected)="onProductSelected($event)" />
                     @if ((form.controls['productId'].dirty && form.controls['productId'].touched || fgd.submitted) && form.controls['productId'].invalid) {
                     <p class="field-error">Sélection d'un produit obligatoire.</p>
                     }

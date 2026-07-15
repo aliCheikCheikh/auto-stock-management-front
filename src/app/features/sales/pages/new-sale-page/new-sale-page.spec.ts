@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NewSalePage } from './new-sale-page';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 describe('NewSalePage', () => {
   let component: NewSalePage;
@@ -13,7 +14,9 @@ describe('NewSalePage', () => {
       imports: [NewSalePage],
       providers: [
         provideHttpClient(),
-        provideHttpClientTesting(),]
+        provideHttpClientTesting(),
+        provideRouter([]),
+      ]
     })
       .compileComponents();
 

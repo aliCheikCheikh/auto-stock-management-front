@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Page } from "../../../core/api/page.model";
-import { Product, ProductStockSummary, UpdateProductRequest } from "../models/product.model";
+import { Product, ProductSearchResult, ProductStockSummary, UpdateProductRequest } from "../models/product.model";
 
 
 
@@ -34,6 +34,11 @@ export class ProductsApiService {
 
     public getProduct(productId: string): Observable<Product> {
         return this.http.get<Product>(`${this.apiBaseUrl}/products/${productId}`);
+    }
+
+    public searchProducts(query: string): Observable<ProductSearchResult[]> {
+        const params = new HttpParams().set('q', query);
+        return this.http.get<ProductSearchResult[]>(`${this.apiBaseUrl}/products/search`, { params });
     }
 
 

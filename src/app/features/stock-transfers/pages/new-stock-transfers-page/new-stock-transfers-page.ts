@@ -1,17 +1,19 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { StockTransfersApiService } from '../../data-access/stock-transfers-api.service';
 import { TransferStockRequest } from '../../models/stock-transfers.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
-import { Product } from '../../../products/models/product.model';
+import { ProductSearchResult } from '../../../products/models/product.model';
 import { ProductsApiService } from '../../../products/data-access/products-api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { ActivatedRoute } from '@angular/router';
+import { ProductPicker } from '../../../products/ui/product-picker/product-picker';
 
 @Component({
   selector: 'app-new-stock-transfers-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ProductPicker],
   templateUrl: './new-stock-transfers-page.html',
   styleUrl: './new-stock-transfers-page.scss',
 })
@@ -19,8 +21,11 @@ export class NewStockTransfersPage implements OnInit {
   private readonly stockTransfersApi = inject(StockTransfersApiService);
   private readonly productsApi = inject(ProductsApiService);
   private readonly notificationService = inject(NotificationService);
+  private readonly route = inject(ActivatedRoute);
 
-  products: readonly Product[] = [];
+  readonly preselectedLabel = signal('');
+  private readonly picker = viewChild(ProductPicker);
+
   readonly locations = [
     DEV_SESSION_CONTEXT.locations.shopFloor,
     DEV_SESSION_CONTEXT.locations.backstock,
@@ -56,11 +61,23 @@ export class NewStockTransfersPage implements OnInit {
 
 
   ngOnInit(): void {
-    this.productsApi.listProducts(true).subscribe({
-      next: (page) => {
-        this.products = page.content;
-      }
-    })
+    // Pré-sélection éventuelle depuis la fiche produit (?productId=…).
+    const productId = this.route.snapshot.queryParamMap.get('productId');
+    if (productId) {
+      this.productsApi.getProduct(productId).subscribe({
+        next: (product) => {
+          this.form.controls.productId.setValue(product.productId);
+          this.preselectedLabel.set(product.name);
+        },
+        error: () => this.notificationService.error('Le produit pré-sélectionné est introuvable.'),
+      });
+    }
+  }
+
+  onProductSelected(product: ProductSearchResult): void {
+    this.form.controls.productId.setValue(product.productId);
+    this.form.controls.productId.markAsDirty();
+    this.form.controls.productId.markAsTouched();
   }
 
 
@@ -104,6 +121,8 @@ export class NewStockTransfersPage implements OnInit {
           destinationLocationId: '',
           quantity: 1,
         });
+        this.preselectedLabel.set('');
+        this.picker()?.reset();
       },
       error: (error: unknown) => {
         this.isSubmitting = false;

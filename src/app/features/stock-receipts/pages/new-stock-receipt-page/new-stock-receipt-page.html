@@ -30,12 +30,10 @@
                     @if (form.controls.isNewProduct.value) {
                     <input id="productReference" type="text" formControlName="productReference" autofocus />
                     } @else {
-                    <select id="productReference" formControlName="productReference">
-                        <option value="" disabled>Choisir un produit</option>
-                        @for (product of products; track product.productId) {
-                        <option [value]="product.reference">{{ product.name }} — {{ product.reference }}</option>
-                        }
-                    </select>
+                    <app-product-picker
+                        inputId="productReference"
+                        [initialLabel]="preselectedLabel()"
+                        (selected)="onProductSelected($event)" />
                     }
                     @if ((form.controls.productReference.dirty && form.controls.productReference.touched || fgd.submitted) && form.controls.productReference.invalid) {
                     <p class="field-error">Référence obligatoire.</p>
