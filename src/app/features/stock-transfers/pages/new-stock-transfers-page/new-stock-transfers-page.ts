@@ -4,7 +4,8 @@ import { StockTransfersApiService } from '../../data-access/stock-transfers-api.
 import { TransferStockRequest } from '../../models/stock-transfers.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
-import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
+import { SessionContextService } from '../../../../core/session/session-context.service';
+import { SessionLocation } from '../../../../core/session/context.model';
 import { ProductSearchResult } from '../../../products/models/product.model';
 import { ProductsApiService } from '../../../products/data-access/products-api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
@@ -22,14 +23,14 @@ export class NewStockTransfersPage implements OnInit {
   private readonly productsApi = inject(ProductsApiService);
   private readonly notificationService = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
+  private readonly sessionContext = inject(SessionContextService);
 
   readonly preselectedLabel = signal('');
   private readonly picker = viewChild(ProductPicker);
 
-  readonly locations = [
-    DEV_SESSION_CONTEXT.locations.shopFloor,
-    DEV_SESSION_CONTEXT.locations.backstock,
-  ];
+  // Emplacements réels du magasin (chargés depuis /context) pour les listes
+  // source / destination. Vide tant que le contexte n'est pas chargé.
+  locations: readonly SessionLocation[] = [];
 
   isSubmitting = false;
 
@@ -61,6 +62,12 @@ export class NewStockTransfersPage implements OnInit {
 
 
   ngOnInit(): void {
+    // Charge les emplacements réels du magasin (fini les UUID codés en dur).
+    this.sessionContext.ensureLoaded().subscribe({
+      next: (context) => (this.locations = context.locations),
+      error: () => this.notificationService.error('Impossible de charger les emplacements du magasin.'),
+    });
+
     // Pré-sélection éventuelle depuis la fiche produit (?productId=…).
     const productId = this.route.snapshot.queryParamMap.get('productId');
     if (productId) {

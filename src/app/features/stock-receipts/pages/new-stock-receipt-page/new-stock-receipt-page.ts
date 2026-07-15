@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
-import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
+import { SessionContextService } from '../../../../core/session/session-context.service';
 import { StockReceiptsApiService } from '../../data-access/stock-receipts-api.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
@@ -27,6 +27,7 @@ export class NewStockReceiptPage {
   categories:Category[] = [];
   private readonly productsApi = inject(ProductsApiService);
   private readonly route = inject(ActivatedRoute);
+  private readonly sessionContext = inject(SessionContextService);
 
   // Libellé pré-rempli du picker « produit existant » (pré-sélection fiche).
   readonly preselectedLabel = signal('');
@@ -35,6 +36,11 @@ export class NewStockReceiptPage {
   currentIdempotencyKey: string | null = null;
 
   constructor() {
+    // Charge le contexte magasin (shopId + emplacements réels) une fois, en cache.
+    this.sessionContext.ensureLoaded().pipe(takeUntilDestroyed()).subscribe({
+      error: () => this.notificationService.error('Impossible de charger le contexte du magasin.'),
+    });
+
     this.updateProductInfoValidators(this.form.controls.isNewProduct.value);
 
     this.form.controls.isNewProduct.valueChanges
@@ -127,6 +133,14 @@ export class NewStockReceiptPage {
       return;
     }
 
+    const context = this.sessionContext.context();
+    const shopFloorId = this.sessionContext.locationIdByType('SHOP_FLOOR');
+    const backstockId = this.sessionContext.locationIdByType('BACKSTOCK');
+    if (!context || !shopFloorId || !backstockId) {
+      this.notificationService.error('Le contexte du magasin n\'est pas encore chargé. Réessayez.');
+      return;
+    }
+
     const request: ReceiveStockRequest = {
       productReference: formValue.productReference,
       ...(formValue.isNewProduct ? {
@@ -141,14 +155,14 @@ export class NewStockReceiptPage {
           minimumGlobalThreshold: formValue.minimumGlobalThreshold,
         },
       } : {}),
-      shopId: DEV_SESSION_CONTEXT.shopId,
+      shopId: context.shopId,
       distributions: [
         {
-          locationId: DEV_SESSION_CONTEXT.locations.shopFloor.locationId,
+          locationId: shopFloorId,
           quantity: formValue.shopFloorQuantity,
         },
         {
-          locationId: DEV_SESSION_CONTEXT.locations.backstock.locationId,
+          locationId: backstockId,
           quantity: formValue.backstockQuantity,
         },
       ].filter((distribution) => distribution.quantity > 0),
