@@ -119,6 +119,7 @@ export class NewSalePage implements OnInit {
       },
       error: (error: unknown) => {
         this.isSubmitting = false;
+        this.currentIdempotencyKey = null;
         this.notificationService.error(this.getSaleErrorMessage(error));
       }
     })

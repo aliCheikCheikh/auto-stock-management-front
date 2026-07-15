@@ -132,6 +132,7 @@ export class NewStockTransfersPage implements OnInit {
       },
       error: (error: unknown) => {
         this.isSubmitting = false;
+        this.currentIdempotencyKey = null;
         this.notificationService.error(this.getTransferErrorMessage(error));
       }
     });

@@ -94,6 +94,9 @@
   top: calc(100% + var(--space-2));
   left: 0;
   right: 0;
+  // Largeur suffisante pour rester lisible même sur un champ étroit ; bornée à
+  // la largeur du viewport pour ne jamais déborder horizontalement.
+  min-width: min(280px, 100vw);
   z-index: 1100; // au-dessus du contenu (toasts = 1000)
   overflow: hidden;
   border: var(--border-subtle);
@@ -142,24 +145,30 @@
   background: var(--gray-100);
 }
 
+// Nom : jusqu'à 2 lignes puis ellipsis — deux produits aux noms longs et
+// proches restent distinguables sans jamais déborder de l'item.
 .product-picker__name {
   grid-column: 1;
   color: var(--gray-900);
   font-size: var(--text-base);
   font-weight: 500;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere; // coupe une chaîne très longue sans espace
 }
 
+// Référence (unique) : toujours visible en entier, jamais tronquée. Sur sa
+// propre ligne, en secondaire ; se replie si besoin plutôt que de se couper.
 .product-picker__ref {
   grid-column: 1;
   grid-row: 2;
   color: var(--gray-500);
   font-size: var(--text-xs);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .product-picker__price {
