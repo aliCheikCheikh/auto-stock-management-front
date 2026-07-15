@@ -6,7 +6,6 @@ export interface CreateSaleLine {
 }
 
 export interface CreateSaleRequest {
-    readonly sellerId: string;
     readonly shopId: string;
     readonly lines: readonly CreateSaleLine[];
 }

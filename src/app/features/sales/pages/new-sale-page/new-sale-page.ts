@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { SalesApiService } from '../../data-access/sales-api.service';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateSaleRequest } from '../../models/sales.model';
-import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
+import { SessionContextService } from '../../../../core/session/session-context.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { ProductsApiService } from '../../../products/data-access/products-api.service';
@@ -22,6 +22,7 @@ export class NewSalePage implements OnInit {
   private readonly productsApi = inject(ProductsApiService);
   private readonly notificationService = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
+  private readonly sessionContext = inject(SessionContextService);
 
   // Libellé pré-rempli du picker (pré-sélection depuis la fiche produit).
   readonly preselectedLabel = signal('');
@@ -44,6 +45,11 @@ export class NewSalePage implements OnInit {
   });
 
   ngOnInit(): void {
+    // Charge le contexte magasin (shopId réel) une fois, mis en cache.
+    this.sessionContext.ensureLoaded().subscribe({
+      error: () => this.notificationService.error('Impossible de charger le contexte du magasin.'),
+    });
+
     // Pré-sélection éventuelle depuis la fiche produit (?productId=…) : on
     // récupère le produit pour renseigner le contrôle et afficher son nom.
     const productId = this.route.snapshot.queryParamMap.get('productId');
@@ -76,11 +82,16 @@ export class NewSalePage implements OnInit {
       return;
     }
 
+    const context = this.sessionContext.context();
+    if (!context) {
+      this.notificationService.error('Le contexte du magasin n\'est pas encore chargé. Réessayez.');
+      return;
+    }
+
     const formValue = this.form.getRawValue();
 
     const request: CreateSaleRequest = {
-      sellerId: DEV_SESSION_CONTEXT.userId,
-      shopId: DEV_SESSION_CONTEXT.shopId,
+      shopId: context.shopId,
       lines: [
         {
           productId: formValue.productId,
