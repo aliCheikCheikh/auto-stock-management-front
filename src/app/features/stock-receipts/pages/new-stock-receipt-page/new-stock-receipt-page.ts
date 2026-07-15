@@ -106,7 +106,7 @@ export class NewStockReceiptPage {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
-    backstockQuantity: new FormControl(1, {
+    backstockQuantity: new FormControl(0, {
       nonNullable: true,
       validators: [Validators.required, Validators.min(0)],
     }),
@@ -191,7 +191,7 @@ export class NewStockReceiptPage {
           unitPriceAmount: '',
           minimumGlobalThreshold: 0,
           shopFloorQuantity: 0,
-          backstockQuantity: 1,
+          backstockQuantity: 0,
         });
         // Le picker n'est pas un contrôle du formulaire : on le vide à la main.
         this.preselectedLabel.set('');
