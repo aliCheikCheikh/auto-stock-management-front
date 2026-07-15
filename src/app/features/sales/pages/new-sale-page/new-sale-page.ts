@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { SalesApiService } from '../../data-access/sales-api.service';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateSaleRequest } from '../../models/sales.model';
@@ -6,12 +6,14 @@ import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { ProductsApiService } from '../../../products/data-access/products-api.service';
-import { Product } from '../../../products/models/product.model';
+import { ProductSearchResult } from '../../../products/models/product.model';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { ActivatedRoute } from '@angular/router';
+import { ProductPicker } from '../../../products/ui/product-picker/product-picker';
 
 @Component({
   selector: 'app-new-sale-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ProductPicker],
   templateUrl: './new-sale-page.html',
   styleUrl: './new-sale-page.scss',
 })
@@ -19,7 +21,11 @@ export class NewSalePage implements OnInit {
   private readonly salesApi = inject(SalesApiService);
   private readonly productsApi = inject(ProductsApiService);
   private readonly notificationService = inject(NotificationService);
-  products: readonly Product[] = [];
+  private readonly route = inject(ActivatedRoute);
+
+  // Libellé pré-rempli du picker (pré-sélection depuis la fiche produit).
+  readonly preselectedLabel = signal('');
+  private readonly picker = viewChild(ProductPicker);
 
   currentIdempotencyKey: string | null = null;
   isSubmitting = false;
@@ -38,11 +44,26 @@ export class NewSalePage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.productsApi.listProducts(true).subscribe({
-      next: (page) => {
-        this.products = page.content;
-      }
-    })
+    // Pré-sélection éventuelle depuis la fiche produit (?productId=…) : on
+    // récupère le produit pour renseigner le contrôle et afficher son nom.
+    const productId = this.route.snapshot.queryParamMap.get('productId');
+    if (productId) {
+      this.productsApi.getProduct(productId).subscribe({
+        next: (product) => {
+          this.form.controls.productId.setValue(product.productId);
+          this.preselectedLabel.set(product.name);
+        },
+        error: () => this.notificationService.error('Le produit pré-sélectionné est introuvable.'),
+      });
+    }
+  }
+
+  // Le picker n'est pas un contrôle de formulaire : on reporte le choix dans le
+  // contrôle productId (source de vérité pour la validation et la requête).
+  onProductSelected(product: ProductSearchResult): void {
+    this.form.controls.productId.setValue(product.productId);
+    this.form.controls.productId.markAsDirty();
+    this.form.controls.productId.markAsTouched();
   }
 
   onSubmit(formDirective: FormGroupDirective): void {
@@ -81,6 +102,9 @@ export class NewSalePage implements OnInit {
         this.notificationService.success('Vente enregistrée');
         // resetForm() remet aussi submitted=false → aucune erreur ne reflashe.
         formDirective.resetForm({ productId: '', quantity: 1 });
+        // Vide aussi l'affichage du picker (non lié au FormGroup).
+        this.preselectedLabel.set('');
+        this.picker()?.reset();
       },
       error: (error: unknown) => {
         this.isSubmitting = false;

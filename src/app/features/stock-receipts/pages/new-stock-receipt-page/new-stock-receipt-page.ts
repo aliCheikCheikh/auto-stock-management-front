@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReceiveStockRequest } from '../../models/stock-receipt.model';
 import { DEV_SESSION_CONTEXT } from '../../../../core/dev-session-context';
@@ -10,11 +10,13 @@ import { NotificationService } from '../../../../core/notifications/notification
 import { CategoriesApiService } from '../../../categories/data-access/categories-api.service';
 import { Category } from '../../../categories/models/category.model';
 import { ProductsApiService } from '../../../products/data-access/products-api.service';
-import { Product } from '../../../products/models/product.model';
+import { ProductSearchResult } from '../../../products/models/product.model';
+import { ActivatedRoute } from '@angular/router';
+import { ProductPicker } from '../../../products/ui/product-picker/product-picker';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ProductPicker],
   templateUrl: './new-stock-receipt-page.html',
   styleUrl: './new-stock-receipt-page.scss',
 })
@@ -24,7 +26,10 @@ export class NewStockReceiptPage {
   private readonly categoriesApi = inject(CategoriesApiService);
   categories:Category[] = [];
   private readonly productsApi = inject(ProductsApiService);
-  products: readonly Product[] = [];
+  private readonly route = inject(ActivatedRoute);
+
+  // Libellé pré-rempli du picker « produit existant » (pré-sélection fiche).
+  readonly preselectedLabel = signal('');
 
   isSubmitting = false;
   currentIdempotencyKey: string | null = null;
@@ -39,13 +44,33 @@ export class NewStockReceiptPage {
         // Au changement de mode, on repart d'une référence vierge : évite qu'une
         // valeur saisie/choisie dans l'autre mode ne reste collée dans le champ.
         this.form.controls.productReference.reset('');
+        this.preselectedLabel.set('');
       });
       this.categoriesApi.listCategories().pipe(takeUntilDestroyed()).subscribe((categories)=>{
         this.categories = categories;
       })
-      this.productsApi.listProducts(true).pipe(takeUntilDestroyed()).subscribe((page)=>{
-        this.products = page.content;
-      })
+
+      // Pré-sélection éventuelle depuis la fiche produit (?productId=…) : bascule
+      // en mode « produit existant » et renseigne la référence + le libellé.
+      const productId = this.route.snapshot.queryParamMap.get('productId');
+      if (productId) {
+        this.form.controls.isNewProduct.setValue(false);
+        this.productsApi.getProduct(productId).pipe(takeUntilDestroyed()).subscribe({
+          next: (product) => {
+            this.form.controls.productReference.setValue(product.reference);
+            this.preselectedLabel.set(product.name);
+          },
+          error: () => this.notificationService.error('Le produit pré-sélectionné est introuvable.'),
+        });
+      }
+  }
+
+  // Reporte la sélection du picker dans le contrôle productReference (le
+  // back-end réceptionne un produit existant par sa référence).
+  onProductSelected(product: ProductSearchResult): void {
+    this.form.controls.productReference.setValue(product.reference);
+    this.form.controls.productReference.markAsDirty();
+    this.form.controls.productReference.markAsTouched();
   }
 
   readonly form = new FormGroup({
