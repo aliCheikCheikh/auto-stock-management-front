@@ -12,11 +12,125 @@
 .sale-form {
   display: grid;
   gap: var(--space-5);
-  max-width: var(--content-md);
+  max-width: var(--content-lg);
   margin: 0 auto;
 }
 
-// champ quantité : limité en largeur, pas besoin de s'étirer sur toute la colonne
+.sale-grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1200px) {
+  .sale-grid {
+    grid-template-columns: 1fr 360px;
+  }
+}
+
+.sale-section,
+.cart-section {
+  background: var(--white);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.sale-section {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.sale-section .section-heading {
+  margin: 0 0 var(--space-3);
+}
+
+.sale-section .section-heading h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.cart-section {
+  min-width: 320px;
+}
+
+.cart-section__title {
+  margin: 0 0 var(--space-3);
+}
+
+.form-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.action-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.pending-warning {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--warning-400);
+  border-radius: var(--radius-md);
+  background: var(--warning-50);
+  color: var(--warning-900);
+}
+
+.pending-warning p {
+  margin: 0;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.cart-list {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3);
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+}
+
+.cart-item p {
+  margin: 0.25rem 0 0;
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.cart-item__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-content: end;
+}
+
+.cart-item__total {
+  font-weight: 700;
+}
+
 .field--quantity input {
   max-width: 180px;
 }
@@ -30,5 +144,9 @@
 @media (max-width: 600px) {
   .sale-page {
     padding: var(--space-4) var(--space-3);
+  }
+
+  .field--quantity input {
+    max-width: 120px;
   }
 }

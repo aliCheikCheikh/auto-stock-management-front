@@ -1,55 +1,112 @@
 <main class="sale-page">
-    <header class="page-header">
-        <div>
-            <p class="page-kicker">Ventes</p>
-            <h1>Enregistrer une vente</h1>
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Ventes</p>
+      <h1>Enregistrer une vente</h1>
+    </div>
+  </header>
+
+  <form class="sale-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit(fgd)">
+    <div class="sale-grid">
+      <section class="card sale-section" aria-labelledby="sale-section-title">
+        <div class="section-heading">
+          <h2 id="sale-section-title">Ajouter un article</h2>
         </div>
-    </header>
 
-    <form class="sale-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit(fgd)">
-        <section class="form-section" aria-labelledby="sale-section-title">
-            <div class="section-heading">
-                <h2 id="sale-section-title">Produit vendu</h2>
+        <div class="form-grid">
+          <div class="field field--wide">
+            <label for="sale-product">Produit</label>
+            <app-product-picker
+              inputId="sale-product"
+              [initialLabel]="preselectedLabel()"
+              (selected)="onProductSelected($event)"
+            />
+            @if (cart().length === 0 && ((form.controls['productId'].dirty && form.controls['productId'].touched) || fgd.submitted) && form.controls['productId'].invalid) {
+            <p class="field-error">Sélection d'un produit obligatoire.</p>
+            }
+          </div>
+
+          <div class="field field--quantity">
+            <label for="quantity">Quantité vendue</label>
+            <input id="quantity" type="number" formControlName="quantity" min="1" />
+            @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('required')) {
+            <p class="field-error">Quantité obligatoire.</p>
+            }
+            @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('min')) {
+            <p class="field-error">Quantité minimum : 1.</p>
+            }
+          </div>
+        </div>
+
+        
+
+        <div class="action-group">
+          <button
+            class="btn btn--secondary btn--lg"
+            type="button"
+            (click)="addToCart()"
+            [disabled]="isSubmitting"
+          >
+            Ajouter au panier
+          </button>
+          <button
+            class="btn btn--primary btn--lg"
+            type="submit"
+            [disabled]="isSubmitting"
+            [attr.aria-busy]="isSubmitting"
+          >
+            @if (isSubmitting) {
+            Enregistrement...
+            } @else {
+            Enregistrer la vente
+            }
+          </button>
+        </div>
+      </section>
+
+      <aside class="cart-section" aria-live="polite">
+        <div class="cart-section__title">
+          <h2>Panier</h2>
+          <p>{{ cart().length }} article(s)</p>
+        </div>
+
+        @if (cart().length === 0) {
+        <p class="cart-panel__empty">Ajoutez des produits au panier pour créer une vente multi-articles.</p>
+        } @else {
+        <ul class="cart-list">
+          @for (line of cart(); track line.productId) {
+          <li class="cart-item">
+            <div>
+              <strong>{{ line.productLabel }}</strong>
+              <p>Qté : {{ line.quantity }} × {{ line.unitPrice | money }}</p>
             </div>
-
-            <div class="form-grid">
-                <div class="field field--wide">
-                    <label for="sale-product">Produit</label>
-                    <app-product-picker
-                        inputId="sale-product"
-                        [initialLabel]="preselectedLabel()"
-                        (selected)="onProductSelected($event)" />
-                    @if ((form.controls['productId'].dirty && form.controls['productId'].touched || fgd.submitted) && form.controls['productId'].invalid) {
-                    <p class="field-error">Sélection d'un produit obligatoire.</p>
-                    }
-                </div>
-
-                <div class="field field--quantity">
-                    <label for="quantity">Quantité vendue</label>
-                    <input id="quantity" type="number" formControlName="quantity" min="1" />
-                    @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('required')) {
-                    <p class="field-error">Quantité obligatoire.</p>
-                    }
-                    @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('min')) {
-                    <p class="field-error">Quantité minimum : 1.</p>
-                    }
-                </div>
+            <div class="cart-item__actions">
+              <span class="cart-item__total">{{ line.subtotal | money }}</span>
+              <button type="button" class="btn btn--secondary" (click)="removeFromCart(line.productId)">
+                Retirer
+              </button>
             </div>
-        </section>
+          </li>
+          }
+        </ul>
 
-        <footer class="form-actions">
-            <button
-                class="btn btn--primary btn--lg"
-                type="submit"
-                [disabled]="isSubmitting"
-                [attr.aria-busy]="isSubmitting"
-            >
-                @if (isSubmitting) {
-                Enregistrement...
-                } @else {
-                Enregistrer la vente
-                }
-            </button>
-        </footer>
-    </form>
+        <div class="cart-total">
+          <span>Total panier</span>
+          <strong>{{ cartTotal() | money }}</strong>
+        </div>
+        }
+      </aside>
+    </div>
+  </form>
+
+  @if (confirmingPendingRemoval()) {
+  <app-confirm-dialog
+    title="Produit non ajouté"
+    message="Vous avez un produit sélectionné qui n’est pas dans le panier. Voulez-vous le retirer et poursuivre l’enregistrement avec les articles déjà ajoutés ?"
+    confirmLabel="Retirer"
+    cancelLabel="Annuler"
+    (confirmed)="confirmPendingRemoval()"
+    (cancelled)="confirmingPendingRemoval.set(false)"
+  />
+  }
 </main>
