@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { SalesApiService } from '../../data-access/sales-api.service';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateSaleRequest } from '../../models/sales.model';
@@ -7,13 +7,30 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
 import { ProductsApiService } from '../../../products/data-access/products-api.service';
 import { ProductSearchResult } from '../../../products/models/product.model';
+import { Money } from '../../../../core/api/money.model';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProductPicker } from '../../../products/ui/product-picker/product-picker';
+import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
+import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
+
+interface CartLine {
+  productId: string;
+  productLabel: string;
+  quantity: number;
+  unitPrice: Money;
+  subtotal: Money;
+}
+
+interface PendingProduct {
+  productId: string;
+  label: string;
+  unitPrice: Money;
+}
 
 @Component({
   selector: 'app-new-sale-page',
-  imports: [ReactiveFormsModule, ProductPicker],
+  imports: [ReactiveFormsModule, ProductPicker, ConfirmDialog, MoneyPipe],
   templateUrl: './new-sale-page.html',
   styleUrl: './new-sale-page.scss',
 })
@@ -30,18 +47,44 @@ export class NewSalePage implements OnInit {
 
   currentIdempotencyKey: string | null = null;
   isSubmitting = false;
+  readonly cart = signal<CartLine[]>([]);
+  readonly confirmingPendingRemoval = signal(false);
+
+  // Source de vérité unique : le produit sélectionné mais pas encore ajouté au
+  // panier. Renseigné par le picker ou la pré-sélection, remis à null à l'ajout.
+  readonly selectedProduct = signal<ProductSearchResult | null>(null);
+
+  readonly pendingProduct = computed<PendingProduct | null>(() => {
+    const selected = this.selectedProduct();
+    if (!selected) {
+      return null;
+    }
+    return {
+      productId: selected.productId,
+      label: selected.name,
+      unitPrice: selected.unitPrice,
+    };
+  });
+
+  readonly hasPendingProduct = computed(() => this.selectedProduct() !== null);
+
+  readonly cartTotal = computed<Money>(() => {
+    const totalAmount = this.cart().reduce((sum, line) => sum + Number(line.subtotal.amount), 0);
+    return {
+      amount: totalAmount.toString(),
+      currency: this.cart()[0]?.unitPrice.currency ?? 'XAF',
+    };
+  });
 
   readonly form = new FormGroup({
-    productId: new FormControl('',
-      {
-        nonNullable: true,
-        validators: [Validators.required]
-      }),
-    quantity: new FormControl(1,
-      {
-        nonNullable: true,
-        validators: [Validators.required, Validators.min(1)]
-      }),
+    productId: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    quantity: new FormControl(1, {
+      nonNullable: true,
+      validators: [Validators.required, Validators.min(1)],
+    }),
   });
 
   ngOnInit(): void {
@@ -50,14 +93,14 @@ export class NewSalePage implements OnInit {
       error: () => this.notificationService.error('Impossible de charger le contexte du magasin.'),
     });
 
-    // Pré-sélection éventuelle depuis la fiche produit (?productId=…) : on
-    // récupère le produit pour renseigner le contrôle et afficher son nom.
+    // Pré-sélection éventuelle depuis la fiche produit (?productId=…).
     const productId = this.route.snapshot.queryParamMap.get('productId');
     if (productId) {
       this.productsApi.getProduct(productId).subscribe({
         next: (product) => {
           this.form.controls.productId.setValue(product.productId);
           this.preselectedLabel.set(product.name);
+          this.selectedProduct.set(product);
         },
         error: () => this.notificationService.error('Le produit pré-sélectionné est introuvable.'),
       });
@@ -65,11 +108,58 @@ export class NewSalePage implements OnInit {
   }
 
   // Le picker n'est pas un contrôle de formulaire : on reporte le choix dans le
-  // contrôle productId (source de vérité pour la validation et la requête).
+  // contrôle productId (source de vérité pour la validation) et dans selectedProduct.
   onProductSelected(product: ProductSearchResult): void {
     this.form.controls.productId.setValue(product.productId);
     this.form.controls.productId.markAsDirty();
     this.form.controls.productId.markAsTouched();
+    this.selectedProduct.set(product);
+  }
+
+  addToCart(): void {
+    const selected = this.selectedProduct();
+    if (!selected) {
+      this.notificationService.error('Sélectionnez un produit avant d’ajouter au panier.');
+      return;
+    }
+
+    if (this.form.controls.quantity.invalid) {
+      this.form.controls.quantity.markAsDirty();
+      this.form.controls.quantity.markAsTouched();
+      return;
+    }
+
+    const quantity = this.form.controls.quantity.value;
+    const unitPrice = selected.unitPrice;
+
+    this.cart.update((lines) => {
+      const existingIndex = lines.findIndex((line) => line.productId === selected.productId);
+      if (existingIndex >= 0) {
+        const updated = [...lines];
+        const existingLine = updated[existingIndex];
+        const newQuantity = existingLine.quantity + quantity;
+        updated[existingIndex] = {
+          ...existingLine,
+          quantity: newQuantity,
+          subtotal: this.lineSubtotal(existingLine.unitPrice, newQuantity),
+        };
+        return updated;
+      }
+
+      return [...lines, {
+        productId: selected.productId,
+        productLabel: selected.name,
+        quantity,
+        unitPrice,
+        subtotal: this.lineSubtotal(unitPrice, quantity),
+      }];
+    });
+
+    this.resetProductSelection();
+  }
+
+  removeFromCart(productId: string): void {
+    this.cart.update((lines) => lines.filter((line) => line.productId !== productId));
   }
 
   onSubmit(formDirective: FormGroupDirective): void {
@@ -77,8 +167,15 @@ export class NewSalePage implements OnInit {
       return;
     }
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+    // Un produit sélectionné mais non ajouté : on demande confirmation plutôt
+    // que de valider une vente incomplète ou d'ignorer silencieusement le choix.
+    if (this.hasPendingProduct()) {
+      this.confirmingPendingRemoval.set(true);
+      return;
+    }
+
+    if (this.cart().length === 0) {
+      this.notificationService.error('Ajoutez au moins un article au panier avant de valider la vente.');
       return;
     }
 
@@ -88,16 +185,9 @@ export class NewSalePage implements OnInit {
       return;
     }
 
-    const formValue = this.form.getRawValue();
-
     const request: CreateSaleRequest = {
       shopId: context.shopId,
-      lines: [
-        {
-          productId: formValue.productId,
-          quantity: formValue.quantity,
-        }
-      ].filter((line) => line.quantity > 0)
+      lines: this.cart().map((line) => ({ productId: line.productId, quantity: line.quantity })),
     };
 
     if (this.currentIdempotencyKey === null) {
@@ -110,20 +200,41 @@ export class NewSalePage implements OnInit {
       next: () => {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
+        this.cart.set([]);
         this.notificationService.success('Vente enregistrée');
-        // resetForm() remet aussi submitted=false → aucune erreur ne reflashe.
         formDirective.resetForm({ productId: '', quantity: 1 });
-        // Vide aussi l'affichage du picker (non lié au FormGroup).
-        this.preselectedLabel.set('');
-        this.picker()?.reset();
+        this.resetProductSelection();
       },
       error: (error: unknown) => {
         this.isSubmitting = false;
         this.currentIdempotencyKey = null;
         this.notificationService.error(this.getSaleErrorMessage(error));
-      }
-    })
+      },
+    });
+  }
 
+  confirmPendingRemoval(): void {
+    this.clearPendingSelection();
+    this.confirmingPendingRemoval.set(false);
+  }
+
+  clearPendingSelection(): void {
+    this.resetProductSelection();
+  }
+
+  private resetProductSelection(): void {
+    this.form.controls.productId.setValue('');
+    this.form.controls.quantity.setValue(1);
+    this.preselectedLabel.set('');
+    this.selectedProduct.set(null);
+    this.picker()?.reset();
+  }
+
+  private lineSubtotal(unitPrice: Money, quantity: number): Money {
+    return {
+      amount: (Number(unitPrice.amount) * quantity).toString(),
+      currency: unitPrice.currency,
+    };
   }
 
   private getSaleErrorMessage(error: unknown): string {
@@ -150,9 +261,5 @@ export class NewSalePage implements OnInit {
     }
 
     return 'Impossible d\'enregistrer la vente pour le moment.';
-
-
   }
 }
-
-
