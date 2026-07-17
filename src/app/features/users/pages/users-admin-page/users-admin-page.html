@@ -142,12 +142,11 @@
           </div>
         }
       } @empty {
-        <div class="empty-state">
-          <p class="empty-state__title">Aucun compte vendeur</p>
-          <p class="empty-state__text">
-            Créez un premier compte vendeur avec le formulaire ci-dessus pour lui donner accès au comptoir.
-          </p>
-        </div>
+        <app-empty-state
+          illustration="sellers"
+          title="Aucun compte vendeur"
+          text="Créez un premier compte vendeur avec le formulaire ci-dessus pour lui donner accès au comptoir."
+        />
       }
     </div>
   </section>

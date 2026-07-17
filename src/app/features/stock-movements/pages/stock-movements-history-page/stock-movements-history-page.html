@@ -26,10 +26,11 @@
       </div>
 
       @if (movements().length === 0) {
-        <div class="empty-state">
-          <p class="empty-state__title">Aucun résultat</p>
-          <p class="empty-state__text">Aucun mouvement de stock n'a encore été enregistré.</p>
-        </div>
+        <app-empty-state
+          illustration="movements"
+          title="Aucun mouvement"
+          text="Réceptions, ventes et transferts alimenteront ce journal au fil de l'activité."
+        />
       } @else {
         <div class="data-table movements-table" role="table" aria-label="Historique des mouvements">
           <div class="data-table__header" role="row">

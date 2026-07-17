@@ -7,6 +7,7 @@ import { SessionContextService } from '../../../../core/session/session-context.
 import { PageMeta } from '../../../../core/api/page.model';
 import { Spinner } from '../../../../shared/ui/spinner/spinner';
 import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import { DatePipe } from '@angular/common';
 
 interface MovementRow {
@@ -22,7 +23,7 @@ interface MovementRow {
 
 @Component({
   selector: 'app-stock-movements-history-page',
-  imports: [DatePipe, Spinner, Pagination],
+  imports: [DatePipe, Spinner, Pagination, EmptyState],
   templateUrl: './stock-movements-history-page.html',
   styleUrl: './stock-movements-history-page.scss',
 })

@@ -50,7 +50,14 @@
           }
         </ul>
       } @else if (showEmpty()) {
-        <p class="product-picker__empty" role="status">Aucun produit trouvé</p>
+        <div class="product-picker__empty" role="status">
+          <svg class="product-picker__empty-icon" viewBox="0 0 32 32" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path class="es-stroke" d="M6 10h13M6 16h13M6 22h7" />
+            <circle class="es-accent" cx="21" cy="21" r="6" />
+            <path class="es-accent" d="M25.5 25.5 29 29" />
+          </svg>
+          <span>Aucun produit trouvé</span>
+        </div>
       }
     </div>
   }

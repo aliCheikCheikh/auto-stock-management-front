@@ -5,10 +5,11 @@ import { UsersApiService } from '../../data-access/users-api.service';
 import { User } from '../../models/user.model';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
+import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 
 @Component({
   selector: 'app-users-admin-page',
-  imports: [ReactiveFormsModule, ConfirmDialog],
+  imports: [ReactiveFormsModule, ConfirmDialog, EmptyState],
   templateUrl: './users-admin-page.html',
   styleUrl: './users-admin-page.scss',
 })

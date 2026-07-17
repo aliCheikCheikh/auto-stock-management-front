@@ -107,13 +107,13 @@
         }
       </article>
       } @empty {
-      <div class="empty-state">
-        <p class="empty-state__title">Aucun produit au catalogue</p>
-        <p class="empty-state__text">
-          Enregistrez une réception pour ajouter votre premier produit et démarrer le suivi de stock.
-        </p>
-        <a class="btn btn--primary empty-state__action" href="/stock-receipts/new">Nouvelle réception</a>
-      </div>
+      <app-empty-state
+        illustration="products"
+        title="Aucun produit au catalogue"
+        text="Enregistrez une réception pour ajouter votre premier produit et démarrer le suivi de stock."
+      >
+        <a class="btn btn--primary" href="/stock-receipts/new">Nouvelle réception</a>
+      </app-empty-state>
       }
     </div>
   </section>
