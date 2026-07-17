@@ -122,10 +122,10 @@
   <nav class="app-nav" aria-label="Navigation principale">
     <a routerLink="/products" routerLinkActive="is-active">Catalogue</a>
     <a routerLink="/stock-receipts/new" routerLinkActive="is-active">Réception stock</a>
-    <a routerLink="/sales/new" routerLinkActive="is-active">Ventes</a>
+    <a routerLink="/sales/new" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Ventes</a>
     <a routerLink="/stock-transfers/new" routerLinkActive="is-active">Transferts stock</a>
     <a routerLink="/stock-movements" routerLinkActive="is-active">Historique des mouvements</a>
-    <a routerLink="/sales" routerLinkActive="is-active">Historique des ventes</a>
+    <a routerLink="/sales" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Historique des ventes</a>
     @if (isOwner()) {
       <a routerLink="/admin/users" routerLinkActive="is-active">Administration</a>
     }
