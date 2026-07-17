@@ -31,6 +31,7 @@
   --warning-bg:     #FDF6EC;
   --warning-border: #F0DDBB;
   --danger-600:     #B91C1C;
+  --danger-700:     #991B1B; // hover bouton destructif
   --danger-bg:      #FDF1F1;
   --danger-border:  #F2CACA;
 
@@ -60,6 +61,7 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
+  --radius-pill: 999px; // boutons entièrement arrondis
 
   // ─── Bordures & ombres (bordure d'abord, ombre réservée aux overlays) ──────
   --border-subtle: 1px solid var(--gray-200);
@@ -158,6 +160,7 @@
   --warning-bg:     #2E2413;
   --warning-border: #45371C;
   --danger-600:     #F26B6B;
+  --danger-700:     #E05252; // hover bouton destructif (sombre)
   --danger-bg:      #3A1E22;
   --danger-border:  #5A2A2E;
 
@@ -258,9 +261,9 @@ a {
   justify-content: center;
   gap: var(--space-2);
   min-height: var(--control-h-sm);
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-5);
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill); // boutons « pilule » entièrement arrondis
   font-size: var(--text-base);
   font-weight: 600;
   line-height: 1.2;
@@ -299,7 +302,7 @@ a {
 }
 
 .btn--danger:hover {
-  background: #991B1B;
+  background: var(--danger-700);
 }
 
 .btn--ghost {
