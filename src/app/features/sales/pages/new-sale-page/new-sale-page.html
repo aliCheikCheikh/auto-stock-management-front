@@ -49,18 +49,6 @@
           >
             Ajouter au panier
           </button>
-          <button
-            class="btn btn--primary btn--lg"
-            type="submit"
-            [disabled]="isSubmitting"
-            [attr.aria-busy]="isSubmitting"
-          >
-            @if (isSubmitting) {
-            Enregistrement...
-            } @else {
-            Enregistrer la vente
-            }
-          </button>
         </div>
       </section>
 
@@ -70,35 +58,54 @@
           <p>{{ cart().length }} article(s)</p>
         </div>
 
-        @if (cart().length === 0) {
-        <app-empty-state
-          illustration="cart"
-          title="Panier vide"
-          text="Sélectionnez une pièce et ajoutez-la au panier pour composer une vente multi-articles."
-        />
-        } @else {
-        <ul class="cart-list">
-          @for (line of cart(); track line.productId) {
-          <li class="cart-item">
-            <div>
-              <strong>{{ line.productLabel }}</strong>
-              <p>Qté : {{ line.quantity }} × {{ line.unitPrice | money }}</p>
-            </div>
-            <div class="cart-item__actions">
-              <span class="cart-item__total">{{ line.subtotal | money }}</span>
-              <button type="button" class="btn btn--secondary" (click)="removeFromCart(line.productId)">
-                Retirer
-              </button>
-            </div>
-          </li>
-          }
-        </ul>
+        <div class="cart-body">
+          @if (cart().length === 0) {
+          <app-empty-state
+            illustration="cart"
+            title="Panier vide"
+            text="Ajoutez au moins un article pour pouvoir enregistrer la vente. Le panier reste vide tant qu’aucune pièce n’a été ajoutée."
+          />
+          } @else {
+          <ul class="cart-list">
+            @for (line of cart(); track line.productId) {
+            <li class="cart-item">
+              <div>
+                <strong>{{ line.productLabel }}</strong>
+                <p>Qté : {{ line.quantity }} × {{ line.unitPrice | money }}</p>
+              </div>
+              <div class="cart-item__actions">
+                <span class="cart-item__total">{{ line.subtotal | money }}</span>
+                <button type="button" class="btn btn--secondary" (click)="removeFromCart(line.productId)">
+                  Retirer
+                </button>
+              </div>
+            </li>
+            }
+          </ul>
 
-        <div class="cart-total">
-          <span>Total panier</span>
-          <strong>{{ cartTotal() | money }}</strong>
+          <div class="cart-total">
+            <span>Total panier</span>
+            <strong>{{ cartTotal() | money }}</strong>
+          </div>
+
+          @if (cart().length > 0) {
+          <div class="cart-actions">
+            <button
+              class="btn btn--primary btn--lg"
+              type="submit"
+              [disabled]="isSubmitting"
+              [attr.aria-busy]="isSubmitting"
+            >
+              @if (isSubmitting) {
+              Enregistrement...
+              } @else {
+              Enregistrer la vente
+              }
+            </button>
+          </div>
+          }
+          }
         </div>
-        }
       </aside>
     </div>
   </form>
