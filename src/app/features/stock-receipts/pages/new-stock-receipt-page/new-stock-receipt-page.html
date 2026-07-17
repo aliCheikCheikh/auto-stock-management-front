@@ -26,7 +26,13 @@
 
             <div class="form-grid form-grid--product">
                 <div class="field field--wide">
-                    <label for="productReference">Référence produit</label>
+                    <label for="productReference">
+                        @if (form.controls.isNewProduct.value) {
+                        Référence produit
+                        } @else {
+                        Référence ou nom du produit
+                        }
+                    </label>
                     @if (form.controls.isNewProduct.value) {
                     <input id="productReference" type="text" formControlName="productReference" autofocus />
                     } @else {
