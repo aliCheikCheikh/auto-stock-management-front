@@ -13,6 +13,7 @@ import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dial
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { Spinner } from '../../../../shared/ui/spinner/spinner';
+import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 
 const STOCK_LEVELS_PAGE_SIZE = 100;
 
@@ -33,7 +34,7 @@ interface ProductListItem {
 
 @Component({
   selector: 'app-products-page',
-  imports: [AsyncPipe, RouterLink, ConfirmDialog, MoneyPipe, Spinner],
+  imports: [AsyncPipe, RouterLink, ConfirmDialog, MoneyPipe, Spinner, EmptyState],
   templateUrl: './products-page.html',
   styleUrl: './products-page.scss',
 })

@@ -33,36 +33,24 @@
 }
 
 // ─── Colonnes du tableau des mouvements ──────────────────────────────────────
+// En-tête et lignes partagent EXACTEMENT la même grille → alignement parfait.
+// Largeurs équilibrées : colonnes texte à gauche, Quantité étroite et alignée
+// à droite (héritée de .data-table__num global), placée entre Produit et
+// Emplacement — jamais rejetée à l'extrême droite.
 .movements-table .data-table__header,
 .movements-table .data-table__row {
-  display: grid; 
-  align-items: center; // Aligne verticalement le texte et les badges
-  column-gap: var(--space-5, 24px); // Force l'espacement entre les colonnes
-
-  /* Nouvelle structure de grille pour régler l'entassement */
-  grid-template-columns: 
-    140px                  /* Date : largeur fixe minimum */
-    100px                  /* Type : largeur fixe (englobe le badge de 90px) */
-    minmax(0, 1.2fr)       /* Produit : prend l'espace central */
-    80px                   /* Quantité : largeur fixe pour aligner les chiffres */
-    minmax(0, 1fr);        /* Emplacement : prend l'espace restant */
+  grid-template-columns:
+    150px                    /* Date */
+    116px                    /* Type */
+    minmax(120px, 1fr)       /* Produit */
+    88px                     /* Quantité */
+    minmax(160px, 1.4fr);    /* Emplacement */
 }
 
 // ─── Alignements des colonnes ────────────────────────────────────────────────
 .movement-date {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-}
-
-/* Force l'alignement parfait de la colonne Quantité à droite */
-// ─── Alignements des colonnes ────────────────────────────────────────────────
-/* Centre le titre et les chiffres de la colonne Quantité */
-.data-table__num {
-  text-align: center;
-  display: flex;
-  justify-content: center; /* Centre horizontalement */
-  align-items: center;     /* Centre verticalement */
-  width: 100%;
 }
 
 .movement-product {
@@ -80,39 +68,33 @@
 }
 
 // ─── Badge de type (via typeKind) ────────────────────────────────────────────
+// Style sobre : petit point coloré + libellé neutre (même registre que
+// .stock-badge). Discret, dans la palette, contraste AA (texte neutre).
 .type-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center; // Centre le texte dans le badge
-  width: 90px;             // FORCE LA MEME TAILLE POUR TOUS LES BADGES
-  padding: 2px var(--space-2);
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-size: var(--text-xs);
-  font-weight: 600;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--gray-900);
   white-space: nowrap;
 }
 
-// Réception : entrée de stock → vert (succès).
-.type-badge--ENTRY {
-  background: var(--success-bg);
-  border-color: var(--success-border);
-  color: var(--success-600);
+.type-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--gray-400);
 }
 
-// Transfert : déplacement interne → ambre (avertissement neutre).
-.type-badge--TRANSFER {
-  background: var(--warning-bg);
-  border-color: var(--warning-border);
-  color: var(--warning-600);
-}
-
-// Vente : sortie « métier » → HARMONISÉ (Bleu pastel)
-.type-badge--EXIT {
-  background: var(--info-bg, #dbeafe); // Fond clair
-  border-color: var(--info-border, #bfdbfe); // Bordure discrète
-  color: var(--accent-600); // Texte coloré (plus lisible)
-}
+// Réception : entrée de stock → vert.
+.type-badge--ENTRY::before   { background: var(--success-600); }
+// Vente : sortie liée à une vente → accent.
+.type-badge--EXIT::before    { background: var(--accent-600); }
+// Transfert : déplacement interne → ambre.
+.type-badge--TRANSFER::before { background: var(--warning-600); }
 
 // ─── Responsive ──────────────────────────────────────────────────────────────
 @media (max-width: 900px) {

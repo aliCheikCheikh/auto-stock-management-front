@@ -23,6 +23,8 @@ export class App {
   // Lien « Administration » réservé à l'OWNER.
   readonly isOwner = computed(() => this.authService.currentUser()?.role === 'OWNER');
   readonly currentUser = this.authService.currentUser;
+  // Initiales dérivées de l'email du compte connecté (aucun appel backend).
+  readonly userInitials = computed(() => initialsFromEmail(this.currentUser()?.email));
   readonly userMenuOpen = signal(false);
   // Reflète l'état plein écran pour basculer l'icône du bouton.
   readonly isFullscreen = signal(false);
@@ -90,6 +92,19 @@ export class App {
       this.router.navigate(['/login'])
     })
   }
+}
+
+// Initiales à partir de l'email : 1 à 2 lettres tirées de la partie locale
+// (avant @), découpée sur . _ - + . Ex. « owner@… » → « O », « ali.k@… » → « AK ».
+function initialsFromEmail(email: string | undefined): string {
+  const local = (email ?? '').split('@')[0];
+  const parts = local.split(/[.\-_+]+/).filter(Boolean);
+  if (parts.length === 0) {
+    return '';
+  }
+  const first = parts[0]!.charAt(0);
+  const second = parts.length > 1 ? parts[1]!.charAt(0) : '';
+  return (first + second).toUpperCase();
 }
 
 // Vrai si l'utilisateur est en train de saisir (input/textarea/select ou zone

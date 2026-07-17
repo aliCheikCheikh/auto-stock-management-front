@@ -71,7 +71,11 @@
         </div>
 
         @if (cart().length === 0) {
-        <p class="cart-panel__empty">Ajoutez des produits au panier pour créer une vente multi-articles.</p>
+        <app-empty-state
+          illustration="cart"
+          title="Panier vide"
+          text="Sélectionnez une pièce et ajoutez-la au panier pour composer une vente multi-articles."
+        />
         } @else {
         <ul class="cart-list">
           @for (line of cart(); track line.productId) {

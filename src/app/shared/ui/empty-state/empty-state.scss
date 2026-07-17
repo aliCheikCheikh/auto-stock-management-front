@@ -1,0 +1,29 @@
+// Le gabarit (.empty-state, __title, __text, __action) vient du design system
+// global (styles.scss). Ce composant n'ajoute que l'illustration et ses teintes.
+:host {
+  display: block;
+}
+
+.empty-state__illustration {
+  margin-bottom: var(--space-1);
+}
+
+.empty-state__illustration svg {
+  width: 132px;
+  height: auto;
+}
+
+// Deux tons tirés des tokens : structure neutre + rappel d'accent. Suivent le
+// thème clair/sombre automatiquement (les tokens sont redéfinis en sombre).
+.es-stroke {
+  stroke: var(--gray-300);
+}
+
+.es-accent {
+  stroke: var(--accent-600);
+}
+
+// L'action ne réserve d'espace que si un bouton est projeté.
+.empty-state__action:empty {
+  display: none;
+}

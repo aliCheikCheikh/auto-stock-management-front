@@ -1,0 +1,6 @@
+.not-found-page {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - var(--nav-height) * 2);
+  padding: var(--space-9) var(--space-6);
+}

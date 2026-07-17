@@ -31,10 +31,13 @@
       </div>
 
       @if (sales().length === 0) {
-        <div class="empty-state">
-          <p class="empty-state__title">Aucun résultat</p>
-          <p class="empty-state__text">Aucune vente n'a encore été enregistrée.</p>
-        </div>
+        <app-empty-state
+          illustration="sales"
+          title="Aucune vente"
+          text="Aucune vente n'a encore été enregistrée. La première apparaîtra ici."
+        >
+          <a class="btn btn--primary" href="/sales/new">Nouvelle vente</a>
+        </app-empty-state>
       } @else {
         <div class="sales-summary">
           <div class="sales-summary__header">

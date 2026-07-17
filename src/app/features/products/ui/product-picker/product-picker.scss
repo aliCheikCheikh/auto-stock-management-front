@@ -184,10 +184,28 @@
 
 .product-picker__empty {
   margin: 0;
-  padding: var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-3);
   color: var(--gray-500);
   font-size: var(--text-base);
   text-align: center;
+}
+
+.product-picker__empty-icon {
+  width: 34px;
+  height: 34px;
+}
+
+// Illustration compacte deux tons, alignée sur les tokens (suit le thème).
+.product-picker__empty-icon .es-stroke {
+  stroke: var(--gray-300);
+}
+
+.product-picker__empty-icon .es-accent {
+  stroke: var(--accent-600);
 }
 
 @media (max-width: 900px) {

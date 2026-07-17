@@ -7,6 +7,7 @@ import { Money } from '../../../../core/api/money.model';
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
 import { Spinner } from '../../../../shared/ui/spinner/spinner';
 import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import { DatePipe } from '@angular/common';
 
 interface SaleLineRow {
@@ -25,7 +26,7 @@ interface SaleRow {
 
 @Component({
   selector: 'app-sales-history-page',
-  imports: [MoneyPipe, DatePipe, Spinner, Pagination],
+  imports: [MoneyPipe, DatePipe, Spinner, Pagination, EmptyState],
   templateUrl: './sales-history-page.html',
   styleUrl: './sales-history-page.scss',
 })
