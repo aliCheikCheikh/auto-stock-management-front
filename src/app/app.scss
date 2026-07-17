@@ -25,6 +25,14 @@
   text-decoration: none;
 }
 
+.app-topbar app-product-search {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: center;
+  min-width: 0;
+  margin: 0 var(--space-4) 0 calc(var(--space-6) + 48px);
+}
+
 // Rangée basse de navigation : même fond navy, séparée du bandeau par un filet
 .app-nav {
   display: flex;

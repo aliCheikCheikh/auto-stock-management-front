@@ -58,7 +58,8 @@
 
 // ─── Variante 'navbar' : champ translucide lisible sur navy ──────────────────
 :host([data-variant='navbar']) .product-picker {
-  max-width: 420px;
+  width: 100%;
+  max-width: min(900px, 100%);
   margin: 0 auto;
 }
 
@@ -67,10 +68,13 @@
 }
 
 :host([data-variant='navbar']) .product-picker__input {
-  min-height: 40px;
+  min-height: 42px;
   border-color: rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.12);
   color: var(--on-brand);
+  border-radius: var(--radius-pill);
+  padding-left: calc(var(--space-8) + 2px);
+  padding-right: var(--space-4);
 }
 
 :host([data-variant='navbar']) .product-picker__input::placeholder {
