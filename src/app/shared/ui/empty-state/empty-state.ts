@@ -6,6 +6,7 @@ export type EmptyIllustration =
   | 'movements'
   | 'sellers'
   | 'search'
+  | 'cart'
   | 'error';
 
 /**
