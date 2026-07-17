@@ -209,7 +209,8 @@
   transform: rotate(180deg);
 }
 
-// Avatar rond générique (lettre du rôle P/V ou icône personne)
+// Avatar rond : initiales de l'email sur pastille accent (blanc AA), ou icône
+// personne en repli si l'email est indisponible.
 .app-user__avatar {
   display: grid;
   place-items: center;
@@ -217,10 +218,11 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--accent-600);
   color: var(--on-brand);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: 700;
+  letter-spacing: 0.02em;
   line-height: 1;
 }
 
