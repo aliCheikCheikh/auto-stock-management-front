@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProductPicker } from '../../../products/ui/product-picker/product-picker';
 import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
+import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 
 interface CartLine {
   productId: string;
@@ -30,7 +31,7 @@ interface PendingProduct {
 
 @Component({
   selector: 'app-new-sale-page',
-  imports: [ReactiveFormsModule, ProductPicker, ConfirmDialog, MoneyPipe],
+  imports: [ReactiveFormsModule, ProductPicker, ConfirmDialog, MoneyPipe, EmptyState],
   templateUrl: './new-sale-page.html',
   styleUrl: './new-sale-page.scss',
 })
