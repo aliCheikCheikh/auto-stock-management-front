@@ -516,6 +516,11 @@ select option[disabled] {
   text-align: right;
 }
 
+.data-grid th.data-grid__center,
+.data-grid td.data-grid__center {
+  text-align: center !important;
+}
+
 // ─── États de liste : chargement / vide / erreur ─────────────────────────────
 // Contenu centré : accueille aussi bien un message qu'un <app-spinner>.
 .state-block {

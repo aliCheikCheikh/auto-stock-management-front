@@ -87,15 +87,15 @@
               @for (sale of sales(); track sale.saleId) {
                 @for (line of sale.lines; track $index; let isFirst = $first) {
                 <tr>
-                  @if (isFirst) {
-                  <td class="sales-table__sale" [attr.rowspan]="sale.lines.length">
+                  <td class="sales-table__sale">
+                    @if (isFirst) {
                     <span class="sale__date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</span>
                     <span class="sale__count">{{ sale.lines.length }} article(s)</span>
                     <strong class="sale__total">{{ sale.total | money }}</strong>
+                    }
                   </td>
-                  }
                   <td class="sale__product">{{ line.productName }}</td>
-                  <td class="data-grid__num">{{ line.quantity }}</td>
+                  <td class="data-grid__center">{{ line.quantity }}</td>
                   <td class="data-grid__num">{{ line.unitPrice | money }}</td>
                   <td class="data-grid__num">{{ line.subtotal | money }}</td>
                 </tr>

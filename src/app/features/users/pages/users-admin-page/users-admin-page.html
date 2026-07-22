@@ -96,14 +96,14 @@
             <tr>
               <td class="users-table__email">{{ user.email }}</td>
 
-              <td>
+              <td class="data-grid__center">
                 @switch (user.role) {
                   @case ('OWNER') { Propriétaire }
                   @case ('SELLER') { Vendeur }
                 }
               </td>
 
-              <td>
+              <td class="data-grid__center">
                 @if (!user.active) {
                   <span class="status-badge status-badge--off">Désactivé</span>
                 } @else if (user.passwordTemporary) {
