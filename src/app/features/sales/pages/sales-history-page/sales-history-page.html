@@ -34,6 +34,7 @@
         <div class="data-grid-scroll">
           <table class="data-grid sales-table" aria-label="Historique détaillé des ventes, regroupé par vente">
             <colgroup>
+              <col class="sales-table__sale-col" />
               <col class="sales-table__product-col" />
               <col class="sales-table__quantity-col" />
               <col class="sales-table__price-col" />
@@ -41,6 +42,7 @@
             </colgroup>
             <thead>
               <tr>
+                <th scope="col">Vente</th>
                 <th scope="col">Produit</th>
                 <th scope="col" class="data-grid__num">Quantité</th>
                 <th scope="col" class="data-grid__num">PU</th>
@@ -49,25 +51,24 @@
             </thead>
             @for (sale of sales(); track sale.saleId) {
               <tbody class="sales-table__group">
-                <tr class="sales-table__group-heading">
-                  <th scope="rowgroup" colspan="4">
-                    <div class="sale-group__heading">
-                      <div class="sale-group__details">
-                        <time class="sale-group__date" [attr.datetime]="sale.date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</time>
-                        <span class="sale-group__count">{{ sale.lines.length }} article(s)</span>
-                      </div>
-                      <strong class="sale-group__total">{{ sale.total | money }}</strong>
-                    </div>
-                  </th>
-                </tr>
-                @for (line of sale.lines; track $index) {
+                @for (line of sale.lines; track $index; let isFirst = $first) {
                 <tr>
+                  @if (isFirst) {
+                  <th class="sales-table__sale" scope="rowgroup" [attr.rowspan]="sale.lines.length + 1">
+                    <time class="sale-group__date" [attr.datetime]="sale.date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</time>
+                    <span class="sale-group__count">{{ sale.lines.length }} article(s)</span>
+                  </th>
+                  }
                   <td class="sales-table__product">{{ line.productName }}</td>
                   <td class="data-grid__center">{{ line.quantity }}</td>
                   <td class="data-grid__num">{{ line.unitPrice | money }}</td>
                   <td class="data-grid__num">{{ line.subtotal | money }}</td>
                 </tr>
                 }
+                <tr class="sales-table__group-total">
+                  <td class="sales-table__total-label" colspan="3">Total de la vente</td>
+                  <td class="sales-table__total-amount data-grid__num">{{ sale.total | money }}</td>
+                </tr>
               </tbody>
             }
           </table>
