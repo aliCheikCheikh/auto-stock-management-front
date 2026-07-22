@@ -1,6 +1,6 @@
-// Page historique des ventes — cohérente avec l'historique des mouvements :
-// un conteneur .card unique, une bande récap sobre en tête, puis les ventes
-// listées et séparées par un filet. Tokens du design system uniquement.
+// Page historique des ventes — une carte de données sobre, structurée par
+// vente afin de conserver l'association immédiate entre chaque achat et ses
+// articles. Tokens du design system uniquement.
 .history-page {
   min-height: calc(100vh - var(--nav-height));
   padding: var(--space-6) var(--space-7) var(--space-8);
@@ -26,35 +26,18 @@
 
 .page-header__content {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
   flex-wrap: wrap;
 }
 
-.page-header__meta {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-}
-
 .history-count {
-  margin: 0;
-  color: var(--gray-900);
-  font-size: var(--text-base);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.history-separator {
-  color: var(--gray-300);
-}
-
-.history-total {
   margin: 0;
   color: var(--gray-500);
   font-size: var(--text-sm);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
 .history-error {
@@ -68,127 +51,86 @@
   justify-items: start;
 }
 
-// ─── Bande récapitulative (en tête de carte) ─────────────────────────────────
-.sales-summary {
-  padding: var(--space-5) var(--space-6);
-  border-bottom: var(--border-subtle);
+// ─── Grille des ventes ───────────────────────────────────────────────────────
+// Chaque <tbody> représente une vente : l'en-tête de groupe porte ses repères
+// (date, nombre d'articles, total), puis ses lignes restent immédiatement dessous.
+.sales-table {
+  min-width: 680px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.sales-table__product-col { width: 46%; }
+.sales-table__quantity-col { width: 14%; }
+.sales-table__price-col { width: 20%; }
+.sales-table__subtotal-col { width: 20%; }
+
+.sales-table__group + .sales-table__group .sales-table__group-heading th {
+  border-top: var(--space-2) solid var(--gray-0);
+}
+
+.sales-table__group-heading th {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--gray-300);
+  background: var(--gray-50);
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+}
+
+.sales-table__group-heading:hover th {
   background: var(--gray-50);
 }
 
-.sales-summary__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-5);
-  flex-wrap: wrap;
-}
-
-.sales-summary__label-group {
-  display: grid;
-  gap: var(--space-1);
-}
-
-.sales-summary__label,
-.sales-summary__total-label {
-  color: var(--gray-500);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-}
-
-.sales-summary__count {
-  margin: 0;
-  color: var(--gray-900);
-  font-size: var(--text-base);
-  font-weight: 600;
-}
-
-.sales-summary__total {
-  display: grid;
-  gap: var(--space-1);
-  text-align: right;
-}
-
-.sales-summary__total-amount {
-  color: var(--gray-900);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.sales-summary__separator {
-  height: 1px;
-  background: var(--gray-200);
-  margin: var(--space-4) 0;
-}
-
-.sales-summary__days {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.sales-summary__day {
+.sale-group__heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.sale-group__details {
+  display: flex;
+  align-items: baseline;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  background: var(--gray-0);
-  border: var(--border-subtle);
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
-  color: var(--gray-500);
+  min-width: 0;
 }
 
-.sales-summary__day strong {
-  color: var(--gray-900);
-  font-variant-numeric: tabular-nums;
-}
-
-// ─── Grille des ventes ───────────────────────────────────────────────────────
-.sales-table {
-  min-width: 760px;
-}
-
-.sales-table__sale-col { width: 22%; }
-.sales-table__product-col { width: 34%; }
-.sales-table__quantity-col { width: 12%; }
-.sales-table__price-col { width: 16%; }
-.sales-table__subtotal-col { width: 16%; }
-
-.sales-table__sale {
-  vertical-align: top !important;
-}
-
-.sale__date {
-  display: block;
-  color: var(--gray-900);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-.sale__count {
-  display: block;
-  margin-top: var(--space-1);
-  color: var(--gray-500);
-  font-size: var(--text-xs);
-}
-
-.sale__product {
-  overflow-wrap: anywhere;
-  color: var(--gray-900);
-  font-weight: 400;
-}
-
-.sale__total {
-  display: block;
-  margin-top: var(--space-2);
+.sale-group__date {
   color: var(--gray-900);
   font-size: var(--text-sm);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.sale-group__count {
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.sale-group__count::before {
+  content: '·';
+  margin-right: var(--space-3);
+  color: var(--gray-300);
+}
+
+.sale-group__total {
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.sales-table__product {
+  overflow-wrap: anywhere;
+  color: var(--gray-900);
+  font-weight: 400;
 }
 
 // ─── Responsive ──────────────────────────────────────────────────────────────
@@ -203,11 +145,7 @@
     padding: var(--space-4) var(--space-3);
   }
 
-  .sales-summary {
-    padding: var(--space-4);
-  }
-
   .sales-table {
-    min-width: 760px;
+    min-width: 680px;
   }
 }
