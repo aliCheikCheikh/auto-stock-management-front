@@ -475,6 +475,12 @@ select option[disabled] {
   text-transform: uppercase;
 }
 
+// Les séparateurs restent réservés aux libellés de colonnes : ils structurent
+// la lecture sans transformer le corps de la grille en quadrillage.
+.data-grid thead th:not(:last-child) {
+  border-right: 1px solid var(--gray-200);
+}
+
 .data-grid td {
   border-bottom: var(--border-subtle);
   color: var(--gray-900);
@@ -499,13 +505,15 @@ select option[disabled] {
   cursor: pointer;
 }
 
-.data-grid__num {
+.data-grid th.data-grid__num,
+.data-grid td.data-grid__num {
   font-variant-numeric: tabular-nums;
   text-align: right !important;
   white-space: nowrap;
 }
 
-.data-grid__actions {
+.data-grid th.data-grid__actions,
+.data-grid td.data-grid__actions {
   text-align: right;
 }
 
