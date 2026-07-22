@@ -131,10 +131,10 @@
   overflow-y: auto;
 }
 
-// Option : nom (principal) + référence (secondaire) à gauche, prix à droite
+// Option : nom et référence à gauche, prix à droite.
 .product-picker__option {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 0 var(--space-3);
   padding: var(--space-2) var(--space-3);
@@ -143,7 +143,6 @@
   transition: background 0.1s;
 }
 
-// Surlignage (survol + navigation clavier) : même repère visuel
 .product-picker__option:hover,
 .product-picker__option.is-active {
   background: var(--gray-100);
@@ -165,8 +164,7 @@
   overflow-wrap: anywhere; // coupe une chaîne très longue sans espace
 }
 
-// Référence (unique) : toujours visible en entier, jamais tronquée. Sur sa
-// propre ligne, en secondaire ; se replie si besoin plutôt que de se couper.
+// Référence : secondaire, sur sa propre ligne pour rester lisible.
 .product-picker__ref {
   grid-column: 1;
   grid-row: 2;

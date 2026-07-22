@@ -1,5 +1,5 @@
 // ─── Écran admin — gestion des comptes ───────────────────────────────────────
-// Réutilise .card / .section-heading / .field / .btn / .data-table du design
+// Réutilise .card / .section-heading / .field / .btn / .data-grid du design
 // system. Accent marque navy porté par le chrome ; ici surfaces claires.
 // Même gabarit de page que les écrans de formulaire (réception, vente, édition) :
 // canvas pleine largeur + contenu centré à --content-md.
@@ -36,12 +36,17 @@
 }
 
 // ─── Tableau des comptes ─────────────────────────────────────────────────────
-.users-table__row {
-  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.6fr);
+.users-table {
+  min-width: 720px;
 }
 
+.users-table__email-col { width: 36%; }
+.users-table__role-col { width: 16%; }
+.users-table__status-col { width: 18%; }
+.users-table__actions-col { width: 30%; }
+
 .users-table__email {
-  font-weight: 500;
+  font-weight: 400;
   color: var(--gray-900);
   overflow-wrap: anywhere;
 }
@@ -86,9 +91,12 @@
 
 // ─── Formulaire de réinitialisation en ligne ─────────────────────────────────
 .reset-inline {
+  background: var(--gray-50);
+}
+
+.reset-inline td {
   padding: var(--space-4) var(--space-5) var(--space-5);
   border-top: var(--border-subtle);
-  background: var(--gray-50);
 }
 
 .reset-inline__form {
@@ -121,13 +129,8 @@
     padding: var(--space-5);
   }
 
-  // Tableau compacté (colonnes plus serrées) mais toutes les actions restent
-  // accessibles : les boutons passent à la ligne via flex-wrap.
-  .users-table__row {
-    grid-template-columns: minmax(0, 1.8fr) minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1.4fr);
-    gap: var(--space-3);
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
+  .users-table {
+    min-width: 720px;
   }
 
   .reset-inline__form {

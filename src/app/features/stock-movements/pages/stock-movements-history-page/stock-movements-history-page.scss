@@ -33,19 +33,15 @@
 }
 
 // ─── Colonnes du tableau des mouvements ──────────────────────────────────────
-// En-tête et lignes partagent EXACTEMENT la même grille → alignement parfait.
-// Largeurs équilibrées : colonnes texte à gauche, Quantité étroite et alignée
-// à droite (héritée de .data-table__num global), placée entre Produit et
-// Emplacement — jamais rejetée à l'extrême droite.
-.movements-table .data-table__header,
-.movements-table .data-table__row {
-  grid-template-columns:
-    150px                    /* Date */
-    116px                    /* Type */
-    minmax(120px, 1fr)       /* Produit */
-    88px                     /* Quantité */
-    minmax(160px, 1.4fr);    /* Emplacement */
+.movements-table {
+  min-width: 720px;
 }
+
+.movements-table__date-col { width: 17%; }
+.movements-table__type-col { width: 14%; }
+.movements-table__product-col { width: 26%; }
+.movements-table__quantity-col { width: 12%; }
+.movements-table__location-col { width: 31%; }
 
 // ─── Alignements des colonnes ────────────────────────────────────────────────
 .movement-date {
@@ -55,6 +51,10 @@
 
 .movement-product {
   overflow-wrap: anywhere;
+}
+
+.movement-type {
+  padding-inline: var(--space-3) !important;
 }
 
 .movement-location {
@@ -71,13 +71,21 @@
 // Style sobre : petit point coloré + libellé neutre (même registre que
 // .stock-badge). Discret, dans la palette, contraste AA (texte neutre).
 .type-badge {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr);
   align-items: center;
-  gap: var(--space-2);
+  column-gap: var(--space-2);
+  inline-size: min(16ch, 100%);
+  margin-inline: auto;
   font-size: var(--text-sm);
   font-weight: 500;
   color: var(--gray-900);
+  text-align: left;
   white-space: nowrap;
+}
+
+.type-badge__label {
+  text-align: left;
 }
 
 .type-badge::before {
@@ -104,12 +112,7 @@
 
   // Le tableau garde ses colonnes et défile horizontalement si besoin.
   .movements-table {
-    overflow-x: auto;
-  }
-
-  .movements-table .data-table__header,
-  .movements-table .data-table__row {
-    min-width: 640px;
+    min-width: 720px;
   }
 }
 

@@ -77,62 +77,26 @@
 
 // ─── Tableau emplacements ─────────────────────────────────────────────────────
 .location-table {
-  width: 100%;
-  overflow: hidden;
+  min-width: 420px;
 }
 
-.location-table__header,
-.location-table__row {
-  display: grid;
-  grid-template-columns: 1fr 100px;
-  gap: 24px;
-  align-items: center;
-  padding: 0 24px;
-}
-
-.location-table__header {
-  min-height: 36px;
-  background: var(--color-canvas-soft);
-  color: var(--color-muted);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.location-table__header span:last-child {
-  text-align: right;
-  justify-self: end;
-}
-
-.location-table__row {
-  min-height: 56px;
-  border-top: 1px solid var(--color-border);
-}
-
-.location-table__row:first-of-type {
-  border-top: 0;
-}
+.location-table__name-col { width: 76%; }
+.location-table__quantity-col { width: 24%; }
 
 .location-name {
-  font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-ink);
 }
 
 .location-quantity {
-  font-size: 20px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--color-ink);
-  text-align: right;
-  justify-self: end;
+  font-variant-numeric: tabular-nums;
 }
 
 .location-empty {
-  padding: 24px;
+  padding: var(--space-5) !important;
   color: var(--color-muted);
-  font-size: 14px;
 }
 
 // ─── Barre d'actions (fiche = hub) ───────────────────────────────────────────
@@ -208,10 +172,7 @@
     font-size: 20px;
   }
 
-  .location-table__header,
-  .location-table__row {
-    grid-template-columns: 1fr 72px;
-    gap: 16px;
-    padding: 0 16px;
+  .location-table {
+    min-width: 420px;
   }
 }

@@ -68,87 +68,104 @@
       <h2 id="list-title">Comptes existants</h2>
     </div>
 
-    <div class="data-table users-table" role="table" aria-labelledby="list-title">
-      <div class="data-table__header users-table__row" role="row">
-        <span role="columnheader">Email</span>
-        <span role="columnheader">Rôle</span>
-        <span role="columnheader">Statut</span>
-        <span role="columnheader">Actions</span>
-      </div>
+    @if (users().length === 0) {
+      <app-empty-state
+        illustration="sellers"
+        title="Aucun compte vendeur"
+        text="Créez un premier compte vendeur avec le formulaire ci-dessus pour lui donner accès au comptoir."
+      />
+    } @else {
+      <div class="data-grid-scroll">
+        <table class="data-grid users-table" aria-labelledby="list-title">
+          <colgroup>
+            <col class="users-table__email-col" />
+            <col class="users-table__role-col" />
+            <col class="users-table__status-col" />
+            <col class="users-table__actions-col" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">Email</th>
+              <th scope="col">Rôle</th>
+              <th scope="col">Statut</th>
+              <th scope="col" class="data-grid__actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track user.userId) {
+            <tr>
+              <td class="users-table__email">{{ user.email }}</td>
 
-      @for (user of users(); track user.userId) {
-        <div class="data-table__row users-table__row" role="row">
-          <span class="users-table__email" role="cell">{{ user.email }}</span>
-
-          <span role="cell">
-            @switch (user.role) {
-              @case ('OWNER') { Propriétaire }
-              @case ('SELLER') { Vendeur }
-            }
-          </span>
-
-          <span role="cell">
-            @if (!user.active) {
-              <span class="status-badge status-badge--off">Désactivé</span>
-            } @else if (user.passwordTemporary) {
-              <span class="status-badge status-badge--pending">En attente</span>
-            } @else {
-              <span class="status-badge status-badge--active">Actif</span>
-            }
-          </span>
-
-          <span class="users-table__actions" role="cell">
-            @if (user.role === 'SELLER') {
-              @if (user.active) {
-                <button class="btn btn--secondary btn--sm" type="button" (click)="startReset(user)">
-                  Réinitialiser
-                </button>
-                <button class="btn btn--danger btn--sm" type="button" (click)="askDeactivation(user)">
-                  Désactiver
-                </button>
-              } @else {
-                <span class="users-table__muted">—</span>
-              }
-            } @else {
-              <span class="users-table__muted">—</span>
-            }
-          </span>
-        </div>
-
-        @if (resettingUserId() === user.userId) {
-          <div class="reset-inline">
-            <form class="reset-inline__form" [formGroup]="resetForm" (ngSubmit)="submitReset()" novalidate>
-              <div class="field reset-inline__field">
-                <label [attr.for]="'reset-' + user.userId">
-                  Nouveau mot de passe temporaire — {{ user.email }}
-                </label>
-                <input
-                  [id]="'reset-' + user.userId"
-                  type="text"
-                  formControlName="temporaryPassword"
-                  autocomplete="off"
-                  [attr.aria-invalid]="resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid"
-                />
-                @if (resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid) {
-                  <p class="field-error">Au moins 8 caractères.</p>
+              <td class="data-grid__center">
+                @switch (user.role) {
+                  @case ('OWNER') { Propriétaire }
+                  @case ('SELLER') { Vendeur }
                 }
-              </div>
+              </td>
 
-              <div class="reset-inline__actions">
-                <button class="btn btn--primary btn--sm" type="submit">Valider</button>
-                <button class="btn btn--ghost btn--sm" type="button" (click)="cancelReset()">Annuler</button>
-              </div>
-            </form>
-          </div>
-        }
-      } @empty {
-        <app-empty-state
-          illustration="sellers"
-          title="Aucun compte vendeur"
-          text="Créez un premier compte vendeur avec le formulaire ci-dessus pour lui donner accès au comptoir."
-        />
-      }
-    </div>
+              <td class="data-grid__center">
+                @if (!user.active) {
+                  <span class="status-badge status-badge--off">Désactivé</span>
+                } @else if (user.passwordTemporary) {
+                  <span class="status-badge status-badge--pending">En attente</span>
+                } @else {
+                  <span class="status-badge status-badge--active">Actif</span>
+                }
+              </td>
+
+              <td class="data-grid__actions">
+                <div class="users-table__actions">
+                  @if (user.role === 'SELLER') {
+                    @if (user.active) {
+                      <button class="btn btn--secondary btn--sm" type="button" (click)="startReset(user)">
+                        Réinitialiser
+                      </button>
+                      <button class="btn btn--danger btn--sm" type="button" (click)="askDeactivation(user)">
+                        Désactiver
+                      </button>
+                    } @else {
+                      <span class="users-table__muted">—</span>
+                    }
+                  } @else {
+                    <span class="users-table__muted">—</span>
+                  }
+                </div>
+              </td>
+            </tr>
+
+            @if (resettingUserId() === user.userId) {
+            <tr class="reset-inline">
+              <td colspan="4">
+                <form class="reset-inline__form" [formGroup]="resetForm" (ngSubmit)="submitReset()" novalidate>
+                  <div class="field reset-inline__field">
+                    <label [attr.for]="'reset-' + user.userId">
+                      Nouveau mot de passe temporaire — {{ user.email }}
+                    </label>
+                    <input
+                      [id]="'reset-' + user.userId"
+                      type="text"
+                      formControlName="temporaryPassword"
+                      autocomplete="off"
+                      [attr.aria-invalid]="resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid"
+                    />
+                    @if (resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid) {
+                      <p class="field-error">Au moins 8 caractères.</p>
+                    }
+                  </div>
+
+                  <div class="reset-inline__actions">
+                    <button class="btn btn--primary btn--sm" type="submit">Valider</button>
+                    <button class="btn btn--ghost btn--sm" type="button" (click)="cancelReset()">Annuler</button>
+                  </div>
+                </form>
+              </td>
+            </tr>
+            }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </section>
   </div>
 

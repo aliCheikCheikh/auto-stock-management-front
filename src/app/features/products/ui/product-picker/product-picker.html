@@ -33,20 +33,20 @@
           aria-label="Résultats de recherche"
         >
           @for (item of results(); track item.productId; let i = $index) {
-            <li
-              class="product-picker__option"
-              [class.is-active]="i === activeIndex()"
-              id="product-picker-option-{{ i }}"
-              role="option"
-              [attr.aria-selected]="i === activeIndex()"
-              (mousedown)="$event.preventDefault()"
-              (mouseenter)="activeIndex.set(i)"
-              (click)="select(item)"
-            >
-              <span class="product-picker__name">{{ item.name }}</span>
-              <span class="product-picker__ref">{{ item.reference }}</span>
-              <span class="product-picker__price">{{ item.unitPrice | money }}</span>
-            </li>
+          <li
+            class="product-picker__option"
+            [class.is-active]="i === activeIndex()"
+            id="product-picker-option-{{ i }}"
+            role="option"
+            [attr.aria-selected]="i === activeIndex()"
+            (mousedown)="$event.preventDefault()"
+            (mouseenter)="activeIndex.set(i)"
+            (click)="select(item)"
+          >
+            <span class="product-picker__name">{{ item.name }}</span>
+            <span class="product-picker__ref">{{ item.reference }}</span>
+            <span class="product-picker__price">{{ item.unitPrice | money }}</span>
+          </li>
           }
         </ul>
       } @else if (showEmpty()) {

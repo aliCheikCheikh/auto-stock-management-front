@@ -3,14 +3,10 @@
     <div class="page-header__content">
       <div>
         <p class="page-kicker">Ventes</p>
-        <h1>Historique des ventes</h1>
+        <h1 id="sales-history-title">Historique des ventes</h1>
       </div>
       @if (state() === 'success') {
-        <div class="page-header__meta">
-          <p class="history-count">{{ pageDisplayCount() }} ventes</p>
-          <span class="history-separator">·</span>
-          <p class="history-total">{{ page().totalElements }} au total</p>
-        </div>
+        <p class="history-count">{{ pageDisplayCount() }} ventes affichées</p>
       }
     </div>
   </header>
@@ -26,10 +22,6 @@
     </section>
   } @else {
     <section class="card history-section" aria-labelledby="sales-history-title">
-      <div class="section-heading">
-        <h2 id="sales-history-title">Historique des ventes</h2>
-      </div>
-
       @if (sales().length === 0) {
         <app-empty-state
           illustration="sales"
@@ -39,64 +31,48 @@
           <a class="btn btn--primary" href="/sales/new">Nouvelle vente</a>
         </app-empty-state>
       } @else {
-        <div class="sales-summary">
-          <div class="sales-summary__header">
-            <div class="sales-summary__label-group">
-              <span class="sales-summary__label">Total de la page</span>
-              <p class="sales-summary__count">{{ pageSummary().salesCount }} vente(s) · {{ pageSummary().articlesCount }} article(s)</p>
-            </div>
-            <div class="sales-summary__total">
-              <span class="sales-summary__total-label">Total</span>
-              <strong class="sales-summary__total-amount">{{ pageSummary().total | money }}</strong>
-            </div>
-          </div>
-
-          @if (pageSummary().dayTotals.length > 1) {
-            <div class="sales-summary__separator"></div>
-            <div class="sales-summary__days">
-              @for (day of pageSummary().dayTotals; track day.label) {
-                <div class="sales-summary__day">
-                  <span>{{ day.label }}</span>
-                  <span>{{ day.sales }} vente(s), {{ day.articles }} article(s)</span>
-                  <strong>{{ { amount: day.total.toString(), currency: pageSummary().total.currency } | money }}</strong>
-                </div>
-              }
-            </div>
-          }
+        <div class="data-grid-scroll">
+          <table class="data-grid sales-table" aria-label="Historique détaillé des ventes, regroupé par vente">
+            <colgroup>
+              <col class="sales-table__sale-col" />
+              <col class="sales-table__product-col" />
+              <col class="sales-table__quantity-col" />
+              <col class="sales-table__price-col" />
+              <col class="sales-table__subtotal-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Vente</th>
+                <th scope="col">Produit</th>
+                <th scope="col" class="data-grid__num">Quantité</th>
+                <th scope="col" class="data-grid__num">PU</th>
+                <th scope="col" class="data-grid__num">Sous-total</th>
+              </tr>
+            </thead>
+            @for (sale of sales(); track sale.saleId) {
+              <tbody class="sales-table__group">
+                @for (line of sale.lines; track $index; let isFirst = $first) {
+                <tr>
+                  @if (isFirst) {
+                  <th class="sales-table__sale" scope="rowgroup" [attr.rowspan]="sale.lines.length + 1">
+                    <time class="sale-group__date" [attr.datetime]="sale.date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</time>
+                    <span class="sale-group__count">{{ sale.lines.length }} article(s)</span>
+                  </th>
+                  }
+                  <td class="sales-table__product">{{ line.productName }}</td>
+                  <td class="data-grid__center">{{ line.quantity }}</td>
+                  <td class="data-grid__num">{{ line.unitPrice | money }}</td>
+                  <td class="data-grid__num">{{ line.subtotal | money }}</td>
+                </tr>
+                }
+                <tr class="sales-table__group-total">
+                  <td class="sales-table__total-label" colspan="3">Total de la vente</td>
+                  <td class="sales-table__total-amount data-grid__num">{{ sale.total | money }}</td>
+                </tr>
+              </tbody>
+            }
+          </table>
         </div>
-
-        @for (sale of sales(); track sale.saleId) {
-          <article class="sale">
-            <header class="sale__head">
-              <div class="sale__meta">
-                <span class="sale__date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</span>
-                <span class="sale__count">{{ sale.lines.length }} article(s)</span>
-              </div>
-            </header>
-
-            <div class="data-table sale__lines" role="table" aria-label="Détail de la vente">
-              <div class="data-table__header" role="row">
-                <span role="columnheader">Produit</span>
-                <span role="columnheader" class="data-table__num">Quantité</span>
-                <span role="columnheader" class="data-table__num">PU</span>
-                <span role="columnheader" class="data-table__num">Sous-total</span>
-              </div>
-
-              @for (line of sale.lines; track $index) {
-                <div class="data-table__row" role="row">
-                  <span class="sale__product" role="cell" data-label="Produit">{{ line.productName }}</span>
-                  <span class="data-table__num" role="cell" data-label="Quantité">{{ line.quantity }}</span>
-                  <span class="data-table__num" role="cell" data-label="PU">{{ line.unitPrice | money }}</span>
-                  <span class="data-table__num" role="cell" data-label="Sous-total">{{ line.subtotal | money }}</span>
-                </div>
-              }
-            </div>
-
-            <footer class="sale__footer">
-              <strong class="sale__total">{{ sale.total | money }}</strong>
-            </footer>
-          </article>
-        }
       }
     </section>
 
