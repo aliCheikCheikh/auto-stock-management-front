@@ -59,24 +59,33 @@
           <h2 id="location-section-title">Stock par emplacement</h2>
         </div>
 
-        <div class="location-table" role="table" aria-label="Stock par emplacement">
-          <div class="location-table__header" role="row">
-            <span role="columnheader">Emplacement</span>
-            <span role="columnheader">Quantité</span>
-          </div>
-
-          @for (location of summary.byLocation; track location.locationId) {
-            <div class="location-table__row" role="row">
-              <span class="location-name" role="cell">
-                {{ location.locationName || (location.locationType === 'SHOP_FLOOR' ? 'Surface de vente' : 'Réserve') }}
-              </span>
-              <strong class="location-quantity" role="cell">{{ location.quantity }}</strong>
-            </div>
-          } @empty {
-            <div class="location-empty">
-              <p>Aucun stock enregistré pour ce produit.</p>
-            </div>
-          }
+        <div class="data-grid-scroll">
+          <table class="data-grid location-table" aria-label="Stock par emplacement">
+            <colgroup>
+              <col class="location-table__name-col" />
+              <col class="location-table__quantity-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Emplacement</th>
+                <th scope="col" class="data-grid__num">Quantité</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (location of summary.byLocation; track location.locationId) {
+              <tr>
+                <td class="location-name">
+                  {{ location.locationName || (location.locationType === 'SHOP_FLOOR' ? 'Surface de vente' : 'Réserve') }}
+                </td>
+                <td class="location-quantity data-grid__num">{{ location.quantity }}</td>
+              </tr>
+              } @empty {
+              <tr>
+                <td colspan="2" class="location-empty">Aucun stock enregistré pour ce produit.</td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
       </section>
     </div>

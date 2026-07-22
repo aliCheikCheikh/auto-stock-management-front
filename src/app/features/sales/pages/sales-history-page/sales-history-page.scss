@@ -146,74 +146,47 @@
   font-variant-numeric: tabular-nums;
 }
 
-// ─── Une vente : bloc séparé par un filet dans la carte ──────────────────────
-.sale {
-  padding: var(--space-5) var(--space-6);
-  border-top: var(--border-subtle);
+// ─── Grille des ventes ───────────────────────────────────────────────────────
+.sales-table {
+  min-width: 760px;
 }
 
-.sale:first-of-type {
-  border-top: 0;
-}
+.sales-table__sale-col { width: 22%; }
+.sales-table__product-col { width: 34%; }
+.sales-table__quantity-col { width: 12%; }
+.sales-table__price-col { width: 16%; }
+.sales-table__subtotal-col { width: 16%; }
 
-.sale__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-4);
-  margin-bottom: var(--space-3);
-}
-
-.sale__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
-  align-items: baseline;
+.sales-table__sale {
+  vertical-align: top !important;
 }
 
 .sale__date {
+  display: block;
   color: var(--gray-900);
-  font-size: var(--text-base);
-  font-weight: 600;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 
 .sale__count {
+  display: block;
+  margin-top: var(--space-1);
   color: var(--gray-500);
   font-size: var(--text-xs);
-}
-
-// Sous-tableau des lignes : cadre discret, colonnes produit + 3 nombres.
-.sale__lines {
-  border: var(--border-subtle);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.sale__lines .data-table__header,
-.sale__lines .data-table__row {
-  grid-template-columns: minmax(0, 2fr) 80px minmax(90px, 1fr) minmax(90px, 1fr);
-  gap: var(--space-4);
 }
 
 .sale__product {
   overflow-wrap: anywhere;
   color: var(--gray-900);
-  font-weight: 500;
-}
-
-.sale__footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: baseline;
-  gap: var(--space-3);
-  margin-top: var(--space-3);
+  font-weight: 400;
 }
 
 .sale__total {
+  display: block;
+  margin-top: var(--space-2);
   color: var(--gray-900);
-  font-size: var(--text-lg);
-  font-weight: 700;
+  font-size: var(--text-sm);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -230,14 +203,11 @@
     padding: var(--space-4) var(--space-3);
   }
 
-  .sale,
   .sales-summary {
     padding: var(--space-4);
   }
 
-  .sale__lines .data-table__header,
-  .sale__lines .data-table__row {
-    grid-template-columns: minmax(0, 1.6fr) 56px minmax(70px, 1fr) minmax(70px, 1fr);
-    gap: var(--space-2);
+  .sales-table {
+    min-width: 760px;
   }
 }

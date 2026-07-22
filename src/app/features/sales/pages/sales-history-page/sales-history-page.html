@@ -65,38 +65,45 @@
           }
         </div>
 
-        @for (sale of sales(); track sale.saleId) {
-          <article class="sale">
-            <header class="sale__head">
-              <div class="sale__meta">
-                <span class="sale__date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</span>
-                <span class="sale__count">{{ sale.lines.length }} article(s)</span>
-              </div>
-            </header>
-
-            <div class="data-table sale__lines" role="table" aria-label="Détail de la vente">
-              <div class="data-table__header" role="row">
-                <span role="columnheader">Produit</span>
-                <span role="columnheader" class="data-table__num">Quantité</span>
-                <span role="columnheader" class="data-table__num">PU</span>
-                <span role="columnheader" class="data-table__num">Sous-total</span>
-              </div>
-
-              @for (line of sale.lines; track $index) {
-                <div class="data-table__row" role="row">
-                  <span class="sale__product" role="cell" data-label="Produit">{{ line.productName }}</span>
-                  <span class="data-table__num" role="cell" data-label="Quantité">{{ line.quantity }}</span>
-                  <span class="data-table__num" role="cell" data-label="PU">{{ line.unitPrice | money }}</span>
-                  <span class="data-table__num" role="cell" data-label="Sous-total">{{ line.subtotal | money }}</span>
-                </div>
+        <div class="data-grid-scroll">
+          <table class="data-grid sales-table" aria-label="Historique détaillé des ventes">
+            <colgroup>
+              <col class="sales-table__sale-col" />
+              <col class="sales-table__product-col" />
+              <col class="sales-table__quantity-col" />
+              <col class="sales-table__price-col" />
+              <col class="sales-table__subtotal-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Vente</th>
+                <th scope="col">Produit</th>
+                <th scope="col" class="data-grid__num">Quantité</th>
+                <th scope="col" class="data-grid__num">PU</th>
+                <th scope="col" class="data-grid__num">Sous-total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (sale of sales(); track sale.saleId) {
+                @for (line of sale.lines; track $index; let isFirst = $first) {
+                <tr>
+                  @if (isFirst) {
+                  <td class="sales-table__sale" [attr.rowspan]="sale.lines.length">
+                    <span class="sale__date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</span>
+                    <span class="sale__count">{{ sale.lines.length }} article(s)</span>
+                    <strong class="sale__total">{{ sale.total | money }}</strong>
+                  </td>
+                  }
+                  <td class="sale__product">{{ line.productName }}</td>
+                  <td class="data-grid__num">{{ line.quantity }}</td>
+                  <td class="data-grid__num">{{ line.unitPrice | money }}</td>
+                  <td class="data-grid__num">{{ line.subtotal | money }}</td>
+                </tr>
+                }
               }
-            </div>
-
-            <footer class="sale__footer">
-              <strong class="sale__total">{{ sale.total | money }}</strong>
-            </footer>
-          </article>
-        }
+            </tbody>
+          </table>
+        </div>
       }
     </section>
 

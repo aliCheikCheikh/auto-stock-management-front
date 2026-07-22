@@ -32,38 +32,48 @@
           text="Réceptions, ventes et transferts alimenteront ce journal au fil de l'activité."
         />
       } @else {
-        <div class="data-table movements-table" role="table" aria-label="Historique des mouvements">
-          <div class="data-table__header" role="row">
-            <span role="columnheader">Date</span>
-            <span role="columnheader">Type</span>
-            <span role="columnheader">Produit</span>
-            <span role="columnheader" class="data-table__num">Quantité</span>
-            <span role="columnheader">Emplacement</span>
-          </div>
+        <div class="data-grid-scroll">
+          <table class="data-grid movements-table" aria-label="Historique des mouvements">
+            <colgroup>
+              <col class="movements-table__date-col" />
+              <col class="movements-table__type-col" />
+              <col class="movements-table__product-col" />
+              <col class="movements-table__quantity-col" />
+              <col class="movements-table__location-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Produit</th>
+                <th scope="col" class="data-grid__num">Quantité</th>
+                <th scope="col">Emplacement</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (movement of movements(); track movement.movementId) {
+              <tr>
+                <td class="movement-date">{{ movement.date | date: 'dd/MM/yyyy HH:mm' }}</td>
 
-          @for (movement of movements(); track movement.movementId) {
-            <div class="data-table__row" role="row">
-              <span class="movement-date" role="cell" data-label="Date">
-                {{ movement.date | date: 'dd/MM/yyyy HH:mm' }}
-              </span>
+                <td>
+                  <span class="type-badge type-badge--{{ movement.typeKind }}">{{ movement.typeLabel }}</span>
+                </td>
 
-              <span role="cell" data-label="Type">
-                <span class="type-badge type-badge--{{ movement.typeKind }}">{{ movement.typeLabel }}</span>
-              </span>
+                <td class="movement-product">{{ movement.productName }}</td>
 
-              <span class="movement-product" role="cell" data-label="Produit">{{ movement.productName }}</span>
+                <td class="data-grid__num">{{ movement.quantity }}</td>
 
-              <span class="data-table__num" role="cell" data-label="Quantité">{{ movement.quantity }}</span>
-
-              <span class="movement-location" role="cell" data-label="Emplacement">
-                {{ movement.locationLabel }}
-                @if (movement.destinationLabel) {
-                  <span class="movement-location__arrow" aria-hidden="true">→</span>
-                  {{ movement.destinationLabel }}
-                }
-              </span>
-            </div>
-          }
+                <td class="movement-location">
+                  {{ movement.locationLabel }}
+                  @if (movement.destinationLabel) {
+                    <span class="movement-location__arrow" aria-hidden="true">→</span>
+                    {{ movement.destinationLabel }}
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
       }
     </section>

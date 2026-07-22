@@ -33,88 +33,111 @@
       <h2 id="catalogue-title">Produits disponibles</h2>
     </div>
 
-    <div
-      class="data-table catalogue-table"
-      [class.catalogue-table--owner]="isOwner()"
-      role="table"
-      aria-label="Catalogue produits"
-    >
-      <div class="data-table__header" role="row">
-        <span role="columnheader">Produit</span>
-        <span role="columnheader">Reference</span>
-        <span role="columnheader" class="data-table__num">Prix</span>
-        <span role="columnheader" class="data-table__num">Stock global</span>
-        <span role="columnheader">Etat</span>
-        @if (isOwner()) {
-        <span role="columnheader" class="catalogue-actions-col">Actions</span>
-        }
-      </div>
-
-      @for (item of state.products; track item.product.productId) {
-      <article
-        class="data-table__row data-table__row--link"
-        role="row"
-        [routerLink]="['/products', item.product.productId]"
+    <div class="data-grid-scroll">
+      <table
+        class="data-grid catalogue-table"
+        [class.catalogue-table--owner]="isOwner()"
+        aria-label="Catalogue produits"
       >
-        <div class="product-main" role="cell">
-          <strong>{{ item.product.name }}</strong>
-        </div>
-
-        <span role="cell" data-label="Référence">{{ item.product.reference }}</span>
-
-        <strong class="price data-table__num" role="cell" data-label="Prix">
-          {{ item.product.unitPrice | money }}
-        </strong>
-
-        <div class="stock-quantity data-table__num" role="cell" data-label="Stock global">
-          <strong>{{ item.globalQuantity }}</strong>
-          <span>Seuil {{ item.product.minimumGlobalThreshold }}</span>
-        </div>
-
-        <span class="stock-badge stock-badge--{{ item.stockStatus }}" role="cell" data-label="Etat">
-          @switch (item.stockStatus) {
-          @case ('ok') {
-          OK
+        <colgroup>
+          <col class="catalogue-table__product-col" />
+          <col class="catalogue-table__reference-col" />
+          <col class="catalogue-table__price-col" />
+          <col class="catalogue-table__stock-col" />
+          <col class="catalogue-table__status-col" />
+          @if (isOwner()) {
+          <col class="catalogue-table__actions-col" />
           }
-          @case ('low') {
-          Sous seuil
-          }
-          @case ('critical') {
-          Critique
-          }
-          }
-        </span>
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Produit</th>
+            <th scope="col">Référence</th>
+            <th scope="col" class="data-grid__num">Prix</th>
+            <th scope="col" class="data-grid__num">Stock global</th>
+            <th scope="col">État</th>
+            @if (isOwner()) {
+            <th scope="col" class="data-grid__actions">Actions</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of state.products; track item.product.productId) {
+          <tr class="data-grid__row--link" [routerLink]="['/products', item.product.productId]">
+            <td class="product-main">
+              <a
+                class="product-main__link"
+                [routerLink]="['/products', item.product.productId]"
+                [attr.aria-label]="'Voir ' + item.product.name"
+                (click)="$event.stopPropagation()"
+              >
+                {{ item.product.name }}
+              </a>
+            </td>
 
-        @if (isOwner()) {
-        <div class="catalogue-actions-col" role="cell" data-label="Actions">
-          <a
-            class="btn-edit"
-            [routerLink]="['/products', item.product.productId, 'edit']"
-            [attr.aria-label]="'Modifier ' + item.product.name"
-            (click)="$event.stopPropagation()"
-          >
-            Modifier
-          </a>
-          <button
-            class="btn-deactivate"
-            type="button"
-            [attr.aria-label]="'Désactiver ' + item.product.name"
-            (click)="askDeactivation(item.product); $event.stopPropagation()"
-          >
-            Désactiver
-          </button>
-        </div>
-        }
-      </article>
-      } @empty {
-      <app-empty-state
-        illustration="products"
-        title="Aucun produit au catalogue"
-        text="Enregistrez une réception pour ajouter votre premier produit et démarrer le suivi de stock."
-      >
-        <a class="btn btn--primary" href="/stock-receipts/new">Nouvelle réception</a>
-      </app-empty-state>
-      }
+            <td>{{ item.product.reference }}</td>
+
+            <td class="price data-grid__num">{{ item.product.unitPrice | money }}</td>
+
+            <td class="stock-quantity data-grid__num">
+              <strong>{{ item.globalQuantity }}</strong>
+              <span>Seuil {{ item.product.minimumGlobalThreshold }}</span>
+            </td>
+
+            <td>
+              <span class="stock-badge stock-badge--{{ item.stockStatus }}">
+                @switch (item.stockStatus) {
+                @case ('ok') {
+                OK
+                }
+                @case ('low') {
+                Sous seuil
+                }
+                @case ('critical') {
+                Critique
+                }
+                }
+              </span>
+            </td>
+
+            @if (isOwner()) {
+            <td class="data-grid__actions">
+              <div class="catalogue-actions">
+                <a
+                  class="btn-edit"
+                  [routerLink]="['/products', item.product.productId, 'edit']"
+                  [attr.aria-label]="'Modifier ' + item.product.name"
+                  (click)="$event.stopPropagation()"
+                >
+                  Modifier
+                </a>
+                <button
+                  class="btn-deactivate"
+                  type="button"
+                  [attr.aria-label]="'Désactiver ' + item.product.name"
+                  (click)="askDeactivation(item.product); $event.stopPropagation()"
+                >
+                  Désactiver
+                </button>
+              </div>
+            </td>
+            }
+          </tr>
+          } @empty {
+          <tr>
+            <td [attr.colspan]="isOwner() ? 6 : 5" class="catalogue-table__empty">
+              <app-empty-state
+                illustration="products"
+                title="Aucun produit au catalogue"
+                text="Enregistrez une réception pour ajouter votre premier produit et démarrer le suivi de stock."
+              >
+                <a class="btn btn--primary" href="/stock-receipts/new">Nouvelle réception</a>
+              </app-empty-state>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </section>
   }
