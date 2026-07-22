@@ -56,7 +56,9 @@
                 <td class="movement-date data-grid__center">{{ movement.date | date: 'dd/MM/yyyy HH:mm' }}</td>
 
                 <td class="movement-type data-grid__center">
-                  <span class="type-badge type-badge--{{ movement.typeKind }}">{{ movement.typeLabel }}</span>
+                  <span class="type-badge type-badge--{{ movement.typeKind }}">
+                    <span class="type-badge__label">{{ movement.typeLabel }}</span>
+                  </span>
                 </td>
 
                 <td class="movement-product">{{ movement.productName }}</td>
