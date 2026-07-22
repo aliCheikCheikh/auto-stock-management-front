@@ -142,7 +142,8 @@
 .stock-quantity {
   display: grid;
   gap: var(--space-1);
-  text-align: right;
+  justify-items: center;
+  text-align: center;
 }
 
 .stock-quantity strong {
@@ -154,6 +155,11 @@
 .stock-quantity span {
   color: var(--gray-500);
   font-size: var(--text-xs);
+}
+
+.catalogue-stock,
+.catalogue-status {
+  text-align: center !important;
 }
 
 .catalogue-table__empty {

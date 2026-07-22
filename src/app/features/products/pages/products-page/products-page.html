@@ -79,12 +79,14 @@
 
             <td class="price data-grid__num">{{ item.product.unitPrice | money }}</td>
 
-            <td class="stock-quantity data-grid__num">
-              <strong>{{ item.globalQuantity }}</strong>
-              <span>Seuil {{ item.product.minimumGlobalThreshold }}</span>
+            <td class="catalogue-stock">
+              <div class="stock-quantity">
+                <strong>{{ item.globalQuantity }}</strong>
+                <span>Seuil {{ item.product.minimumGlobalThreshold }}</span>
+              </div>
             </td>
 
-            <td>
+            <td class="catalogue-status">
               <span class="stock-badge stock-badge--{{ item.stockStatus }}">
                 @switch (item.stockStatus) {
                 @case ('ok') {
