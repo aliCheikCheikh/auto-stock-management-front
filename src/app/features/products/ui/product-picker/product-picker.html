@@ -16,8 +16,7 @@
     [attr.aria-label]="ariaLabel()"
     role="combobox"
     aria-autocomplete="list"
-    aria-haspopup="grid"
-    aria-controls="product-picker-results"
+    aria-controls="product-picker-listbox"
     [attr.aria-expanded]="showDropdown()"
     [attr.aria-activedescendant]="activeIndex() >= 0 ? 'product-picker-option-' + activeIndex() : null"
     (focus)="onFocus()"
@@ -27,45 +26,29 @@
   @if (showDropdown()) {
     <div class="product-picker__panel">
       @if (results().length > 0) {
-        <div class="product-picker__results">
-          <table
-            class="data-grid product-picker__grid"
-            id="product-picker-results"
-            role="grid"
-            aria-label="Résultats de recherche"
+        <ul
+          class="product-picker__list"
+          id="product-picker-listbox"
+          role="listbox"
+          aria-label="Résultats de recherche"
+        >
+          @for (item of results(); track item.productId; let i = $index) {
+          <li
+            class="product-picker__option"
+            [class.is-active]="i === activeIndex()"
+            id="product-picker-option-{{ i }}"
+            role="option"
+            [attr.aria-selected]="i === activeIndex()"
+            (mousedown)="$event.preventDefault()"
+            (mouseenter)="activeIndex.set(i)"
+            (click)="select(item)"
           >
-            <colgroup>
-              <col class="product-picker__name-col" />
-              <col class="product-picker__reference-col" />
-              <col class="product-picker__price-col" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col">Produit</th>
-                <th scope="col">Référence</th>
-                <th scope="col" class="data-grid__num">Prix</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (item of results(); track item.productId; let i = $index) {
-              <tr
-                class="product-picker__option"
-                [class.is-active]="i === activeIndex()"
-                id="product-picker-option-{{ i }}"
-                role="row"
-                [attr.aria-selected]="i === activeIndex()"
-                (mousedown)="$event.preventDefault()"
-                (mouseenter)="activeIndex.set(i)"
-                (click)="select(item)"
-              >
-                <td class="product-picker__name" role="gridcell">{{ item.name }}</td>
-                <td class="product-picker__ref" role="gridcell">{{ item.reference }}</td>
-                <td class="product-picker__price data-grid__num" role="gridcell">{{ item.unitPrice | money }}</td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+            <span class="product-picker__name">{{ item.name }}</span>
+            <span class="product-picker__ref">{{ item.reference }}</span>
+            <span class="product-picker__price">{{ item.unitPrice | money }}</span>
+          </li>
+          }
+        </ul>
       } @else if (showEmpty()) {
         <div class="product-picker__empty" role="status">
           <svg class="product-picker__empty-icon" viewBox="0 0 32 32" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

@@ -119,39 +119,38 @@
   }
 }
 
-.product-picker__results {
+.product-picker__list {
   max-height: min(60vh, 360px);
-  overflow: auto;
+  margin: 0;
+  padding: var(--space-1);
+  list-style: none;
+  overflow-y: auto;
 }
 
-.product-picker__grid {
-  min-width: 460px;
-}
-
-.product-picker__name-col { width: 48%; }
-.product-picker__reference-col { width: 30%; }
-.product-picker__price-col { width: 22%; }
-
-.product-picker__grid th,
-.product-picker__grid td {
-  padding: var(--space-2) var(--space-3);
-}
-
-// Ligne sélectionnable : même repère visuel pour le survol et le clavier.
+// Option : nom et référence à gauche, prix à droite.
 .product-picker__option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: background 0.1s;
 }
 
-.product-picker__option:hover td,
-.product-picker__option.is-active td {
+.product-picker__option:hover,
+.product-picker__option.is-active {
   background: var(--gray-100);
 }
 
 // Nom : jusqu'à 2 lignes puis ellipsis — deux produits aux noms longs et
 // proches restent distinguables sans jamais déborder de l'item.
 .product-picker__name {
+  grid-column: 1;
   color: var(--gray-900);
-  font-weight: 400;
+  font-size: var(--text-base);
+  font-weight: 500;
   line-height: 1.3;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -161,15 +160,24 @@
   overflow-wrap: anywhere; // coupe une chaîne très longue sans espace
 }
 
-// Référence (unique) : toujours visible en entier, dans sa colonne secondaire.
+// Référence : secondaire, sur sa propre ligne pour rester lisible.
 .product-picker__ref {
+  grid-column: 1;
+  grid-row: 2;
   color: var(--gray-500);
+  font-size: var(--text-xs);
   overflow-wrap: anywhere;
 }
 
 .product-picker__price {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
   color: var(--gray-900);
-  font-weight: 400;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .product-picker__empty {
