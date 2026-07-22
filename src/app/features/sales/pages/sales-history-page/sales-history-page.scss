@@ -7,6 +7,9 @@
   background: var(--gray-50);
   color: var(--gray-900);
   display: grid;
+  // Les pages peu remplies ne doivent pas étirer les rangées de la grille :
+  // le tableau garde ainsi la même distance avec l'en-tête à chaque page.
+  align-content: start;
   place-items: start center;
 }
 
