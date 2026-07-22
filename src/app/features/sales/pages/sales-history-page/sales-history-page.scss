@@ -70,8 +70,10 @@
 }
 
 .sales-table__group-heading th {
-  padding: var(--space-3) var(--space-5);
-  border-bottom: 1px solid var(--gray-300);
+  padding: var(--space-2) var(--space-5);
+  // Sans filet sous le repère : la première ligne reste visuellement attachée
+  // à sa vente, tandis que l'espace entre deux groupes les distingue.
+  border-bottom: 0;
   background: var(--gray-50);
   color: var(--gray-900);
   font-size: var(--text-sm);
@@ -86,10 +88,9 @@
 }
 
 .sale-group__heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
 }
 
 .sale-group__details {
