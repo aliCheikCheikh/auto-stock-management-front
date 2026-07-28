@@ -6,7 +6,10 @@
         <h1 id="sales-history-title">Historique des ventes</h1>
       </div>
       @if (state() === 'success') {
-        <p class="history-count">{{ pageDisplayCount() }} ventes affichées</p>
+        <p class="history-count">
+          {{ pageDisplayCount() }} ventes affichées
+          <span class="history-count__total">— total de la page : {{ pageTotal() | money }}</span>
+        </p>
       }
     </div>
   </header>
@@ -43,7 +46,7 @@
             <thead>
               <tr>
                 <th scope="col">Vente</th>
-                <th scope="col">Produit</th>
+                <th scope="col" class="data-grid__start">Produit</th>
                 <th scope="col" class="data-grid__num">Quantité</th>
                 <th scope="col" class="data-grid__num">PU</th>
                 <th scope="col" class="data-grid__num">Sous-total</th>
@@ -59,7 +62,7 @@
                     <span class="sale-group__count">{{ sale.lines.length }} article(s)</span>
                   </th>
                   }
-                  <td class="sales-table__product">{{ line.productName }}</td>
+                  <td class="sales-table__product data-grid__start">{{ line.productName }}</td>
                   <td class="data-grid__center">{{ line.quantity }}</td>
                   <td class="data-grid__num">{{ line.unitPrice | money }}</td>
                   <td class="data-grid__num">{{ line.subtotal | money }}</td>
