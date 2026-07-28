@@ -51,8 +51,8 @@
         </colgroup>
         <thead>
           <tr>
-            <th scope="col">Produit</th>
-            <th scope="col">Référence</th>
+            <th scope="col" class="data-grid__start">Produit</th>
+            <th scope="col" class="data-grid__start">Référence</th>
             <th scope="col" class="data-grid__num">Prix</th>
             <th scope="col" class="data-grid__num">Stock global</th>
             <th scope="col">État</th>
@@ -64,7 +64,7 @@
         <tbody>
           @for (item of state.products; track item.product.productId) {
           <tr class="data-grid__row--link" [routerLink]="['/products', item.product.productId]">
-            <td class="product-main">
+            <td class="product-main data-grid__start">
               <a
                 class="product-main__link"
                 [routerLink]="['/products', item.product.productId]"
@@ -75,7 +75,7 @@
               </a>
             </td>
 
-            <td>{{ item.product.reference }}</td>
+            <td class="data-grid__start">{{ item.product.reference }}</td>
 
             <td class="price data-grid__num">{{ item.product.unitPrice | money }}</td>
 
