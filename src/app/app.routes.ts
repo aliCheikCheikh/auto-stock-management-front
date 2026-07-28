@@ -12,6 +12,7 @@ import { UsersAdminPage } from './features/users/pages/users-admin-page/users-ad
 import { authGuard, forcePasswordChangeGuard, ownerGuard } from './core/auth/auth.guard';
 import { ProductEditPage } from './features/products/pages/product-edit-page/product-edit-page';
 import { NotFoundPage } from './features/errors/not-found-page/not-found-page';
+import { DebtsPage } from './features/debts/pages/debts-page/debts-page';
 
 export const routes: Routes = [
     {
@@ -62,6 +63,12 @@ export const routes: Routes = [
         path: 'stock-transfers/new',
         component: NewStockTransfersPage,
         canActivate: [authGuard]
+    },
+
+    {
+        path: 'debts',
+        component: DebtsPage,
+        canActivate: [authGuard, ownerGuard]
     },
 
     {
