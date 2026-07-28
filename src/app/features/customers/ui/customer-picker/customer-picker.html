@@ -1,0 +1,165 @@
+<div class="customer-picker" (keydown)="onKeydown($event)">
+  <div class="customer-picker__bar">
+    <div class="customer-picker__field">
+      <span class="customer-picker__icon" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="7" cy="7" r="4.5" />
+          <path d="M10.5 10.5 14 14" />
+        </svg>
+      </span>
+
+      <input
+        #searchInput
+        [attr.id]="inputId()"
+        class="customer-picker__input"
+        [formControl]="searchControl"
+        type="search"
+        [placeholder]="placeholder()"
+        [attr.aria-label]="ariaLabel()"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-controls="customer-picker-listbox"
+        [attr.aria-expanded]="showDropdown()"
+        [attr.aria-activedescendant]="activeIndex() >= 0 ? 'customer-picker-option-' + activeIndex() : null"
+        (focus)="onFocus()"
+        (blur)="onBlur()"
+      />
+
+      @if (showDropdown()) {
+        <div class="customer-picker__panel">
+          @if (searchState() === 'loading') {
+            <p class="customer-picker__status" role="status">Recherche…</p>
+          } @else if (searchState() === 'error') {
+            <div class="customer-picker__status customer-picker__status--error" role="alert">
+              <span>Recherche indisponible.</span>
+              <button
+                class="btn btn--secondary"
+                type="button"
+                (mousedown)="$event.preventDefault()"
+                (click)="retrySearch()"
+              >
+                Réessayer
+              </button>
+            </div>
+          } @else if (results().length > 0) {
+            @if (!hasQuery()) {
+              <p class="customer-picker__hint">Derniers clients</p>
+            }
+            <ul
+              class="customer-picker__list"
+              id="customer-picker-listbox"
+              role="listbox"
+              aria-label="Clients correspondants"
+            >
+              @for (item of results(); track item.customerId; let i = $index) {
+              <li
+                class="customer-picker__option"
+                [class.is-active]="i === activeIndex()"
+                id="customer-picker-option-{{ i }}"
+                role="option"
+                [attr.aria-selected]="i === activeIndex()"
+                (mousedown)="$event.preventDefault()"
+                (mouseenter)="activeIndex.set(i)"
+                (click)="select(item)"
+              >
+                <span class="customer-picker__name">{{ displayName(item) }}</span>
+                <span class="customer-picker__phone">{{ item.phoneNumber }}</span>
+              </li>
+              }
+            </ul>
+          } @else if (showEmpty()) {
+            <p class="customer-picker__status" role="status">Aucun client trouvé</p>
+          }
+
+          <!-- Toujours proposé, résultats ou non : le vendeur sait souvent
+               d'emblée que le client est nouveau. -->
+          <div class="customer-picker__footer">
+            <button
+              class="btn btn--ghost"
+              type="button"
+              (mousedown)="$event.preventDefault()"
+              (click)="openCreateForm()"
+            >
+              + Nouveau client
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <button class="btn btn--secondary customer-picker__new" type="button" (click)="openCreateForm()">
+      + Nouveau client
+    </button>
+  </div>
+</div>
+
+@if (creating()) {
+<!-- Formulaire inline : un <div role="group"> et non un <form>, ce composant
+     étant utilisé à l'intérieur du formulaire de vente. -->
+<div
+  class="customer-create"
+  role="group"
+  aria-labelledby="customer-create-title"
+  [formGroup]="createForm"
+  (keydown.enter)="$event.preventDefault(); submitCreate()"
+  (keydown.escape)="cancelCreate()"
+>
+  <p class="customer-create__title" id="customer-create-title">Nouveau client</p>
+
+  <div class="customer-create__grid">
+    <div class="field">
+      <label for="customer-given-name">Nom *</label>
+      <input
+        #firstCreateInput
+        id="customer-given-name"
+        type="text"
+        formControlName="givenName"
+        autocomplete="off"
+      />
+      @if (createForm.controls.givenName.touched && createForm.controls.givenName.hasError('required')) {
+      <p class="field-error">Nom obligatoire.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="customer-father-name">Nom du père</label>
+      <input id="customer-father-name" type="text" formControlName="fatherName" autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <label for="customer-phone">Téléphone *</label>
+      <input id="customer-phone" type="tel" formControlName="phoneNumber" inputmode="tel" autocomplete="off" />
+      @if (createForm.controls.phoneNumber.touched && createForm.controls.phoneNumber.hasError('required')) {
+      <p class="field-error">Téléphone obligatoire.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="customer-email">Email</label>
+      <input id="customer-email" type="email" formControlName="email" autocomplete="off" />
+      @if (createForm.controls.email.touched && createForm.controls.email.hasError('email')) {
+      <p class="field-error">Email invalide.</p>
+      }
+    </div>
+  </div>
+
+  @if (createError()) {
+  <p class="field-error" role="alert">{{ createError() }}</p>
+  }
+
+  <div class="customer-create__actions">
+    <button class="btn btn--secondary" type="button" (click)="cancelCreate()" [disabled]="isSaving()">
+      Annuler
+    </button>
+    <button
+      class="btn btn--primary"
+      type="button"
+      (click)="submitCreate()"
+      [disabled]="isSaving()"
+      [attr.aria-busy]="isSaving()"
+    >
+      @if (isSaving()) { Création… } @else { Créer le client }
+    </button>
+  </div>
+</div>
+}
