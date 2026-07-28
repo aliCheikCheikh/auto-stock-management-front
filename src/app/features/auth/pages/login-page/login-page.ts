@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { afterNextRender, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
@@ -17,9 +17,13 @@ export class LoginPage {
   private readonly loading = inject(LoadingService);
   private readonly router = inject(Router);
 
-  isSubmitting = false;
-  readonly showPassword = signal(false);
+  private readonly emailInput = viewChild<ElementRef<HTMLInputElement>>('emailInput');
 
+  readonly isSubmitting = signal(false);
+  readonly showPassword = signal(false);
+  // L'échec s'affiche DANS le formulaire : c'est là que l'utilisateur regarde.
+  // Le toast reste en complément pour les utilisateurs déjà partis ailleurs.
+  readonly errorMessage = signal('');
 
   readonly form = new FormGroup({
     email: new FormControl('',
@@ -34,12 +38,17 @@ export class LoginPage {
       }),
   });
 
+  constructor() {
+    // Focus sur l'email à l'ouverture : la saisie commence sans un clic.
+    afterNextRender(() => this.emailInput()?.nativeElement.focus());
+  }
+
   togglePassword(): void {
     this.showPassword.update((visible) => !visible);
   }
 
   onSubmit(): void {
-    if (this.isSubmitting) {
+    if (this.isSubmitting()) {
       return;
     }
 
@@ -49,22 +58,25 @@ export class LoginPage {
     }
 
     const credentials = this.form.getRawValue();
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
+    this.errorMessage.set('');
     // Action explicite → overlay bloquant (masque le formulaire pendant l'appel).
     this.loading.startBlocking();
     this.authService.login(credentials).subscribe({
       next: (user) => {
-        this.notificationService.success(`Connexion reussie`);
-        this.isSubmitting = false;
+        this.notificationService.success('Connexion réussie');
+        this.isSubmitting.set(false);
         this.loading.stopBlocking();
         this.router.navigate([user.passwordTemporary ? '/change-password' : '/products']);
       },
       error: () => {
-        this.notificationService.error('Connexion échouée. Veuillez vérifier vos identifiants et réessayer.');
-        this.isSubmitting = false;
+        const message = 'Connexion échouée. Vérifiez vos identifiants et réessayez.';
+        this.errorMessage.set(message);
+        this.notificationService.error(message);
+        this.isSubmitting.set(false);
         this.loading.stopBlocking();
+        this.emailInput()?.nativeElement.focus();
       }
     });
-
   }
 }

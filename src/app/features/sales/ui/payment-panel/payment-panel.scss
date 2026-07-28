@@ -1,0 +1,171 @@
+// Bloc paiement : dense, hiérarchisé, « Reste à payer » dominant.
+.payment {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.payment__title {
+  margin: 0;
+}
+
+// ─── Choix binaire comptant / crédit ─────────────────────────────────────────
+.payment__modes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--gray-100);
+}
+
+.payment__mode {
+  min-height: var(--control-h-sm);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--gray-500);
+  cursor: pointer;
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1.2;
+  padding: var(--space-2) var(--space-3);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.payment__mode.is-selected {
+  background: var(--gray-0);
+  border-color: var(--gray-200);
+  box-shadow: var(--shadow-xs);
+  color: var(--gray-900);
+  font-weight: 600;
+}
+
+.payment__mode:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.payment__credit {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.payment__hint {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+}
+
+.payment__customer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+}
+
+.payment__customer-identity {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.payment__customer-identity strong {
+  color: var(--gray-900);
+  overflow-wrap: anywhere;
+}
+
+.payment__customer-identity span {
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+// ─── Saisie du montant + raccourcis ──────────────────────────────────────────
+.payment__amount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.payment__amount input {
+  flex: 1;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+}
+
+.payment__shortcuts {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.btn--chip {
+  min-height: var(--control-h-sm);
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+}
+
+// ─── Récapitulatif ───────────────────────────────────────────────────────────
+.payment__summary {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+}
+
+.payment__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.payment__row dt {
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.payment__row dd {
+  margin: 0;
+  color: var(--gray-900);
+  font-size: var(--text-base);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+// Ligne du solde : la plus grosse typo de l'écran. Ambre dès qu'il reste à
+// payer, neutre quand la vente est soldée.
+.payment__row--due {
+  align-items: center;
+  margin-top: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: var(--border-subtle);
+}
+
+.payment__row--due dt {
+  color: var(--gray-900);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.payment__row--due dd {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.payment__row--due.is-due dt,
+.payment__row--due.is-due dd {
+  color: var(--warning-600);
+}

@@ -9,6 +9,7 @@ import { Spinner } from '../../../../shared/ui/spinner/spinner';
 import { Pagination } from '../../../../shared/ui/pagination/pagination';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import { DatePipe } from '@angular/common';
+import { sumMoney } from '../../../../shared/utils/money-math';
 
 interface SaleLineRow {
   readonly productName: string;
@@ -48,48 +49,9 @@ export class SalesHistoryPage implements OnInit {
     return `${currentCount}/${totalCount}`;
   });
 
-  readonly pageSummary = computed(() => {
-    const sales = this.sales();
-    const totalAmount = sales.reduce((sum, sale) => sum + Number(sale.total.amount), 0);
-    const articlesCount = sales.reduce((sum, sale) => sum + sale.lines.length, 0);
-
-    const dayTotals = new Map<string, { label: string; sales: number; articles: number; total: number }>();
-    for (const sale of sales) {
-      const date = new Date(sale.date);
-      const key = date.toISOString().slice(0, 10);
-      const label = date.toLocaleDateString('fr-FR', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
-
-      const existing = dayTotals.get(key);
-      if (existing) {
-        existing.sales += 1;
-        existing.articles += sale.lines.length;
-        existing.total += Number(sale.total.amount);
-      } else {
-        dayTotals.set(key, {
-          label,
-          sales: 1,
-          articles: sale.lines.length,
-          total: Number(sale.total.amount),
-        });
-      }
-    }
-
-    return {
-      salesCount: sales.length,
-      articlesCount,
-      total: {
-        amount: totalAmount.toString(),
-        currency: sales[0]?.total.currency ?? 'XOF',
-      },
-      dayTotals: Array.from(dayTotals.values())
-        .sort((a, b) => b.label.localeCompare(a.label)),
-    };
-  });
+  // Total de la page, sommé en chaîne (BigDecimal) : aucune arithmétique
+  // flottante sur des montants.
+  readonly pageTotal = computed<Money>(() => sumMoney(this.sales().map((sale) => sale.total)));
 
   readonly page = signal<PageMeta>({ page: 0, size: SalesHistoryPage.PAGE_SIZE, totalElements: 0, totalPages: 0 });
   readonly errorMessage = signal('');

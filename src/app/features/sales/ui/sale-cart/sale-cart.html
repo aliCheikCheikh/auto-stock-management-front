@@ -1,0 +1,67 @@
+@if (lines().length === 0) {
+  <app-empty-state
+    illustration="cart"
+    title="Panier vide"
+    text="Scannez ou cherchez un article, puis validez avec Entrée."
+  />
+} @else {
+  <ul class="cart-list">
+    @for (line of lines(); track line.productId) {
+    <li class="cart-line">
+      <div class="cart-line__identity">
+        <strong class="cart-line__label">{{ line.productLabel }}</strong>
+        <span class="cart-line__unit">{{ line.unitPrice | money }} / unité</span>
+      </div>
+
+      <div class="cart-line__qty" role="group" [attr.aria-label]="'Quantité — ' + line.productLabel">
+        <button
+          class="qty-btn"
+          type="button"
+          (click)="step(line, -1)"
+          [disabled]="line.quantity <= 1"
+          [attr.aria-label]="'Diminuer la quantité de ' + line.productLabel"
+        >
+          −
+        </button>
+        <input
+          class="qty-input"
+          type="number"
+          min="1"
+          step="1"
+          [value]="line.quantity"
+          (input)="onQuantityInput(line, $any($event.target).value)"
+          (keydown.enter)="$event.preventDefault()"
+          [attr.aria-label]="'Quantité de ' + line.productLabel"
+        />
+        <button
+          class="qty-btn"
+          type="button"
+          (click)="step(line, 1)"
+          [attr.aria-label]="'Augmenter la quantité de ' + line.productLabel"
+        >
+          +
+        </button>
+      </div>
+
+      <span class="cart-line__total">{{ line.subtotal | money }}</span>
+
+      <button
+        class="cart-line__remove"
+        type="button"
+        (click)="removed.emit(line.productId)"
+        [attr.aria-label]="'Retirer ' + line.productLabel + ' du panier'"
+        title="Retirer du panier"
+      >
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 4l8 8M12 4l-8 8" />
+        </svg>
+      </button>
+    </li>
+    }
+  </ul>
+
+  <div class="cart-total">
+    <span>Total panier</span>
+    <strong>{{ total() | money }}</strong>
+  </div>
+}

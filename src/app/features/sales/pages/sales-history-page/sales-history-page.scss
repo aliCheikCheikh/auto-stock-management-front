@@ -43,6 +43,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+.history-count__total {
+  color: var(--gray-900);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .history-error {
   margin: 0;
   font-weight: 600;

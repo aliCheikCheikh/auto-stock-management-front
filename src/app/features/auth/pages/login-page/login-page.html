@@ -1,97 +1,92 @@
 <main class="login">
-  <header class="login-topbar">
-    <p class="login-topbar__brand">AutoStock</p>
-    <p class="login-topbar__context">Espace de gestion</p>
-  </header>
+  <!-- Volet de marque : le nom du produit y figure UNE fois, avec une seule
+       phrase utile. Masqué sous 900 px — sur téléphone, le formulaire suffit. -->
+  <aside class="login-brand">
+    <p class="login-brand__name">AutoStock</p>
+    <p class="login-brand__line">Gestion du stock, des ventes et des créances de l’atelier.</p>
+    <p class="login-brand__foot">Identifiants fournis par l’administrateur de votre atelier.</p>
+  </aside>
 
-  <section class="login-main" aria-labelledby="login-title">
-    <div class="login-panel">
-      <form class="login-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit()" novalidate>
-        <header class="login-form__head">
-          <div class="login-form__identity" aria-hidden="true">
-            <span class="login-form__mark">AS</span>
-            <span class="login-form__identity-copy">
-              <span>AutoStock</span>
-              <span>Gestion d’atelier</span>
-            </span>
-          </div>
-          <p class="login-form__eyebrow">Accès sécurisé</p>
-          <h1 id="login-title">Connexion</h1>
-          <p class="login-form__lead">Accédez à votre espace de gestion des stocks.</p>
-        </header>
+  <section class="login-panel" aria-labelledby="login-title">
+    <form class="login-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Rappel du produit réservé aux petits écrans, où le volet est masqué. -->
+      <p class="login-form__brand">AutoStock</p>
 
-        <div class="field login-field">
-          <label for="email">Email</label>
+      <h1 id="login-title">Connexion</h1>
+
+      @if (errorMessage()) {
+      <p class="login-form__error" role="alert">{{ errorMessage() }}</p>
+      }
+
+      <div class="field login-field">
+        <label for="email">Email</label>
+        <input
+          #emailInput
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="vous@entreprise.com"
+        />
+        @if ((form.controls.email.dirty && form.controls.email.touched || fgd.submitted) && form.controls.email.invalid) {
+          @if (form.controls.email.hasError('required')) {
+            <p class="field-error">Email requis</p>
+          } @else if (form.controls.email.hasError('email')) {
+            <p class="field-error">Format d'email invalide</p>
+          }
+        }
+      </div>
+
+      <div class="field login-field">
+        <label for="password">Mot de passe</label>
+        <div class="field__control">
           <input
-            id="email"
-            type="email"
-            formControlName="email"
-            autocomplete="email"
-            placeholder="vous@entreprise.com"
-            autofocus
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
           />
-          @if ((form.controls.email.dirty && form.controls.email.touched || fgd.submitted) && form.controls.email.invalid) {
-            @if (form.controls.email.hasError('required')) {
-              <p class="field-error">Email requis</p>
-            } @else if (form.controls.email.hasError('email')) {
-              <p class="field-error">Format d'email invalide</p>
+          <button
+            class="field__toggle"
+            type="button"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          >
+            @if (!showPassword()) {
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1.5 8s2.4-4.5 6.5-4.5S14.5 8 14.5 8s-2.4 4.5-6.5 4.5S1.5 8 1.5 8Z" />
+                <circle cx="8" cy="8" r="2" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6.3 3.7A6 6 0 0 1 8 3.5c4.1 0 6.5 4.5 6.5 4.5a11 11 0 0 1-1.7 2.3" />
+                <path d="M4.2 4.9A11 11 0 0 0 1.5 8S3.9 12.5 8 12.5a6 6 0 0 0 2.6-.6" />
+                <path d="M6.6 6.6a2 2 0 0 0 2.8 2.8" />
+                <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" />
+              </svg>
             }
-          }
+          </button>
         </div>
+        @if ((form.controls.password.dirty && form.controls.password.touched || fgd.submitted) && form.controls.password.invalid) {
+          <p class="field-error">Mot de passe requis</p>
+        }
+      </div>
 
-        <div class="field login-field">
-          <label for="password">Mot de passe</label>
-          <div class="field__control">
-            <input
-              id="password"
-              [type]="showPassword() ? 'text' : 'password'"
-              formControlName="password"
-              autocomplete="current-password"
-              placeholder="••••••••"
-            />
-            <button
-              class="field__toggle"
-              type="button"
-              (click)="togglePassword()"
-              [attr.aria-label]="showPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
-            >
-              @if (!showPassword()) {
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M1.5 8s2.4-4.5 6.5-4.5S14.5 8 14.5 8s-2.4 4.5-6.5 4.5S1.5 8 1.5 8Z" />
-                  <circle cx="8" cy="8" r="2" />
-                </svg>
-              } @else {
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M6.3 3.7A6 6 0 0 1 8 3.5c4.1 0 6.5 4.5 6.5 4.5a11 11 0 0 1-1.7 2.3" />
-                  <path d="M4.2 4.9A11 11 0 0 0 1.5 8S3.9 12.5 8 12.5a6 6 0 0 0 2.6-.6" />
-                  <path d="M6.6 6.6a2 2 0 0 0 2.8 2.8" />
-                  <line x1="2.5" y1="2.5" x2="13.5" y2="13.5" />
-                </svg>
-              }
-            </button>
-          </div>
-          @if ((form.controls.password.dirty && form.controls.password.touched || fgd.submitted) && form.controls.password.invalid) {
-            <p class="field-error">Mot de passe requis</p>
-          }
-        </div>
+      <button
+        class="btn btn--primary btn--lg login-submit"
+        type="submit"
+        [disabled]="isSubmitting()"
+        [attr.aria-busy]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          Connexion…
+        } @else {
+          Se connecter
+        }
+      </button>
 
-        <button
-          class="btn btn--primary btn--lg login-submit"
-          type="submit"
-          [disabled]="isSubmitting"
-          [attr.aria-busy]="isSubmitting"
-        >
-          @if (isSubmitting) {
-            Connexion…
-          } @else {
-            Se connecter
-          }
-        </button>
-
-        <p class="login-form__notice">
-          Utilisez les identifiants fournis par l’administrateur de votre atelier.
-        </p>
-      </form>
-    </div>
+      <!-- Repris du volet de marque quand celui-ci est masqué (petits écrans). -->
+      <p class="login-form__notice">Identifiants fournis par l’administrateur de votre atelier.</p>
+    </form>
   </section>
 </main>

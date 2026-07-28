@@ -78,6 +78,9 @@
 
   // ─── Layout ─────────────────────────────────────────────────────────────────
   --nav-height: 56px;
+  // Hauteur réservée au chrome (bandeau + navigation). Légèrement majorée :
+  // les écrans « pleine hauteur » (caisse) s'en servent pour ne jamais défiler.
+  --chrome-height: calc(var(--nav-height) * 2);
   --content-md: 880px;  // formulaires, fiche produit
   --content-lg: 1280px; // catalogue
 
@@ -270,6 +273,14 @@ a {
   text-decoration: none;
   cursor: pointer;
   transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+// Un bouton ne s'étire JAMAIS verticalement. Dans une grille dont la hauteur est
+// imposée par une colonne voisine plus haute, `align-items: stretch` (défaut)
+// étirait le bouton ; combiné à --radius-pill il devenait un ovale géant.
+.btn {
+  align-self: center;
+  flex-shrink: 0;
 }
 
 .btn--lg {
@@ -521,6 +532,15 @@ select option[disabled] {
 .data-grid th.data-grid__center,
 .data-grid td.data-grid__center {
   text-align: center !important;
+}
+
+// Texte libre (nom de client, de produit, référence, email) : la lecture est
+// plus rapide aligné à gauche. À poser sur le <th> ET le <td> — les deux axes
+// d'une colonne restent solidaires, aucune page ne redéfinit l'alignement chez
+// elle. Les colonnes de valeurs (nombres, montants, états) restent centrées.
+.data-grid th.data-grid__start,
+.data-grid td.data-grid__start {
+  text-align: left;
 }
 
 // ─── États de liste : chargement / vide / erreur ─────────────────────────────

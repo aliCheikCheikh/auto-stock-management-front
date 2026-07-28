@@ -127,6 +127,7 @@
     <a routerLink="/stock-movements" routerLinkActive="is-active">Historique des mouvements</a>
     <a routerLink="/sales" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Historique des ventes</a>
     @if (isOwner()) {
+      <a routerLink="/debts" routerLinkActive="is-active">Créances</a>
       <a routerLink="/admin/users" routerLinkActive="is-active">Administration</a>
     }
   </nav>

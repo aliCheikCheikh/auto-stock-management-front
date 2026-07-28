@@ -85,7 +85,7 @@
           </colgroup>
           <thead>
             <tr>
-              <th scope="col">Email</th>
+              <th scope="col" class="data-grid__start">Email</th>
               <th scope="col">Rôle</th>
               <th scope="col">Statut</th>
               <th scope="col" class="data-grid__actions">Actions</th>
@@ -94,7 +94,7 @@
           <tbody>
             @for (user of users(); track user.userId) {
             <tr>
-              <td class="users-table__email">{{ user.email }}</td>
+              <td class="users-table__email data-grid__start">{{ user.email }}</td>
 
               <td class="data-grid__center">
                 @switch (user.role) {
