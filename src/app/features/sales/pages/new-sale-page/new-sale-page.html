@@ -1,5 +1,5 @@
 <main class="sale-page">
-  <header class="page-header">
+  <header class="page-header sale-header">
     <div>
       <p class="page-kicker">Ventes</p>
       <h1>Enregistrer une vente</h1>
@@ -8,103 +8,105 @@
 
   <form class="sale-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit(fgd)">
     <div class="sale-grid">
-      <section class="card sale-section" aria-labelledby="sale-section-title">
-        <div class="section-heading">
-          <h2 id="sale-section-title">Ajouter un article</h2>
-        </div>
+      <div class="sale-main">
+        <!-- Saisie d'article : une seule ligne, tout au clavier. -->
+        <section class="card sale-entry" aria-label="Ajouter un article">
+          <div class="entry-row">
+            <div class="field entry-row__product">
+              <label for="sale-product">Produit</label>
+              <app-product-picker
+                inputId="sale-product"
+                [initialLabel]="preselectedLabel()"
+                (selected)="onProductSelected($event)"
+              />
+            </div>
 
-        <div class="form-grid">
-          <div class="field field--wide">
-            <label for="sale-product">Produit</label>
-            <app-product-picker
-              inputId="sale-product"
-              [initialLabel]="preselectedLabel()"
-              (selected)="onProductSelected($event)"
-            />
-            @if (cart().length === 0 && ((form.controls['productId'].dirty && form.controls['productId'].touched) || fgd.submitted) && form.controls['productId'].invalid) {
-            <p class="field-error">Sélection d'un produit obligatoire.</p>
-            }
-          </div>
+            <div class="field entry-row__qty">
+              <label for="quantity">Quantité</label>
+              <input
+                id="quantity"
+                type="number"
+                formControlName="quantity"
+                min="1"
+                inputmode="numeric"
+                (keydown.enter)="onQuantityEnter($event)"
+              />
+            </div>
 
-          <div class="field field--quantity">
-            <label for="quantity">Quantité vendue</label>
-            <input id="quantity" type="number" formControlName="quantity" min="1" />
-            @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('required')) {
-            <p class="field-error">Quantité obligatoire.</p>
-            }
-            @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('min')) {
-            <p class="field-error">Quantité minimum : 1.</p>
-            }
-          </div>
-        </div>
-
-        
-
-        <div class="action-group">
-          <button
-            class="btn btn--secondary btn--lg"
-            type="button"
-            (click)="addToCart()"
-            [disabled]="isSubmitting"
-          >
-            Ajouter au panier
-          </button>
-        </div>
-      </section>
-
-      <aside class="cart-section" aria-live="polite">
-        <div class="cart-section__title">
-          <h2>Panier</h2>
-          <p>{{ cart().length }} article(s)</p>
-        </div>
-
-        <div class="cart-body">
-          @if (cart().length === 0) {
-          <app-empty-state
-            illustration="cart"
-            title="Panier vide"
-            text="Ajoutez au moins un article pour pouvoir enregistrer la vente. Le panier reste vide tant qu’aucune pièce n’a été ajoutée."
-          />
-          } @else {
-          <ul class="cart-list">
-            @for (line of cart(); track line.productId) {
-            <li class="cart-item">
-              <div>
-                <strong>{{ line.productLabel }}</strong>
-                <p>Qté : {{ line.quantity }} × {{ line.unitPrice | money }}</p>
-              </div>
-              <div class="cart-item__actions">
-                <span class="cart-item__total">{{ line.subtotal | money }}</span>
-                <button type="button" class="btn btn--secondary" (click)="removeFromCart(line.productId)">
-                  Retirer
-                </button>
-              </div>
-            </li>
-            }
-          </ul>
-
-          <div class="cart-total">
-            <span>Total panier</span>
-            <strong>{{ cartTotal() | money }}</strong>
-          </div>
-
-          @if (cart().length > 0) {
-          <div class="cart-actions">
             <button
-              class="btn btn--primary btn--lg"
-              type="submit"
-              [disabled]="isSubmitting"
-              [attr.aria-busy]="isSubmitting"
+              class="btn btn--secondary btn--lg entry-row__add"
+              type="button"
+              (click)="addToCart()"
+              [disabled]="isSubmitting()"
             >
-              @if (isSubmitting) {
+              Ajouter
+            </button>
+          </div>
+
+          <p class="entry-help">
+            Cherchez le produit, puis ajoutez-le au panier.
+          </p>
+
+          @if (entryHint()) {
+          <p class="entry-hint" role="status" aria-live="polite">{{ entryHint() }}</p>
+          }
+
+          @if (cart().length === 0 && ((form.controls['productId'].dirty && form.controls['productId'].touched) || fgd.submitted) && form.controls['productId'].invalid) {
+          <p class="field-error">Sélection d'un produit obligatoire.</p>
+          }
+          @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('required')) {
+          <p class="field-error">Quantité obligatoire.</p>
+          }
+          @if ((form.controls['quantity'].dirty && form.controls['quantity'].touched || fgd.submitted) && form.controls['quantity'].hasError('min')) {
+          <p class="field-error">Quantité minimum : 1.</p>
+          }
+        </section>
+
+        <section class="card cart-card" aria-labelledby="cart-title">
+          <div class="cart-card__head">
+            <h2 id="cart-title">Panier</h2>
+            <p aria-live="polite">{{ cart().length }} article(s)</p>
+          </div>
+
+          <app-sale-cart
+            [lines]="cart()"
+            [total]="cartTotal()"
+            (quantityChanged)="updateQuantity($event)"
+            (removed)="removeFromCart($event)"
+          />
+        </section>
+      </div>
+
+      <aside class="sale-side">
+        <div class="card side-card">
+          <app-payment-panel
+            [total]="cartTotal()"
+            [(mode)]="paymentMode"
+            [(amountPaid)]="amountPaid"
+            [(customer)]="customer"
+          />
+
+          <div class="side-actions">
+            @if (cart().length === 0) {
+            <p class="side-actions__reason" id="submit-blocked">Ajoutez au moins un article.</p>
+            } @else if (missingCustomer()) {
+            <p class="side-actions__reason" id="submit-blocked">Sélectionnez un client pour valider.</p>
+            }
+
+            <button
+              class="btn btn--primary btn--lg side-actions__submit"
+              type="submit"
+              [disabled]="isSubmitting() || !canSubmit()"
+              [attr.aria-busy]="isSubmitting()"
+              [attr.aria-describedby]="canSubmit() ? null : 'submit-blocked'"
+            >
+              @if (isSubmitting()) {
               Enregistrement...
               } @else {
               Enregistrer la vente
               }
             </button>
           </div>
-          }
-          }
         </div>
       </aside>
     </div>

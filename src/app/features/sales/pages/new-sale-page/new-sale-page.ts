@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal, viewChild } from '@angular
 import { SalesApiService } from '../../data-access/sales-api.service';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateSaleRequest } from '../../models/sales.model';
+import { CartLine, CartQuantityChange } from '../../models/cart-line.model';
 import { SessionContextService } from '../../../../core/session/session-context.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../../core/api/problem-detail.model';
@@ -12,16 +13,11 @@ import { NotificationService } from '../../../../core/notifications/notification
 import { ActivatedRoute } from '@angular/router';
 import { ProductPicker } from '../../../products/ui/product-picker/product-picker';
 import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
-import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
-import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
-
-interface CartLine {
-  productId: string;
-  productLabel: string;
-  quantity: number;
-  unitPrice: Money;
-  subtotal: Money;
-}
+import { formatMoney } from '../../../../shared/pipes/money.pipe';
+import { SaleCart } from '../../ui/sale-cart/sale-cart';
+import { PaymentMode, PaymentPanel, sanitizeAmount } from '../../ui/payment-panel/payment-panel';
+import { CustomerResponse } from '../../../customers/models/customer.model';
+import { addAmounts, isPositiveAmount, multiplyAmount } from '../../../../shared/utils/money-math';
 
 interface PendingProduct {
   productId: string;
@@ -29,9 +25,14 @@ interface PendingProduct {
   unitPrice: Money;
 }
 
+/**
+ * Écran de vente — orchestration seulement : le panier (`SaleCart`) et le bloc
+ * paiement (`PaymentPanel`) sont des composants dédiés. La page tient l'état du
+ * panier, celui du paiement et la soumission.
+ */
 @Component({
   selector: 'app-new-sale-page',
-  imports: [ReactiveFormsModule, ProductPicker, ConfirmDialog, MoneyPipe, EmptyState],
+  imports: [ReactiveFormsModule, ProductPicker, SaleCart, PaymentPanel, ConfirmDialog],
   templateUrl: './new-sale-page.html',
   styleUrl: './new-sale-page.scss',
 })
@@ -45,15 +46,26 @@ export class NewSalePage implements OnInit {
   // Libellé pré-rempli du picker (pré-sélection depuis la fiche produit).
   readonly preselectedLabel = signal('');
   private readonly picker = viewChild(ProductPicker);
+  private readonly paymentPanel = viewChild(PaymentPanel);
 
   currentIdempotencyKey: string | null = null;
-  isSubmitting = false;
+  readonly isSubmitting = signal(false);
   readonly cart = signal<CartLine[]>([]);
   readonly confirmingPendingRemoval = signal(false);
+
+  // Guidage de saisie affiché près du champ concerné. Une saisie incomplète
+  // n'est pas un échec : elle ne déclenche pas de toast rouge, qui dévaluerait
+  // les vraies alertes (vente refusée, appel serveur en erreur).
+  readonly entryHint = signal('');
 
   // Source de vérité unique : le produit sélectionné mais pas encore ajouté au
   // panier. Renseigné par le picker ou la pré-sélection, remis à null à l'ajout.
   readonly selectedProduct = signal<ProductSearchResult | null>(null);
+
+  // État du paiement, piloté en liaison double par PaymentPanel.
+  readonly paymentMode = signal<PaymentMode>('FULL');
+  readonly amountPaid = signal('0');
+  readonly customer = signal<CustomerResponse | null>(null);
 
   readonly pendingProduct = computed<PendingProduct | null>(() => {
     const selected = this.selectedProduct();
@@ -70,12 +82,14 @@ export class NewSalePage implements OnInit {
   readonly hasPendingProduct = computed(() => this.selectedProduct() !== null);
 
   readonly cartTotal = computed<Money>(() => {
-    const totalAmount = this.cart().reduce((sum, line) => sum + Number(line.subtotal.amount), 0);
-    return {
-      amount: totalAmount.toString(),
-      currency: this.cart()[0]?.unitPrice.currency ?? 'XAF',
-    };
+    const lines = this.cart();
+    const amount = lines.reduce((sum, line) => addAmounts(sum, line.subtotal.amount), '0');
+    return { amount, currency: lines[0]?.unitPrice.currency ?? 'XAF' };
   });
+
+  readonly isCreditSale = computed(() => this.paymentMode() === 'CREDIT');
+  readonly missingCustomer = computed(() => this.isCreditSale() && this.customer() === null);
+  readonly canSubmit = computed(() => this.cart().length > 0 && !this.missingCustomer());
 
   readonly form = new FormGroup({
     productId: new FormControl('', {
@@ -115,12 +129,14 @@ export class NewSalePage implements OnInit {
     this.form.controls.productId.markAsDirty();
     this.form.controls.productId.markAsTouched();
     this.selectedProduct.set(product);
+    this.entryHint.set('');
   }
 
   addToCart(): void {
     const selected = this.selectedProduct();
     if (!selected) {
-      this.notificationService.error('Sélectionnez un produit avant d’ajouter au panier.');
+      this.entryHint.set('Choisissez d’abord un produit dans le champ ci-dessus.');
+      this.picker()?.focus();
       return;
     }
 
@@ -142,7 +158,7 @@ export class NewSalePage implements OnInit {
         updated[existingIndex] = {
           ...existingLine,
           quantity: newQuantity,
-          subtotal: this.lineSubtotal(existingLine.unitPrice, newQuantity),
+          subtotal: lineSubtotal(existingLine.unitPrice, newQuantity),
         };
         return updated;
       }
@@ -152,11 +168,34 @@ export class NewSalePage implements OnInit {
         productLabel: selected.name,
         quantity,
         unitPrice,
-        subtotal: this.lineSubtotal(unitPrice, quantity),
+        subtotal: lineSubtotal(unitPrice, quantity),
       }];
     });
 
+    this.entryHint.set('');
     this.resetProductSelection();
+    // Enchaînement clavier : le champ produit reprend la main.
+    this.picker()?.focus();
+  }
+
+  // Entrée depuis le champ quantité : ajoute la ligne sans soumettre la vente.
+  onQuantityEnter(event: Event): void {
+    event.preventDefault();
+    this.addToCart();
+  }
+
+  updateQuantity(change: CartQuantityChange): void {
+    this.cart.update((lines) =>
+      lines.map((line) =>
+        line.productId === change.productId
+          ? {
+              ...line,
+              quantity: change.quantity,
+              subtotal: lineSubtotal(line.unitPrice, change.quantity),
+            }
+          : line
+      )
+    );
   }
 
   removeFromCart(productId: string): void {
@@ -164,7 +203,7 @@ export class NewSalePage implements OnInit {
   }
 
   onSubmit(formDirective: FormGroupDirective): void {
-    if (this.isSubmitting) {
+    if (this.isSubmitting()) {
       return;
     }
 
@@ -175,8 +214,11 @@ export class NewSalePage implements OnInit {
       return;
     }
 
+    // Panier vide et client manquant sont déjà expliqués sous le bouton (qui
+    // est désactivé) : on ramène le vendeur au champ utile, sans alerte.
     if (this.cart().length === 0) {
-      this.notificationService.error('Ajoutez au moins un article au panier avant de valider la vente.');
+      this.entryHint.set('Ajoutez au moins un article avant de valider la vente.');
+      this.picker()?.focus();
       return;
     }
 
@@ -186,28 +228,50 @@ export class NewSalePage implements OnInit {
       return;
     }
 
+    const customer = this.customer();
+    if (this.isCreditSale() && customer === null) {
+      this.paymentPanel()?.focusCustomer();
+      return;
+    }
+
     const request: CreateSaleRequest = {
       shopId: context.shopId,
       lines: this.cart().map((line) => ({ productId: line.productId, quantity: line.quantity })),
+      // Vente au comptant : aucun des deux champs n'est envoyé.
+      ...(this.isCreditSale() && customer
+        ? {
+            customerId: customer.customerId,
+            // Seule conversion numérique : le contrat d'API attend un nombre nu.
+            amountPaid: Number(sanitizeAmount(this.amountPaid())),
+          }
+        : {}),
     };
 
     if (this.currentIdempotencyKey === null) {
       this.currentIdempotencyKey = crypto.randomUUID();
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
     this.salesApi.sellProduct(request, this.currentIdempotencyKey).subscribe({
-      next: () => {
-        this.isSubmitting = false;
+      next: (sale) => {
+        this.isSubmitting.set(false);
         this.currentIdempotencyKey = null;
         this.cart.set([]);
-        this.notificationService.success('Vente enregistrée');
+        // Le solde annoncé au client est celui du backend, pas le calcul local.
+        const amountDue = sale.amountDue;
+        this.notificationService.success(
+          amountDue && isPositiveAmount(amountDue.amount)
+            ? `Vente enregistrée — reste à payer : ${formatMoney(amountDue)}`
+            : 'Vente enregistrée'
+        );
         formDirective.resetForm({ productId: '', quantity: 1 });
         this.resetProductSelection();
+        this.paymentPanel()?.reset();
+        this.picker()?.focus();
       },
       error: (error: unknown) => {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
         this.currentIdempotencyKey = null;
         this.notificationService.error(this.getSaleErrorMessage(error));
       },
@@ -229,13 +293,6 @@ export class NewSalePage implements OnInit {
     this.preselectedLabel.set('');
     this.selectedProduct.set(null);
     this.picker()?.reset();
-  }
-
-  private lineSubtotal(unitPrice: Money, quantity: number): Money {
-    return {
-      amount: (Number(unitPrice.amount) * quantity).toString(),
-      currency: unitPrice.currency,
-    };
   }
 
   private getSaleErrorMessage(error: unknown): string {
@@ -261,6 +318,21 @@ export class NewSalePage implements OnInit {
       return 'Une règle métier empêche l’enregistrement de la vente.';
     }
 
+    if (problem?.code === 'CREDIT_SALE_REQUIRES_CUSTOMER') {
+      return 'Une vente à crédit doit être rattachée à un client.';
+    }
+
+    if (problem?.code === 'CUSTOMER_NOT_FOUND') {
+      return 'Le client sélectionné est introuvable.';
+    }
+
     return 'Impossible d\'enregistrer la vente pour le moment.';
   }
+}
+
+function lineSubtotal(unitPrice: Money, quantity: number): Money {
+  return {
+    amount: multiplyAmount(unitPrice.amount, quantity),
+    currency: unitPrice.currency,
+  };
 }

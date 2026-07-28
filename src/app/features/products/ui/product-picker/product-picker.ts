@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, input, output, signal, viewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ProductsApiService } from '../../data-access/products-api.service';
 import { ProductSearchResult } from '../../models/product.model';
@@ -42,6 +42,8 @@ export class ProductPicker {
   readonly initialLabel = input('');
 
   readonly selected = output<ProductSearchResult>();
+
+  private readonly searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
   readonly searchControl = new FormControl('', { nonNullable: true });
   readonly results = signal<ProductSearchResult[]>([]);
@@ -147,6 +149,11 @@ export class ProductPicker {
     this.searchControl.setValue('', { emitEvent: false });
     this.results.set([]);
     this.close();
+  }
+
+  // Rend la main au champ : le vendeur enchaîne les articles au clavier.
+  focus() {
+    this.searchInput()?.nativeElement.focus();
   }
 
   private close() {

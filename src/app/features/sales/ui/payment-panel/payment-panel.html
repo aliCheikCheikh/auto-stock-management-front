@@ -1,0 +1,87 @@
+<section class="payment" aria-labelledby="payment-title">
+  <h2 class="payment__title" id="payment-title">Paiement</h2>
+
+  <div class="payment__modes" role="radiogroup" aria-labelledby="payment-title">
+    <button
+      class="payment__mode"
+      type="button"
+      role="radio"
+      [attr.aria-checked]="!isCredit()"
+      [class.is-selected]="!isCredit()"
+      (click)="selectMode('FULL')"
+    >
+      Payé en totalité
+    </button>
+    <button
+      class="payment__mode"
+      type="button"
+      role="radio"
+      [attr.aria-checked]="isCredit()"
+      [class.is-selected]="isCredit()"
+      (click)="selectMode('CREDIT')"
+    >
+      Crédit
+    </button>
+  </div>
+
+  @if (isCredit()) {
+  <div class="payment__credit">
+    <div class="field">
+      <label for="sale-customer">Client</label>
+      @if (customer(); as selected) {
+      <div class="payment__customer">
+        <div class="payment__customer-identity">
+          <strong>{{ customerLabel() }}</strong>
+          <span>{{ selected.phoneNumber }}</span>
+        </div>
+        <button class="btn btn--secondary" type="button" (click)="clearCustomer()">Changer</button>
+      </div>
+      } @else {
+      <app-customer-picker inputId="sale-customer" (selected)="onCustomerSelected($event)" />
+      }
+    </div>
+
+    <div class="field">
+      <label for="amount-paid">Montant payé maintenant</label>
+      <div class="payment__amount">
+        <input
+          id="amount-paid"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          [value]="amountPaid()"
+          (input)="onAmountInput($any($event.target).value)"
+          (focus)="$any($event.target).select()"
+          (keydown.enter)="$event.preventDefault()"
+          aria-describedby="amount-paid-hint"
+        />
+        <div class="payment__shortcuts" role="group" aria-label="Raccourcis de montant">
+          <button class="btn btn--secondary btn--chip" type="button" (click)="payNothing()">Rien</button>
+          <button class="btn btn--secondary btn--chip" type="button" (click)="payEverything()">Tout</button>
+        </div>
+      </div>
+      <p class="payment__hint" id="amount-paid-hint">
+        « Rien » si le client repart sans payer, « Tout » pour solder la vente.
+      </p>
+      @if (isOverpaid()) {
+      <p class="field-error">Le montant payé dépasse le total de la vente.</p>
+      }
+    </div>
+  </div>
+  }
+
+  <dl class="payment__summary" role="status" aria-live="polite">
+    <div class="payment__row">
+      <dt>Total</dt>
+      <dd>{{ total() | money }}</dd>
+    </div>
+    <div class="payment__row">
+      <dt>Payé</dt>
+      <dd>{{ paidMoney() | money }}</dd>
+    </div>
+    <div class="payment__row payment__row--due" [class.is-due]="hasRemaining()">
+      <dt>Reste à payer</dt>
+      <dd>{{ remaining() | money }}</dd>
+    </div>
+  </dl>
+</section>
