@@ -44,7 +44,7 @@ describe('UsersList', () => {
 
   it('ne propose jamais la réinitialisation du mot de passe au propriétaire', () => {
     const rows = Array.from(
-      fixture.nativeElement.querySelectorAll('tbody tr') as NodeListOf<HTMLTableRowElement>
+      fixture.nativeElement.querySelectorAll('.user-card') as NodeListOf<HTMLElement>
     );
     const ownerRow = rows.find((row) => row.textContent?.includes(OWNER.email));
     const sellerRow = rows.find((row) => row.textContent?.includes(SELLER.email));
@@ -55,7 +55,7 @@ describe('UsersList', () => {
 
   it('désactive visuellement la désactivation de l’unique propriétaire actif', () => {
     const ownerRow = Array.from(
-      fixture.nativeElement.querySelectorAll('tbody tr') as NodeListOf<HTMLTableRowElement>
+      fixture.nativeElement.querySelectorAll('.user-card') as NodeListOf<HTMLElement>
     ).find((row) => row.textContent?.includes(OWNER.email));
     const deactivateButton = Array.from(ownerRow!.querySelectorAll('button')).find(
       (button) => button.textContent?.trim() === 'Désactiver'

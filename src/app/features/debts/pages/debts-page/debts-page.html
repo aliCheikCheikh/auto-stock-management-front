@@ -127,7 +127,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (row of filteredRows(); track row.saleId) {
+                @for (row of debtsPage.items(); track row.saleId) {
                 <tr [class.debts-row--overdue]="row.overdue">
                   <td class="debt-customer data-grid__start" data-label="Client">{{ row.customerName }}</td>
 
@@ -171,6 +171,10 @@
               </tbody>
             </table>
           </div>
+
+          @if (debtsPage.isPaginated()) {
+            <app-pagination [meta]="debtsPage.meta()" (goTo)="debtsPage.goTo($event)" />
+          }
         }
       }
     </section>

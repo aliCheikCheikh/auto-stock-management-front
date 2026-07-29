@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { map } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DebtsApiService } from '../../data-access/debts-api.service';
 import { OutstandingDebtResponse } from '../../models/debt.model';
 import { Money } from '../../../../core/api/money.model';
@@ -10,6 +10,8 @@ import { customerDisplayName, telHref } from '../../../customers/models/customer
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
 import { Spinner } from '../../../../shared/ui/spinner/spinner';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
+import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { createLocalPagination } from '../../../../shared/utils/local-pagination';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { compareAmounts, sumMoney } from '../../../../shared/utils/money-math';
 import { RecordPaymentDialog } from '../../ui/record-payment-dialog/record-payment-dialog';
@@ -37,7 +39,15 @@ interface DebtRow {
 
 @Component({
   selector: 'app-debts-page',
-  imports: [DatePipe, ReactiveFormsModule, MoneyPipe, Spinner, EmptyState, RecordPaymentDialog],
+  imports: [
+    DatePipe,
+    ReactiveFormsModule,
+    MoneyPipe,
+    Spinner,
+    EmptyState,
+    Pagination,
+    RecordPaymentDialog,
+  ],
   templateUrl: './debts-page.html',
   styleUrl: './debts-page.scss',
 })
@@ -91,6 +101,18 @@ export class DebtsPage implements OnInit {
     sumMoney(this.overdueRows().map((row) => row.amountDue), this.totalDue().currency)
   );
 
+  // GET /debts n'est pas paginé côté serveur : la pagination reste locale.
+  // Les totaux en tête restent calculés sur l'ensemble filtré, pas sur la page.
+  readonly debtsPage = createLocalPagination(this.filteredRows);
+
+  constructor() {
+    // Une nouvelle recherche repart de la première page ; un encaissement, qui
+    // ne fait que recharger les données, conserve la position.
+    this.searchControl.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.debtsPage.reset());
+  }
+
   ngOnInit(): void {
     this.load();
   }
@@ -112,6 +134,7 @@ export class DebtsPage implements OnInit {
 
   sortBy(sort: DebtSort): void {
     this.sort.set(sort);
+    this.debtsPage.reset();
   }
 
   startPayment(row: DebtRow): void {

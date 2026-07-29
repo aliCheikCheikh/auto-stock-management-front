@@ -8,12 +8,12 @@
     (click)="$event.stopPropagation()"
     (keydown)="trapFocus(dialog, $event)"
   >
-    <h2 class="dialog-title" id="rename-user-title">Renommer le compte</h2>
+    <h2 class="dialog-title" id="rename-user-title">Modifier le nom complet</h2>
     <p class="dialog-message">L’email de connexion {{ user().email }} ne sera pas modifié.</p>
 
     <form class="rename-user-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <div class="field">
-        <label for="renamed-display-name">Nom affiché</label>
+        <label for="renamed-display-name">Nom complet</label>
         <input
           id="renamed-display-name"
           type="text"

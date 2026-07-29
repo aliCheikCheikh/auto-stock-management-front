@@ -26,6 +26,10 @@ export interface SaleLineResponse {
 export interface SaleResponse {
     readonly saleId: string;
     readonly sellerId: string;
+    // Nom du vendeur. Renseigné dans l'historique paginé uniquement : sur la
+    // création et sur GET /sales/{id}, l'auteur est l'appelant lui-même et le
+    // serveur renvoie null.
+    readonly sellerName?: string | null;
     readonly lines: readonly SaleLineResponse[];
     readonly totalAmount: Money;
     readonly createdAt: string;

@@ -14,12 +14,19 @@ import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { Spinner } from '../../../../shared/ui/spinner/spinner';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
+import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { PageMeta } from '../../../../core/api/page.model';
 
+const PRODUCTS_PAGE_SIZE = 20;
 const STOCK_LEVELS_PAGE_SIZE = 100;
 
 type ProductsPageState =
   | { readonly status: 'loading' }
-  | { readonly status: 'success'; readonly products: readonly ProductListItem[] }
+  | {
+      readonly status: 'success';
+      readonly products: readonly ProductListItem[];
+      readonly page: PageMeta;
+    }
   | { readonly status: 'error'; readonly message: string }
 
 
@@ -34,7 +41,7 @@ interface ProductListItem {
 
 @Component({
   selector: 'app-products-page',
-  imports: [AsyncPipe, RouterLink, ConfirmDialog, MoneyPipe, Spinner, EmptyState],
+  imports: [AsyncPipe, RouterLink, ConfirmDialog, MoneyPipe, Spinner, EmptyState, Pagination],
   templateUrl: './products-page.html',
   styleUrl: './products-page.scss',
 })
@@ -45,12 +52,12 @@ export class ProductsPage {
   readonly isOwner = computed(() => this.authService.currentUser()?.role === 'OWNER');
   readonly productToDeactivate = signal<Product | null>(null);
   private readonly notifications = inject(NotificationService);
-  private readonly reload$ = new BehaviorSubject<void>(undefined);
+  private readonly requestedPage$ = new BehaviorSubject(0);
 
 
-  readonly state$ = this.reload$.pipe(
-    switchMap(() => forkJoin({
-      productsPage: this.productsApi.listProducts(true),
+  readonly state$ = this.requestedPage$.pipe(
+    switchMap((pageIndex) => forkJoin({
+      productsPage: this.productsApi.listProducts(true, PRODUCTS_PAGE_SIZE, pageIndex),
       stockLevelsPage: this.stockLevelsApi.listStockLevels({ size: STOCK_LEVELS_PAGE_SIZE })
     }).pipe(
       map(({ productsPage, stockLevelsPage }): ProductsPageState => {
@@ -58,6 +65,7 @@ export class ProductsPage {
 
         return {
           status: 'success',
+          page: productsPage.page,
           products: productsPage.content.map((product): ProductListItem => {
             const globalQuantity = globalQuantityByProductId.get(product.productId) ?? 0;
 
@@ -81,6 +89,11 @@ export class ProductsPage {
     this.productToDeactivate.set(product);
   }
 
+  goToPage(index: number): void {
+    if (index < 0) return;
+    this.requestedPage$.next(index);
+  }
+
   cancelDeactivation(): void {
     this.productToDeactivate.set(null);
   }
@@ -94,7 +107,7 @@ export class ProductsPage {
       next: () => {
         this.notifications.success(`Le produit « ${product.name} » a été désactivé.`);
         this.productToDeactivate.set(null);
-        this.reload$.next();
+        this.requestedPage$.next(this.requestedPage$.value);
       },
       error: () => {
         this.notifications.error(`La désactivation du produit « ${product.name} » a échoué.`);
@@ -153,4 +166,3 @@ function buildGlobalQuantityByProductId(
 
   return quantities;
 }
-

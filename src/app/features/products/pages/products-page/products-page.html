@@ -8,7 +8,10 @@
 
     <div class="page-actions">
       @if (state.status === 'success') {
-      <p class="product-count">{{ state.products.length }} produit(s)</p>
+      <p class="product-count">
+        {{ state.page.totalElements }}
+        {{ state.page.totalElements > 1 ? 'produits' : 'produit' }}
+      </p>
       }
 
       <a class="btn btn--primary" href="/stock-receipts/new">Nouvelle réception</a>
@@ -19,6 +22,7 @@
   <section class="state-block catalogue-state" aria-live="polite">
     <app-spinner label="Chargement des produits…" />
   </section>
+
   }
 
   @if (state.status === 'error') {
@@ -142,6 +146,9 @@
       </table>
     </div>
   </section>
+  @if (state.page.totalPages > 1) {
+  <app-pagination [meta]="state.page" (goTo)="goToPage($event)" />
+  }
   }
   }
 

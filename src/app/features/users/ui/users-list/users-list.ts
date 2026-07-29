@@ -24,4 +24,10 @@ export class UsersList {
   isPending(action: string, user: User): boolean {
     return this.pendingActionKeys().has(`${action}:${user.userId}`);
   }
+
+  initials(user: User): string {
+    const parts = user.displayName.trim().split(/\s+/).filter(Boolean);
+    const initials = parts.slice(0, 2).map((part) => part.charAt(0)).join('');
+    return (initials || user.email.charAt(0)).toLocaleUpperCase('fr');
+  }
 }

@@ -44,7 +44,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (category of categories(); track category.id) {
+                @for (category of categoriesPage.items(); track category.id) {
                   <tr>
                     <td class="data-grid__start" data-label="Famille">
                       @if (editingCategory()?.id === category.id) {
@@ -99,6 +99,13 @@
               </tbody>
             </table>
           </div>
+
+          @if (categoriesPage.isPaginated()) {
+            <app-pagination
+              [meta]="categoriesPage.meta()"
+              (goTo)="categoriesPage.goTo($event)"
+            />
+          }
         }
       </section>
     }

@@ -1,87 +1,78 @@
-<div class="data-grid-scroll">
-  <table class="data-grid data-grid--cards users-table" aria-label="Comptes utilisateurs">
-    <thead>
-      <tr>
-        <th scope="col" class="data-grid__start">Utilisateur</th>
-        <th scope="col">Rôle</th>
-        <th scope="col">État</th>
-        <th scope="col" class="data-grid__actions">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (user of users(); track user.userId) {
-        <tr [class.users-table__row--inactive]="!user.active">
-          <td class="data-grid__start" data-label="Utilisateur">
-            <div class="user-identity">
-              <span class="user-identity__name">
-                {{ user.displayName }}
-                @if (user.userId === currentUserId()) {
-                  <span class="user-identity__self">Vous</span>
-                }
-              </span>
-              <span class="user-identity__email">{{ user.email }}</span>
-            </div>
-          </td>
-          <td class="data-grid__center" data-label="Rôle">
-            <span class="role-badge">
-              @if (user.role === 'OWNER') { Propriétaire } @else { Vendeur }
-            </span>
-          </td>
-          <td class="data-grid__center" data-label="État">
-            <div class="user-status">
-              <span class="status-badge" [class.status-badge--active]="user.active" [class.status-badge--inactive]="!user.active">
-                {{ user.active ? 'Actif' : 'Désactivé' }}
-              </span>
-              @if (user.passwordChangeRequired) {
-                <span class="password-status">Changement de mot de passe en attente</span>
-              }
-            </div>
-          </td>
-          <td class="data-grid__actions" data-label="Actions">
-            <div class="users-table__actions">
-              <button
-                class="btn btn--secondary"
-                type="button"
-                (click)="renameRequested.emit(user)"
-              >
-                Renommer
-              </button>
-
-              @if (user.role === 'SELLER' && user.active) {
-                <button
-                  class="btn btn--secondary"
-                  type="button"
-                  (click)="passwordResetRequested.emit(user)"
-                >
-                  Réinitialiser le mot de passe
-                </button>
-              }
-
-              @if (user.active) {
-                <button
-                  class="btn btn--danger"
-                  type="button"
-                  [disabled]="isSoleActiveOwner(user)"
-                  [title]="isSoleActiveOwner(user) ? 'Le magasin doit conserver un propriétaire actif' : 'Désactiver ce compte'"
-                  (click)="deactivationRequested.emit(user)"
-                >
-                  Désactiver
-                </button>
-              } @else {
-                <button
-                  class="btn btn--primary"
-                  type="button"
-                  [disabled]="isPending('reactivate', user)"
-                  [attr.aria-busy]="isPending('reactivate', user)"
-                  (click)="reactivationRequested.emit(user)"
-                >
-                  @if (isPending('reactivate', user)) { Réactivation… } @else { Réactiver }
-                </button>
-              }
-            </div>
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
+<div class="users-grid__header" aria-hidden="true">
+  <span></span>
+  <span>Utilisateur</span>
+  <span>Rôle</span>
+  <span>Accès</span>
+  <span class="users-grid__actions-label">Actions</span>
 </div>
+
+<ul class="users-grid" aria-label="Comptes utilisateurs">
+  @for (user of users(); track user.userId) {
+    <li class="user-card" [class.user-card--inactive]="!user.active">
+      <div class="user-card__avatar" aria-hidden="true">{{ initials(user) }}</div>
+
+      <div class="user-card__identity">
+        <div class="user-card__name-line">
+          <strong>{{ user.displayName }}</strong>
+          @if (user.userId === currentUserId()) {
+            <span class="user-card__self">Vous</span>
+          }
+        </div>
+        <a [href]="'mailto:' + user.email">{{ user.email }}</a>
+      </div>
+
+      <div class="user-card__role">
+        <span class="role-badge">
+          @if (user.role === 'OWNER') { Propriétaire } @else { Vendeur }
+        </span>
+      </div>
+
+      <div class="user-status">
+        <span class="status-badge" [class.status-badge--active]="user.active" [class.status-badge--inactive]="!user.active">
+          {{ user.active ? 'Actif' : 'Désactivé' }}
+        </span>
+        @if (user.passwordChangeRequired) {
+          <span class="password-status">Changement de mot de passe en attente</span>
+        }
+      </div>
+
+      <details class="user-actions">
+        <summary aria-label="Gérer le compte de {{ user.displayName }}">
+          Gérer
+          <span aria-hidden="true">•••</span>
+        </summary>
+        <div class="user-actions__menu">
+          <button type="button" (click)="renameRequested.emit(user)">Modifier le nom complet</button>
+
+          @if (user.role === 'SELLER' && user.active) {
+            <button type="button" (click)="passwordResetRequested.emit(user)">
+              Réinitialiser le mot de passe
+            </button>
+          }
+
+          @if (user.active) {
+            <button
+              class="user-actions__danger"
+              type="button"
+              [disabled]="isSoleActiveOwner(user)"
+              [title]="isSoleActiveOwner(user) ? 'Le magasin doit conserver un propriétaire actif' : 'Désactiver ce compte'"
+              (click)="deactivationRequested.emit(user)"
+            >
+              Désactiver
+            </button>
+          } @else {
+            <button
+              class="user-actions__primary"
+              type="button"
+              [disabled]="isPending('reactivate', user)"
+              [attr.aria-busy]="isPending('reactivate', user)"
+              (click)="reactivationRequested.emit(user)"
+            >
+              @if (isPending('reactivate', user)) { Réactivation… } @else { Réactiver }
+            </button>
+          }
+        </div>
+      </details>
+    </li>
+  }
+</ul>

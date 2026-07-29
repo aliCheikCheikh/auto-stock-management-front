@@ -1,17 +1,26 @@
 <main class="history-page">
-  <header class="page-header">
-    <div class="page-header__content">
-      <div>
-        <p class="page-kicker">Ventes</p>
-        <h1 id="sales-history-title">Historique des ventes</h1>
-      </div>
-      @if (state() === 'success') {
-        <p class="history-count">
-          {{ pageDisplayCount() }} ventes affichées
-          <span class="history-count__total">— total de la page : {{ pageTotal() | money }}</span>
-        </p>
-      }
+  <header class="page-header sales-header">
+    <div>
+      <p class="page-kicker">Journal des ventes</p>
+      <h1 id="sales-history-title">Historique des ventes</h1>
+      <p class="sales-header__description">
+        Retrouvez le détail de chaque transaction et le vendeur qui l’a enregistrée.
+      </p>
     </div>
+
+    @if (state() === 'success') {
+      <div class="sales-summary" aria-label="Résumé de la page">
+        <div class="sales-summary__item">
+          <span>Ventes affichées</span>
+          <strong>{{ sales().length }} / {{ page().totalElements }}</strong>
+        </div>
+        <div class="sales-summary__separator" aria-hidden="true"></div>
+        <div class="sales-summary__item sales-summary__item--total">
+          <span>Total de la page</span>
+          <strong>{{ pageTotal() | money }}</strong>
+        </div>
+      </div>
+    }
   </header>
 
   @if (state() === 'loading') {
@@ -23,59 +32,76 @@
       <p class="history-error">{{ errorMessage() }}</p>
       <button class="btn btn--secondary" type="button" (click)="goToPage(page().page)">Réessayer</button>
     </section>
+  } @else if (sales().length === 0) {
+    <section class="card history-state" aria-labelledby="sales-history-title">
+      <app-empty-state
+        illustration="sales"
+        title="Aucune vente"
+        text="Aucune vente n'a encore été enregistrée. La première apparaîtra ici."
+      >
+        <a class="btn btn--primary" href="/sales/new">Nouvelle vente</a>
+      </app-empty-state>
+    </section>
   } @else {
-    <section class="card history-section" aria-labelledby="sales-history-title">
-      @if (sales().length === 0) {
-        <app-empty-state
-          illustration="sales"
-          title="Aucune vente"
-          text="Aucune vente n'a encore été enregistrée. La première apparaîtra ici."
-        >
-          <a class="btn btn--primary" href="/sales/new">Nouvelle vente</a>
-        </app-empty-state>
-      } @else {
-        <div class="data-grid-scroll">
-          <table class="data-grid sales-table" aria-label="Historique détaillé des ventes, regroupé par vente">
-            <colgroup>
-              <col class="sales-table__sale-col" />
-              <col class="sales-table__product-col" />
-              <col class="sales-table__quantity-col" />
-              <col class="sales-table__price-col" />
-              <col class="sales-table__subtotal-col" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col">Vente</th>
-                <th scope="col" class="data-grid__start">Produit</th>
-                <th scope="col" class="data-grid__num">Quantité</th>
-                <th scope="col" class="data-grid__num">PU</th>
-                <th scope="col" class="data-grid__num">Sous-total</th>
-              </tr>
-            </thead>
-            @for (sale of sales(); track sale.saleId) {
-              <tbody class="sales-table__group">
-                @for (line of sale.lines; track $index; let isFirst = $first) {
-                <tr>
-                  @if (isFirst) {
-                  <th class="sales-table__sale" scope="rowgroup" [attr.rowspan]="sale.lines.length + 1">
-                    <time class="sale-group__date" [attr.datetime]="sale.date">{{ sale.date | date: 'dd/MM/yyyy HH:mm' }}</time>
-                    <span class="sale-group__count">{{ sale.lines.length }} article(s)</span>
-                  </th>
-                  }
-                  <td class="sales-table__product data-grid__start">{{ line.productName }}</td>
-                  <td class="data-grid__center">{{ line.quantity }}</td>
-                  <td class="data-grid__num">{{ line.unitPrice | money }}</td>
-                  <td class="data-grid__num">{{ line.subtotal | money }}</td>
-                </tr>
-                }
-                <tr class="sales-table__group-total">
-                  <td class="sales-table__total-label" colspan="3">Total de la vente</td>
-                  <td class="sales-table__total-amount data-grid__num">{{ sale.total | money }}</td>
-                </tr>
-              </tbody>
+    <section class="sales-list" aria-label="Ventes enregistrées">
+      @for (sale of sales(); track sale.saleId) {
+        <article class="sale-card" [attr.aria-labelledby]="'sale-' + sale.saleId">
+          <header class="sale-card__header">
+            <div class="sale-card__identity">
+              <span class="sale-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M6 3h12v18l-2-1.5L14 21l-2-1.5L10 21l-2-1.5L6 21V3Z" />
+                  <path d="M9 8h6M9 12h6" />
+                </svg>
+              </span>
+              <div>
+                <div class="sale-card__title-line">
+                  <h2 [id]="'sale-' + sale.saleId">
+                    Vente du {{ sale.date | date: 'dd MMM yyyy' }}
+                  </h2>
+                  <span class="sale-card__count">
+                    {{ sale.lines.length }}
+                    {{ sale.lines.length > 1 ? 'articles' : 'article' }}
+                  </span>
+                </div>
+                <p class="sale-card__meta">
+                  <time [attr.datetime]="sale.date">{{ sale.date | date: 'HH:mm' }}</time>
+                  <span aria-hidden="true">•</span>
+                  <span>Enregistrée par <strong>{{ sale.sellerName }}</strong></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="sale-card__total">
+              <span>Total</span>
+              <strong>{{ sale.total | money }}</strong>
+            </div>
+          </header>
+
+          <div class="sale-lines" role="table" aria-label="Articles de la vente">
+            <div class="sale-lines__header" role="row">
+              <span role="columnheader">Produit</span>
+              <span role="columnheader">Quantité</span>
+              <span role="columnheader">Prix unitaire</span>
+              <span role="columnheader">Sous-total</span>
+            </div>
+
+            @for (line of sale.lines; track $index) {
+              <div class="sale-line" role="row">
+                <strong class="sale-line__product" role="cell">{{ line.productName }}</strong>
+                <span class="sale-line__quantity" role="cell" data-label="Quantité">
+                  {{ line.quantity }}
+                </span>
+                <span class="sale-line__money" role="cell" data-label="Prix unitaire">
+                  {{ line.unitPrice | money }}
+                </span>
+                <strong class="sale-line__money sale-line__subtotal" role="cell" data-label="Sous-total">
+                  {{ line.subtotal | money }}
+                </strong>
+              </div>
             }
-          </table>
-        </div>
+          </div>
+        </article>
       }
     </section>
 
