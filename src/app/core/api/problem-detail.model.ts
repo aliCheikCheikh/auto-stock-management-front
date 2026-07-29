@@ -14,7 +14,10 @@ export type ProblemCode =
   | 'INVALID_PHONE_NUMBER'
   | 'CREDIT_SALE_REQUIRES_CUSTOMER'
   | 'SALE_ALREADY_SETTLED'
-  | 'PAYMENT_EXCEEDS_AMOUNT_DUE';
+  | 'PAYMENT_EXCEEDS_AMOUNT_DUE'
+  | 'CATEGORY_NAME_ALREADY_USED'
+  | 'CATEGORY_IN_USE'
+  | 'CATEGORY_NOT_FOUND';
 
 export interface ProblemValidationError {
   readonly field: string;
