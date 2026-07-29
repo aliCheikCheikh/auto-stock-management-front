@@ -32,29 +32,77 @@
   font-weight: 600;
 }
 
-// ─── Colonnes du tableau des mouvements ──────────────────────────────────────
+// ─── Tableau groupé par opération ────────────────────────────────────────────
+// Chaque <tbody> est une opération : la cellule « Opération » traverse ses
+// lignes, comme dans l'historique des ventes.
 .movements-table {
-  min-width: 720px;
+  min-width: 820px;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.movements-table__date-col { width: 17%; }
-.movements-table__type-col { width: 14%; }
-.movements-table__product-col { width: 26%; }
-.movements-table__quantity-col { width: 12%; }
-.movements-table__location-col { width: 31%; }
+.movements-table__operation-col { width: 26%; }
+.movements-table__product-col { width: 30%; }
+.movements-table__quantity-col { width: 14%; }
+.movements-table__location-col { width: 30%; }
 
-// ─── Alignements des colonnes ────────────────────────────────────────────────
-.movement-date {
+.movements-table__group + .movements-table__group > tr:first-child > * {
+  border-top: var(--space-2) solid var(--gray-0);
+}
+
+.movements-table__operation {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 0;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+  vertical-align: top !important;
+}
+
+// Le badge était centré dans une cellule centrée ; en tête de groupe, il
+// s'aligne sur le reste des informations.
+.movements-table__operation .type-badge {
+  margin-inline: 0;
+}
+
+.operation__date {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.movement-product {
+.operation__author {
+  display: block;
+  color: var(--gray-500);
+  font-size: var(--text-xs);
   overflow-wrap: anywhere;
 }
 
-.movement-type {
-  padding-inline: var(--space-3) !important;
+// Affiché seulement au-delà d'une ligne : un mouvement seul reste compact.
+.operation__count {
+  display: inline-block;
+  margin-top: var(--space-1);
+  padding: 0 var(--space-2);
+  border: var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--gray-0);
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+// ─── Alignements des colonnes ────────────────────────────────────────────────
+.movement-product {
+  overflow-wrap: anywhere;
 }
 
 .movement-location {
@@ -112,7 +160,7 @@
 
   // Le tableau garde ses colonnes et défile horizontalement si besoin.
   .movements-table {
-    min-width: 720px;
+    min-width: 820px;
   }
 }
 
