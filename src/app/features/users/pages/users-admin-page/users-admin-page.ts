@@ -15,6 +15,8 @@ import { CreateSellerDialog } from '../../ui/create-seller-dialog/create-seller-
 import { OneTimePasswordDialog } from '../../ui/one-time-password-dialog/one-time-password-dialog';
 import { RenameUserDialog } from '../../ui/rename-user-dialog/rename-user-dialog';
 import { UsersList } from '../../ui/users-list/users-list';
+import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { createLocalPagination } from '../../../../shared/utils/local-pagination';
 
 type ConfirmationKind = 'deactivate' | 'reset-password';
 
@@ -35,6 +37,7 @@ interface OneTimePassword {
     CreateSellerDialog,
     EmptyState,
     OneTimePasswordDialog,
+    Pagination,
     RenameUserDialog,
     Spinner,
     UsersList,
@@ -62,6 +65,17 @@ export class UsersAdminPage implements OnInit {
           user.email.toLocaleLowerCase('fr').includes(query)
       );
   });
+
+  // L'endpoint des comptes n'est pas paginé côté serveur : la pagination reste
+  // locale, et n'apparaît qu'au-delà du seuil.
+  readonly usersPage = createLocalPagination(this.filteredUsers);
+
+  // Une nouvelle recherche repart de la première page ; un simple
+  // rafraîchissement de données, lui, conserve la position.
+  onSearch(term: string): void {
+    this.searchTerm.set(term);
+    this.usersPage.reset();
+  }
 
   readonly createDialogOpen = signal(false);
   readonly createFailure = signal<UserManagementFailure | null>(null);

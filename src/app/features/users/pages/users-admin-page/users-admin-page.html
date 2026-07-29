@@ -64,7 +64,7 @@
                 autocomplete="off"
                 placeholder="Nom ou email"
                 [value]="searchTerm()"
-                (input)="searchTerm.set($any($event.target).value)"
+                (input)="onSearch($any($event.target).value)"
               />
             </div>
           }
@@ -76,7 +76,7 @@
           </div>
         } @else {
           <app-users-list
-            [users]="filteredUsers()"
+            [users]="usersPage.items()"
             [currentUserId]="currentUserId()"
             [activeOwnerCount]="store.activeOwnerCount()"
             [pendingActionKeys]="store.pendingKeys()"
@@ -85,6 +85,10 @@
             (reactivationRequested)="reactivateUser($event)"
             (passwordResetRequested)="requestPasswordReset($event)"
           />
+
+          @if (usersPage.isPaginated()) {
+            <app-pagination [meta]="usersPage.meta()" (goTo)="usersPage.goTo($event)" />
+          }
         }
       </section>
     }

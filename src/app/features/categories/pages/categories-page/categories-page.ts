@@ -12,7 +12,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
+import { Pagination } from '../../../../shared/ui/pagination/pagination';
 import { Spinner } from '../../../../shared/ui/spinner/spinner';
+import { createLocalPagination } from '../../../../shared/utils/local-pagination';
 import { CategoriesApiService } from '../../data-access/categories-api.service';
 import { categoryFailureFrom } from '../../models/category-api-error';
 import { Category } from '../../models/category.model';
@@ -28,7 +30,14 @@ type CategoriesState = 'loading' | 'ready' | 'error';
 
 @Component({
   selector: 'app-categories-page',
-  imports: [ReactiveFormsModule, CategoryCreateForm, CategoryDeleteDialog, EmptyState, Spinner],
+  imports: [
+    ReactiveFormsModule,
+    CategoryCreateForm,
+    CategoryDeleteDialog,
+    EmptyState,
+    Pagination,
+    Spinner,
+  ],
   templateUrl: './categories-page.html',
   styleUrl: './categories-page.scss',
 })
@@ -40,6 +49,9 @@ export class CategoriesPage implements OnInit {
 
   readonly state = signal<CategoriesState>('loading');
   readonly categories = signal<readonly Category[]>([]);
+  // Endpoint non paginé côté serveur : la pagination est locale et la position
+  // survit à un rechargement (création, renommage, suppression).
+  readonly categoriesPage = createLocalPagination(this.categories);
   readonly editingCategory = signal<Category | null>(null);
   readonly renameServerError = signal('');
   readonly isRenaming = signal(false);
