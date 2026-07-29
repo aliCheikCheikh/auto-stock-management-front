@@ -10,6 +10,7 @@ import { Pagination } from '../../../../shared/ui/pagination/pagination';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import { DatePipe } from '@angular/common';
 import { sumMoney } from '../../../../shared/utils/money-math';
+import { authorLabel } from '../../../../shared/utils/author';
 
 interface SaleLineRow {
   readonly productName: string;
@@ -21,6 +22,7 @@ interface SaleLineRow {
 interface SaleRow {
   readonly saleId: string;
   readonly date: string;
+  readonly sellerName: string;
   readonly total: Money;
   readonly lines: SaleLineRow[];
 }
@@ -94,6 +96,7 @@ export class SalesHistoryPage implements OnInit {
     return {
       saleId: sale.saleId,
       date: sale.createdAt,
+      sellerName: authorLabel(sale.sellerName),
       total: sale.totalAmount,
       lines: sale.lines.map((line) => ({
         productName: this.productNames.get(line.productId) ?? line.productId,

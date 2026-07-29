@@ -64,16 +64,17 @@
 // Chaque <tbody> représente une vente : la cellule « Vente » traverse son
 // groupe, afin que les filets internes démarrent à la colonne Produit.
 .sales-table {
-  min-width: 760px;
+  min-width: 900px; // colonne Vendeur comprise
   border-collapse: separate;
   border-spacing: 0;
 }
 
-.sales-table__sale-col { width: 20%; }
-.sales-table__product-col { width: 34%; }
-.sales-table__quantity-col { width: 14%; }
-.sales-table__price-col { width: 16%; }
-.sales-table__subtotal-col { width: 16%; }
+.sales-table__sale-col { width: 18%; }
+.sales-table__seller-col { width: 14%; }
+.sales-table__product-col { width: 26%; }
+.sales-table__quantity-col { width: 12%; }
+.sales-table__price-col { width: 15%; }
+.sales-table__subtotal-col { width: 15%; }
 
 .sales-table__group + .sales-table__group > tr:first-child > * {
   border-top: var(--space-2) solid var(--gray-0);
@@ -94,6 +95,19 @@
 
 .sales-table__group:hover .sales-table__sale {
   background: var(--gray-50);
+}
+
+// Vendeur : porté par la vente entière, donc rendu une fois par groupe.
+.sales-table__seller {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 0;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  overflow-wrap: anywhere;
 }
 
 .sale-group__date {
@@ -153,6 +167,6 @@
   }
 
   .sales-table {
-    min-width: 760px;
+    min-width: 900px; // colonne Vendeur comprise
   }
 }
