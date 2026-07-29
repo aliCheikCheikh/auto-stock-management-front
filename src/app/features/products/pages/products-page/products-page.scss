@@ -29,9 +29,14 @@
 }
 
 .catalogue-state,
-.catalogue-section {
+.catalogue-section,
+.products-page app-pagination {
   max-width: var(--content-lg);
   margin: 0 auto;
+}
+
+.products-page app-pagination {
+  display: block;
 }
 
 // ─── Colonnes du tableau catalogue ──────────────────────────────────────────

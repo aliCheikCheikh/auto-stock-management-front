@@ -13,8 +13,11 @@ export class ProductsApiService {
     private readonly http = inject(HttpClient);
     private readonly apiBaseUrl = '/api/v1';
 
-    public listProducts(activeOnly = false, size = 20): Observable<Page<Product>> {
-        const params = new HttpParams().set('activeOnly', activeOnly).set('size', size);
+    public listProducts(activeOnly = false, size = 20, page = 0): Observable<Page<Product>> {
+        const params = new HttpParams()
+            .set('activeOnly', activeOnly)
+            .set('size', size)
+            .set('page', page);
         return this.http.get<Page<Product>>(`${this.apiBaseUrl}/products`, { params });
     }
 
