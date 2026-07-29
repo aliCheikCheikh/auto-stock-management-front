@@ -77,6 +77,28 @@ describe('DebtsPage', () => {
     expect(component.filteredRows()[0].saleId).toBe('sale-2');
   });
 
+  it('recharge la liste après un encaissement', () => {
+    httpTesting.expectOne('/api/v1/debts').flush([debt()]);
+
+    component.startPayment(component.filteredRows()[0]);
+    expect(component.payingDebt()?.saleId).toBe('sale-1');
+
+    component.onPaymentRecorded({
+      saleId: 'sale-1',
+      amountPaid: { amount: '30000', currency: 'XAF' },
+      receivedAt: '2026-07-29T09:00:00Z',
+      totalAmount: { amount: '50000', currency: 'XAF' },
+      totalCollected: { amount: '50000', currency: 'XAF' },
+      amountDue: { amount: '0', currency: 'XAF' },
+      settled: true,
+    });
+
+    expect(component.payingDebt()).toBeNull();
+    // La créance soldée disparaît : le serveur ne la renvoie plus.
+    httpTesting.expectOne('/api/v1/debts').flush([]);
+    expect(component.filteredRows().length).toBe(0);
+  });
+
   it('compte les clients concernés sans doublon', () => {
     httpTesting.expectOne('/api/v1/debts').flush([
       debt(),
