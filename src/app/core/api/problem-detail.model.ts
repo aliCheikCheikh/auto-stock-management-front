@@ -12,7 +12,9 @@ export type ProblemCode =
   | 'CUSTOMER_PHONE_ALREADY_USED'
   | 'CUSTOMER_EMAIL_ALREADY_USED'
   | 'INVALID_PHONE_NUMBER'
-  | 'CREDIT_SALE_REQUIRES_CUSTOMER';
+  | 'CREDIT_SALE_REQUIRES_CUSTOMER'
+  | 'SALE_ALREADY_SETTLED'
+  | 'PAYMENT_EXCEEDS_AMOUNT_DUE';
 
 export interface ProblemValidationError {
   readonly field: string;

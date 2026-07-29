@@ -15,9 +15,14 @@ import { ProductPicker } from '../../../products/ui/product-picker/product-picke
 import { ConfirmDialog } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { formatMoney } from '../../../../shared/pipes/money.pipe';
 import { SaleCart } from '../../ui/sale-cart/sale-cart';
-import { PaymentMode, PaymentPanel, sanitizeAmount } from '../../ui/payment-panel/payment-panel';
+import { PaymentMode, PaymentPanel } from '../../ui/payment-panel/payment-panel';
 import { CustomerResponse } from '../../../customers/models/customer.model';
-import { addAmounts, isPositiveAmount, multiplyAmount } from '../../../../shared/utils/money-math';
+import {
+  addAmounts,
+  isPositiveAmount,
+  multiplyAmount,
+  sanitizeAmountInput,
+} from '../../../../shared/utils/money-math';
 
 interface PendingProduct {
   productId: string;
@@ -242,7 +247,7 @@ export class NewSalePage implements OnInit {
         ? {
             customerId: customer.customerId,
             // Seule conversion numérique : le contrat d'API attend un nombre nu.
-            amountPaid: Number(sanitizeAmount(this.amountPaid())),
+            amountPaid: Number(sanitizeAmountInput(this.amountPaid())),
           }
         : {}),
     };

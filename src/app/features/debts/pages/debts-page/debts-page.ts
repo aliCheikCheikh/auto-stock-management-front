@@ -12,6 +12,9 @@ import { Spinner } from '../../../../shared/ui/spinner/spinner';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { compareAmounts, sumMoney } from '../../../../shared/utils/money-math';
+import { RecordPaymentDialog } from '../../ui/record-payment-dialog/record-payment-dialog';
+import { DebtPaymentTarget, PaymentResponse } from '../../models/payment.model';
+import { formatMoney } from '../../../../shared/pipes/money.pipe';
 
 // Tri par défaut : l'ordre du backend, du plus ancien au plus récent.
 export type DebtSort = 'oldest' | 'amountDue';
@@ -34,7 +37,7 @@ interface DebtRow {
 
 @Component({
   selector: 'app-debts-page',
-  imports: [DatePipe, ReactiveFormsModule, MoneyPipe, Spinner, EmptyState],
+  imports: [DatePipe, ReactiveFormsModule, MoneyPipe, Spinner, EmptyState, RecordPaymentDialog],
   templateUrl: './debts-page.html',
   styleUrl: './debts-page.scss',
 })
@@ -46,6 +49,8 @@ export class DebtsPage implements OnInit {
   readonly rows = signal<DebtRow[]>([]);
   readonly errorMessage = signal('');
   readonly sort = signal<DebtSort>('oldest');
+  // Créance en cours d'encaissement (null = dialogue fermé).
+  readonly payingDebt = signal<DebtPaymentTarget | null>(null);
 
   readonly searchControl = new FormControl('', { nonNullable: true });
   private readonly search = toSignal(
@@ -108,6 +113,36 @@ export class DebtsPage implements OnInit {
   sortBy(sort: DebtSort): void {
     this.sort.set(sort);
   }
+
+  startPayment(row: DebtRow): void {
+    this.payingDebt.set(toPaymentTarget(row));
+  }
+
+  cancelPayment(): void {
+    this.payingDebt.set(null);
+  }
+
+  // Le solde annoncé est celui du serveur ; la liste est rechargée pour que les
+  // totaux en tête suivent et qu'une créance soldée disparaisse.
+  onPaymentRecorded(payment: PaymentResponse): void {
+    this.payingDebt.set(null);
+    this.notificationService.success(
+      payment.settled
+        ? 'Dette soldée'
+        : `Remboursement encaissé — reste à payer : ${formatMoney(payment.amountDue)}`
+    );
+    this.load();
+  }
+}
+
+function toPaymentTarget(row: DebtRow): DebtPaymentTarget {
+  return {
+    saleId: row.saleId,
+    customerName: row.customerName,
+    totalAmount: row.totalAmount,
+    amountPaid: row.amountPaid,
+    amountDue: row.amountDue,
+  };
 }
 
 function toRow(debt: OutstandingDebtResponse): DebtRow {

@@ -37,13 +37,13 @@
   display: grid;
   place-content: center;
   justify-items: center;
-  background: rgba(16, 24, 40, 0.45);
+  background: var(--overlay-scrim);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   cursor: progress;
   // Le spinner (app-spinner) hérite de currentColor → points et libellé blancs
   // sur ce fond assombri, quel que soit le thème.
-  color: #fff;
+  color: var(--on-brand);
 }
 
 @media (prefers-reduced-motion: reduce) {

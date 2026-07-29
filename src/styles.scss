@@ -68,6 +68,7 @@
   --border-field:  1px solid var(--gray-300);
   --shadow-xs:      0 1px 2px rgba(16, 24, 40, 0.04);
   --shadow-overlay: 0 8px 24px rgba(16, 24, 40, 0.12);
+  --overlay-scrim:  rgba(16, 24, 40, 0.45); // voile derrière les dialogues
 
   // ─── Focus unifié (champs ET boutons) ───────────────────────────────────────
   --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.25);
@@ -170,6 +171,7 @@
   // ─── Ombres renforcées + focus plus lumineux sur fond sombre ───────────────
   --shadow-xs:      0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-overlay: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --overlay-scrim:  rgba(0, 0, 0, 0.6);
   --focus-ring:     0 0 0 3px rgba(110, 168, 255, 0.5);
 
   color: var(--gray-900);
@@ -599,6 +601,92 @@ select option[disabled] {
   display: flex;
   justify-content: flex-end;
   padding: var(--space-1) 0 0;
+}
+
+// ─── Dialogues modaux ────────────────────────────────────────────────────────
+// Gabarit commun à tous les dialogues (confirmation, encaissement, …) : voile,
+// carte centrée, titre, texte, pied d'actions. Un nouveau dialogue compose ces
+// classes au lieu de redéfinir son propre habillage.
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100; // au-dessus des toasts (1000) : capte le focus et les clics
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: var(--overlay-scrim);
+  animation: dialog-fade 140ms ease-out both;
+}
+
+.dialog-card {
+  width: 100%;
+  max-width: 440px;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-0);
+  box-shadow: var(--shadow-overlay);
+  animation: dialog-pop 140ms ease-out both;
+}
+
+// Neutralise l'uppercase global des h2 : registre « dialogue ».
+.dialog-title {
+  margin: 0;
+  color: var(--gray-900);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.dialog-message {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+@keyframes dialog-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dialog-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog-backdrop,
+  .dialog-card {
+    animation-duration: 1ms;
+  }
+}
+
+@media (max-width: 600px) {
+  .dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .dialog-actions .btn {
+    width: 100%;
+  }
 }
 
 // ─── Onglets segmentés (réception stock) ─────────────────────────────────────

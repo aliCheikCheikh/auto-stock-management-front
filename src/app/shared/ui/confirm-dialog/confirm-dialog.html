@@ -4,24 +4,25 @@
     entrées  : title(), message(), confirmLabel() = « Confirmer », cancelLabel() = « Annuler »
     sorties  : confirmed, cancelled
   Backdrop / Échap → cancelled.emit().
+  L'habillage vient du gabarit .dialog-* du design system (styles.scss).
 -->
 <div
-  class="cd-backdrop"
+  class="dialog-backdrop"
   (click)="cancelled.emit()"
   (keydown.escape)="cancelled.emit()"
 >
   <div
-    class="cd-card"
+    class="dialog-card"
     role="dialog"
     aria-modal="true"
     aria-labelledby="cd-title"
     aria-describedby="cd-message"
     (click)="$event.stopPropagation()"
   >
-    <h2 class="cd-title" id="cd-title">{{ title() }}</h2>
-    <p class="cd-message" id="cd-message">{{ message() }}</p>
+    <h2 class="dialog-title" id="cd-title">{{ title() }}</h2>
+    <p class="dialog-message" id="cd-message">{{ message() }}</p>
 
-    <div class="cd-actions">
+    <div class="dialog-actions">
       <button
         class="btn btn--secondary"
         type="button"

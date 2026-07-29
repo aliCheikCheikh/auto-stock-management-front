@@ -1,12 +1,13 @@
-import { AsyncPipe } from "@angular/common";
 import { Component, input, output } from "@angular/core";
-import { RouterLink } from "@angular/router";
 
-
+/**
+ * Dialogue de confirmation. L'habillage (voile, carte, titre, pied d'actions)
+ * vient du gabarit `.dialog-*` du design system : ce composant n'ajoute aucun
+ * style local.
+ */
 @Component({
     selector: 'app-confirm-dialog',
     templateUrl: './confirm-dialog.html',
-    styleUrl: './confirm-dialog.scss',
 })
 export class ConfirmDialog {
     readonly title = input.required<string>();
@@ -16,7 +17,4 @@ export class ConfirmDialog {
 
     readonly confirmed = output<void>();
     readonly cancelled = output<void>();
-
-
-
 }

@@ -144,14 +144,15 @@
 
 // ─── Tableau ─────────────────────────────────────────────────────────────────
 .debts-table {
-  min-width: 860px;
+  min-width: 980px; // sept colonnes, action comprise
 }
 
-.debts-table__customer-col { width: 22%; }
-.debts-table__phone-col { width: 16%; }
-.debts-table__date-col { width: 18%; }
-.debts-table__amount-col { width: 14%; }
-.debts-table__due-col { width: 16%; }
+.debts-table__customer-col { width: 20%; }
+.debts-table__phone-col { width: 14%; }
+.debts-table__date-col { width: 16%; }
+.debts-table__amount-col { width: 12%; }
+.debts-table__due-col { width: 14%; }
+.debts-table__actions-col { width: 12%; }
 
 // Lignes hautes : lisibles à distance, sans zébrure.
 .debts-table tbody td {
@@ -289,6 +290,20 @@
 
   .debts-table .debt-customer {
     font-size: var(--text-md);
+  }
+
+  // En carte, l'action occupe toute la largeur : l'intitulé de colonne
+  // « Actions » n'apprend rien, le bouton se suffit.
+  .debts-table td.data-grid__actions {
+    padding-top: var(--space-3) !important;
+  }
+
+  .debts-table td.data-grid__actions::before {
+    content: none;
+  }
+
+  .debts-table td.data-grid__actions .btn {
+    width: 100%;
   }
 
   .debts-toolbar {
