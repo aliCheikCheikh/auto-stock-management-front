@@ -8,4 +8,11 @@ describe('routes', () => {
     expect(categoriesRoute).toBeDefined();
     expect(categoriesRoute?.canActivate).toEqual([authGuard, ownerGuard]);
   });
+
+  it('réserve la gestion des utilisateurs au propriétaire', () => {
+    const usersRoute = routes.find((route) => route.path === 'admin/users');
+
+    expect(usersRoute).toBeDefined();
+    expect(usersRoute?.canActivate).toEqual([ownerGuard]);
+  });
 });

@@ -19,6 +19,7 @@ export class ConfirmDialog implements OnDestroy {
   readonly errorMessage = input('');
   readonly confirmLabel = input('Confirmer');
   readonly cancelLabel = input('Annuler');
+  readonly confirmTone = input<'primary' | 'danger'>('danger');
   readonly isSubmitting = input(false);
 
   readonly confirmed = output<void>();
