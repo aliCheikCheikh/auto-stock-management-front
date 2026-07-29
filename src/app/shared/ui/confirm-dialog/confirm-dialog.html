@@ -39,7 +39,9 @@
         {{ cancelLabel() }}
       </button>
       <button
-        class="btn btn--danger"
+        class="btn"
+        [class.btn--danger]="confirmTone() === 'danger'"
+        [class.btn--primary]="confirmTone() === 'primary'"
         type="button"
         (click)="confirm()"
         [disabled]="isSubmitting()"

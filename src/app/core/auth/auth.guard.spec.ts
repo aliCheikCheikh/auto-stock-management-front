@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { authGuard, ownerGuard } from './auth.guard'
+import { authGuard, forcePasswordChangeGuard, ownerGuard } from './auth.guard'
 import { AuthService } from "./auth.service";
 import { ActivatedRouteSnapshot, provideRouter, RouterStateSnapshot, UrlTree } from "@angular/router";
 import { Observable, of, throwError } from "rxjs";
@@ -105,6 +105,54 @@ describe('ownerGuard', () => {
 
         const result = runGuard();
         expect(result instanceof UrlTree).toBe(true);
+        expect((result as UrlTree).toString()).toBe('/products');
+    });
+});
+
+describe('forcePasswordChangeGuard', () => {
+    const runGuard = () =>
+        TestBed.runInInjectionContext(() =>
+            forcePasswordChangeGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot));
+
+    it('laisse uniquement passer un compte dont le mot de passe est temporaire', () => {
+        TestBed.configureTestingModule({
+            providers: [
+                {
+                    provide: AuthService,
+                    useValue: {
+                        currentUser: () => ({
+                            userId: 'seller-1',
+                            role: 'SELLER',
+                            passwordTemporary: true,
+                        }),
+                    },
+                },
+                provideRouter([]),
+            ],
+        });
+
+        expect(runGuard()).toBe(true);
+    });
+
+    it('redirige un compte déjà régularisé vers le catalogue', () => {
+        TestBed.configureTestingModule({
+            providers: [
+                {
+                    provide: AuthService,
+                    useValue: {
+                        currentUser: () => ({
+                            userId: 'seller-1',
+                            role: 'SELLER',
+                            passwordTemporary: false,
+                        }),
+                    },
+                },
+                provideRouter([]),
+            ],
+        });
+
+        const result = runGuard();
+        expect(result instanceof UrlTree).toBeTrue();
         expect((result as UrlTree).toString()).toBe('/products');
     });
 });

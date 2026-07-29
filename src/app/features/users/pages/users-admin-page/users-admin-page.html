@@ -1,180 +1,134 @@
 <main class="users-admin-page">
-  <header class="page-header">
+  <header class="page-header users-header">
     <div>
       <p class="page-kicker">Administration</p>
-      <h1>Comptes utilisateurs</h1>
+      <h1>Utilisateurs</h1>
+      <p class="users-header__description">
+        Ces comptes donnent accès aux données du magasin. Accordez uniquement les accès nécessaires.
+      </p>
     </div>
+    <button class="btn btn--primary" type="button" (click)="openCreateDialog()">
+      Ajouter un vendeur
+    </button>
   </header>
 
-  <div class="users-admin__content">
-  <!-- ─── Créer un vendeur ─────────────────────────────────────────────────── -->
-  <section class="card users-create" aria-labelledby="create-title">
-    <div class="section-heading">
-      <h2 id="create-title">Créer un vendeur</h2>
-    </div>
-
-    <form
-      class="form-grid users-create__form"
-      [formGroup]="createForm"
-      #createDirective="ngForm"
-      (ngSubmit)="createSeller(createDirective)"
-      novalidate
-    >
-      <div class="field">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          autocomplete="off"
-          placeholder="vendeur@entreprise.com"
-          [attr.aria-invalid]="createForm.controls.email.touched && createForm.controls.email.invalid"
-        />
-        @if (createForm.controls.email.touched && createForm.controls.email.invalid) {
-          <p class="field-error">Email valide requis.</p>
-        }
+  <div class="users-content">
+    <section class="users-summary" aria-label="Résumé des comptes">
+      <div class="users-summary__item">
+        <span>Total</span>
+        <strong>{{ store.totalCount() }}</strong>
       </div>
-
-      <div class="field">
-        <label for="temporaryPassword">Mot de passe temporaire</label>
-        <input
-          id="temporaryPassword"
-          type="text"
-          formControlName="temporaryPassword"
-          autocomplete="off"
-          [attr.aria-invalid]="createForm.controls.temporaryPassword.touched && createForm.controls.temporaryPassword.invalid"
-          [attr.aria-describedby]="createForm.controls.temporaryPassword.touched && createForm.controls.temporaryPassword.invalid ? null : 'temporaryPassword-hint'"
-        />
-        @if (createForm.controls.temporaryPassword.touched && createForm.controls.temporaryPassword.invalid) {
-          <p class="field-error">Au moins 8 caractères.</p>
-        } @else {
-          <p id="temporaryPassword-hint" class="users-create__hint">
-            Affiché en clair : communiquez-le au vendeur, il le changera à sa première connexion.
-          </p>
-        }
+      <div class="users-summary__item">
+        <span>Actifs</span>
+        <strong>{{ store.activeCount() }}</strong>
       </div>
+      <div class="users-summary__item">
+        <span>Désactivés</span>
+        <strong>{{ store.inactiveCount() }}</strong>
+      </div>
+    </section>
 
-      <div class="users-create__actions">
-        <button class="btn btn--primary" type="submit" [disabled]="isSubmitting" [attr.aria-busy]="isSubmitting">
-          @if (isSubmitting) { Création… } @else { Créer le vendeur }
+    @if (store.loadState() === 'loading') {
+      <section class="card users-state" aria-live="polite">
+        <app-spinner label="Chargement des utilisateurs" />
+      </section>
+    } @else if (store.loadState() === 'error') {
+      <section class="card users-state users-state--error" role="alert">
+        <p>Impossible de charger les utilisateurs.</p>
+        <button class="btn btn--secondary" type="button" (click)="loadUsers()">Réessayer</button>
+      </section>
+    } @else if (store.users().length === 0) {
+      <section class="card users-state">
+        <app-empty-state
+          illustration="sellers"
+          title="Aucun utilisateur"
+          text="Ajoutez un vendeur pour lui donner accès au magasin."
+        />
+        <button class="btn btn--primary" type="button" (click)="openCreateDialog()">
+          Ajouter un vendeur
         </button>
-      </div>
-    </form>
-  </section>
-
-  <!-- ─── Comptes existants ────────────────────────────────────────────────── -->
-  <section class="card users-list" aria-labelledby="list-title">
-    <div class="section-heading">
-      <h2 id="list-title">Comptes existants</h2>
-    </div>
-
-    @if (users().length === 0) {
-      <app-empty-state
-        illustration="sellers"
-        title="Aucun compte vendeur"
-        text="Créez un premier compte vendeur avec le formulaire ci-dessus pour lui donner accès au comptoir."
-      />
+      </section>
     } @else {
-      <div class="data-grid-scroll">
-        <table class="data-grid users-table" aria-labelledby="list-title">
-          <colgroup>
-            <col class="users-table__email-col" />
-            <col class="users-table__role-col" />
-            <col class="users-table__status-col" />
-            <col class="users-table__actions-col" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th scope="col" class="data-grid__start">Email</th>
-              <th scope="col">Rôle</th>
-              <th scope="col">Statut</th>
-              <th scope="col" class="data-grid__actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (user of users(); track user.userId) {
-            <tr>
-              <td class="users-table__email data-grid__start">{{ user.email }}</td>
+      <section class="card users-list" aria-labelledby="users-list-title">
+        <div class="users-list__heading">
+          <div>
+            <p class="page-kicker">Accès au magasin</p>
+            <h2 id="users-list-title">Comptes existants</h2>
+          </div>
+          @if (store.users().length > 1) {
+            <div class="users-search">
+              <label for="users-search">Rechercher</label>
+              <input
+                id="users-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Nom ou email"
+                [value]="searchTerm()"
+                (input)="searchTerm.set($any($event.target).value)"
+              />
+            </div>
+          }
+        </div>
 
-              <td class="data-grid__center">
-                @switch (user.role) {
-                  @case ('OWNER') { Propriétaire }
-                  @case ('SELLER') { Vendeur }
-                }
-              </td>
-
-              <td class="data-grid__center">
-                @if (!user.active) {
-                  <span class="status-badge status-badge--off">Désactivé</span>
-                } @else if (user.passwordTemporary) {
-                  <span class="status-badge status-badge--pending">En attente</span>
-                } @else {
-                  <span class="status-badge status-badge--active">Actif</span>
-                }
-              </td>
-
-              <td class="data-grid__actions">
-                <div class="users-table__actions">
-                  @if (user.role === 'SELLER') {
-                    @if (user.active) {
-                      <button class="btn btn--secondary btn--sm" type="button" (click)="startReset(user)">
-                        Réinitialiser
-                      </button>
-                      <button class="btn btn--danger btn--sm" type="button" (click)="askDeactivation(user)">
-                        Désactiver
-                      </button>
-                    } @else {
-                      <span class="users-table__muted">—</span>
-                    }
-                  } @else {
-                    <span class="users-table__muted">—</span>
-                  }
-                </div>
-              </td>
-            </tr>
-
-            @if (resettingUserId() === user.userId) {
-            <tr class="reset-inline">
-              <td colspan="4">
-                <form class="reset-inline__form" [formGroup]="resetForm" (ngSubmit)="submitReset()" novalidate>
-                  <div class="field reset-inline__field">
-                    <label [attr.for]="'reset-' + user.userId">
-                      Nouveau mot de passe temporaire — {{ user.email }}
-                    </label>
-                    <input
-                      [id]="'reset-' + user.userId"
-                      type="text"
-                      formControlName="temporaryPassword"
-                      autocomplete="off"
-                      [attr.aria-invalid]="resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid"
-                    />
-                    @if (resetForm.controls.temporaryPassword.touched && resetForm.controls.temporaryPassword.invalid) {
-                      <p class="field-error">Au moins 8 caractères.</p>
-                    }
-                  </div>
-
-                  <div class="reset-inline__actions">
-                    <button class="btn btn--primary btn--sm" type="submit">Valider</button>
-                    <button class="btn btn--ghost btn--sm" type="button" (click)="cancelReset()">Annuler</button>
-                  </div>
-                </form>
-              </td>
-            </tr>
-            }
-            }
-          </tbody>
-        </table>
-      </div>
+        @if (filteredUsers().length === 0) {
+          <div class="users-no-result" role="status">
+            Aucun utilisateur ne correspond à « {{ searchTerm() }} ».
+          </div>
+        } @else {
+          <app-users-list
+            [users]="filteredUsers()"
+            [currentUserId]="currentUserId()"
+            [activeOwnerCount]="store.activeOwnerCount()"
+            [pendingActionKeys]="store.pendingKeys()"
+            (renameRequested)="openRenameDialog($event)"
+            (deactivationRequested)="requestDeactivation($event)"
+            (reactivationRequested)="reactivateUser($event)"
+            (passwordResetRequested)="requestPasswordReset($event)"
+          />
+        }
+      </section>
     }
-  </section>
   </div>
 
-  @if (userToDeactivate(); as user) {
-  <app-confirm-dialog
-    [title]="'Désactiver le compte ?'"
-    [message]="'Le compte « ' + user.email + ' » ne pourra plus se connecter. Ses ventes passées restent conservées.'"
-    confirmLabel="Désactiver"
-    (confirmed)="confirmDeactivation()"
-    (cancelled)="cancelDeactivation()" />
+  @if (createDialogOpen()) {
+    <app-create-seller-dialog
+      [isSubmitting]="store.isPending('create')"
+      [failure]="createFailure()"
+      (formChanged)="createFailure.set(null)"
+      (submitted)="createSeller($event)"
+      (cancelled)="closeCreateDialog()"
+    />
+  }
+
+  @if (userToRename(); as user) {
+    <app-rename-user-dialog
+      [user]="user"
+      [isSubmitting]="store.isPending('rename', user.userId)"
+      [failure]="renameFailure()"
+      (formChanged)="renameFailure.set(null)"
+      (submitted)="renameUser($event)"
+      (cancelled)="closeRenameDialog()"
+    />
+  }
+
+  @if (confirmation(); as pendingConfirmation) {
+    <app-confirm-dialog
+      [title]="confirmationTitle()"
+      [message]="confirmationMessage()"
+      [confirmLabel]="confirmationLabel()"
+      [confirmTone]="pendingConfirmation.kind === 'deactivate' ? 'danger' : 'primary'"
+      [isSubmitting]="isConfirmationSubmitting()"
+      [errorMessage]="confirmationFailure()?.message ?? ''"
+      (confirmed)="confirmAction()"
+      (cancelled)="cancelConfirmation()"
+    />
+  }
+
+  @if (oneTimePassword(); as secret) {
+    <app-one-time-password-dialog
+      [password]="secret.value"
+      [recipientName]="secret.recipientName"
+      (closed)="closeOneTimePassword()"
+    />
   }
 </main>

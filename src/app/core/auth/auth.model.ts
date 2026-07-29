@@ -7,6 +7,7 @@ export type UserRole = 'OWNER' | 'SELLER';
 
 export interface AuthenticatedUser {
     readonly userId: string;
+    readonly displayName: string;
     readonly email: string;
     readonly role: UserRole;
     readonly passwordTemporary: boolean;

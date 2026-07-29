@@ -1,0 +1,79 @@
+.users-table__row--inactive {
+  background: var(--gray-50);
+}
+
+.user-identity,
+.user-status {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.user-identity__name {
+  color: var(--gray-900);
+  font-weight: 600;
+}
+
+.user-identity__email,
+.password-status {
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+.user-identity__self,
+.role-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--gray-100);
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.user-identity__self {
+  margin-left: var(--space-1);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--gray-900);
+  font-weight: 600;
+}
+
+.status-badge::before {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-pill);
+  content: '';
+}
+
+.status-badge--active::before {
+  background: var(--success-600);
+}
+
+.status-badge--inactive::before {
+  background: var(--gray-400);
+}
+
+.users-table__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.users-table__actions .btn {
+  min-height: var(--control-h-sm);
+  padding-inline: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 600px) {
+  .users-table__actions {
+    justify-content: flex-start;
+  }
+}
