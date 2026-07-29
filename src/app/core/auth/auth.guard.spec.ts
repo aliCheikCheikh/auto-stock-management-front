@@ -1,13 +1,14 @@
 import { TestBed } from "@angular/core/testing";
-import { authGuard } from './auth.guard'
+import { authGuard, ownerGuard } from './auth.guard'
 import { AuthService } from "./auth.service";
-import { provideRouter, UrlTree } from "@angular/router";
+import { ActivatedRouteSnapshot, provideRouter, RouterStateSnapshot, UrlTree } from "@angular/router";
 import { Observable, of, throwError } from "rxjs";
 
 
 describe('authGuard', () => {
     const runGuard = () =>
-        TestBed.runInInjectionContext(() => authGuard({} as any, {} as any));
+        TestBed.runInInjectionContext(() =>
+            authGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot));
 
     it('laisse passer (true) un utilisateur déjà connu, sans appeler me()', () => {
         TestBed.configureTestingModule({
@@ -77,5 +78,33 @@ describe('authGuard', () => {
             expect((result as UrlTree).toString()).toBe('/login');
             done();
         });
+    });
+});
+
+describe('ownerGuard', () => {
+    const runGuard = () =>
+        TestBed.runInInjectionContext(() =>
+            ownerGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot));
+
+    it('redirige un vendeur vers le catalogue', () => {
+        TestBed.configureTestingModule({
+            providers: [
+                {
+                    provide: AuthService,
+                    useValue: {
+                        currentUser: () => ({
+                            userId: 'seller-1',
+                            role: 'SELLER',
+                            passwordTemporary: false,
+                        }),
+                    },
+                },
+                provideRouter([]),
+            ],
+        });
+
+        const result = runGuard();
+        expect(result instanceof UrlTree).toBe(true);
+        expect((result as UrlTree).toString()).toBe('/products');
     });
 });

@@ -8,25 +8,32 @@
 -->
 <div
   class="dialog-backdrop"
-  (click)="cancelled.emit()"
-  (keydown.escape)="cancelled.emit()"
+  (click)="cancel()"
+  (keydown.escape)="cancel()"
 >
   <div
+    #dialog
     class="dialog-card"
     role="dialog"
     aria-modal="true"
     aria-labelledby="cd-title"
-    aria-describedby="cd-message"
+    [attr.aria-describedby]="errorMessage() ? 'cd-message cd-error' : 'cd-message'"
     (click)="$event.stopPropagation()"
+    (keydown)="trapFocus(dialog, $event)"
   >
     <h2 class="dialog-title" id="cd-title">{{ title() }}</h2>
     <p class="dialog-message" id="cd-message">{{ message() }}</p>
+
+    @if (errorMessage()) {
+      <p class="dialog-error" id="cd-error" role="alert">{{ errorMessage() }}</p>
+    }
 
     <div class="dialog-actions">
       <button
         class="btn btn--secondary"
         type="button"
-        (click)="cancelled.emit()"
+        (click)="cancel()"
+        [disabled]="isSubmitting()"
         autofocus
       >
         {{ cancelLabel() }}
@@ -34,9 +41,11 @@
       <button
         class="btn btn--danger"
         type="button"
-        (click)="confirmed.emit()"
+        (click)="confirm()"
+        [disabled]="isSubmitting()"
+        [attr.aria-busy]="isSubmitting()"
       >
-        {{ confirmLabel() }}
+        @if (isSubmitting()) { Traitement… } @else { {{ confirmLabel() }} }
       </button>
     </div>
   </div>

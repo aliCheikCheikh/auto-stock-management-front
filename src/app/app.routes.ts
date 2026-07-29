@@ -13,6 +13,7 @@ import { authGuard, forcePasswordChangeGuard, ownerGuard } from './core/auth/aut
 import { ProductEditPage } from './features/products/pages/product-edit-page/product-edit-page';
 import { NotFoundPage } from './features/errors/not-found-page/not-found-page';
 import { DebtsPage } from './features/debts/pages/debts-page/debts-page';
+import { CategoriesPage } from './features/categories/pages/categories-page/categories-page';
 
 export const routes: Routes = [
     {
@@ -86,6 +87,12 @@ export const routes: Routes = [
         path: 'admin/users',
         component: UsersAdminPage,
         canActivate: [ownerGuard]
+    },
+
+    {
+        path: 'admin/categories',
+        component: CategoriesPage,
+        canActivate: [authGuard, ownerGuard]
     },
 
     {

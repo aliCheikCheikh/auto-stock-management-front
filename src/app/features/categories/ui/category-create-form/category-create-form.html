@@ -1,0 +1,35 @@
+<section class="card" aria-labelledby="create-category-title">
+  <div class="section-heading">
+    <h2 id="create-category-title">Créer une famille de pièces</h2>
+  </div>
+
+  <form class="categories-create" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="field">
+      <label for="category-name">Nom de la famille</label>
+      <div class="categories-create__control">
+        <input
+          #nameInput
+          id="category-name"
+          type="text"
+          formControlName="name"
+          maxlength="255"
+          autocomplete="off"
+          placeholder="Ex. Freinage"
+          [attr.aria-invalid]="errorMessage() ? true : null"
+          [attr.aria-describedby]="errorMessage() ? 'category-name-error' : null"
+        />
+        <button
+          class="btn btn--primary"
+          type="submit"
+          [disabled]="form.invalid || isSubmitting()"
+          [attr.aria-busy]="isSubmitting()"
+        >
+          @if (isSubmitting()) { Création… } @else { Créer la famille }
+        </button>
+      </div>
+      @if (errorMessage(); as error) {
+        <p class="field-error" id="category-name-error">{{ error }}</p>
+      }
+    </div>
+  </form>
+</section>
