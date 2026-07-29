@@ -4,6 +4,7 @@ import { MovementType } from './stock-movement.model';
 export interface MovementRow {
   readonly movementId: string;
   readonly operationId: string;
+  readonly productId: string;
   readonly date: string;
   readonly typeKind: MovementType;
   readonly typeLabel: string;
@@ -12,6 +13,21 @@ export interface MovementRow {
   readonly quantity: number;
   readonly locationLabel: string;
   readonly destinationLabel: string | null;
+}
+
+export interface MovementAllocation {
+  readonly movementId: string;
+  readonly quantity: number;
+  readonly locationLabel: string;
+  readonly destinationLabel: string | null;
+}
+
+/** Un produit et la manière dont sa quantité est répartie dans le magasin. */
+export interface MovementProductGroup {
+  readonly productId: string;
+  readonly productName: string;
+  readonly totalQuantity: number;
+  readonly allocations: readonly MovementAllocation[];
 }
 
 /**
@@ -25,6 +41,8 @@ export interface MovementGroup {
   readonly typeLabel: string;
   readonly authorName: string;
   readonly lines: readonly MovementRow[];
+  readonly products: readonly MovementProductGroup[];
+  readonly totalQuantity: number;
 }
 
 /**
@@ -58,5 +76,32 @@ export function groupByOperation(rows: readonly MovementRow[]): MovementGroup[] 
     typeLabel: lines[0].typeLabel,
     authorName: lines[0].authorName,
     lines,
+    products: groupProducts(lines),
+    totalQuantity: lines.reduce((total, line) => total + line.quantity, 0),
+  }));
+}
+
+function groupProducts(lines: readonly MovementRow[]): MovementProductGroup[] {
+  const products = new Map<string, MovementRow[]>();
+
+  for (const line of lines) {
+    const productLines = products.get(line.productId);
+    if (productLines) {
+      productLines.push(line);
+    } else {
+      products.set(line.productId, [line]);
+    }
+  }
+
+  return Array.from(products.entries()).map(([productId, productLines]) => ({
+    productId,
+    productName: productLines[0].productName,
+    totalQuantity: productLines.reduce((total, line) => total + line.quantity, 0),
+    allocations: productLines.map((line) => ({
+      movementId: line.movementId,
+      quantity: line.quantity,
+      locationLabel: line.locationLabel,
+      destinationLabel: line.destinationLabel,
+    })),
   }));
 }

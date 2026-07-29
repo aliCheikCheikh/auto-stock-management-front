@@ -1,30 +1,42 @@
-// Page historique des mouvements : conteneur cohérent avec le catalogue.
 .history-page {
-  min-height: calc(100vh - var(--nav-height));
-  padding: var(--space-6) var(--space-7) var(--space-8);
+  min-height: calc(100vh - var(--chrome-height));
+  padding: var(--space-7) var(--space-7) var(--space-9);
   background: var(--gray-50);
   color: var(--gray-900);
 }
 
-.page-header,
-.history-section,
+.history-header,
+.operations,
 .history-state,
 .history-page app-pagination {
-  max-width: var(--content-lg);
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
 }
 
-.history-page app-pagination {
-  display: block;
+.history-header {
+  align-items: flex-end;
+}
+
+.history-header__description {
+  max-width: 620px;
+  margin-top: var(--space-2);
+  color: var(--gray-500);
+  line-height: 1.5;
 }
 
 .history-count {
-  margin: 0;
+  display: grid;
+  justify-items: end;
   color: var(--gray-500);
-  font-size: var(--text-sm);
-  font-weight: 500;
+  font-size: var(--text-xs);
   white-space: nowrap;
+}
+
+.history-count strong {
+  color: var(--gray-900);
+  font-size: var(--text-lg);
+  line-height: 1.1;
 }
 
 .history-error {
@@ -32,140 +44,209 @@
   font-weight: 600;
 }
 
-// ─── Tableau groupé par opération ────────────────────────────────────────────
-// Chaque <tbody> est une opération : la cellule « Opération » traverse ses
-// lignes, comme dans l'historique des ventes.
-.movements-table {
-  min-width: 820px;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-
-.movements-table__operation-col { width: 26%; }
-.movements-table__product-col { width: 30%; }
-.movements-table__quantity-col { width: 14%; }
-.movements-table__location-col { width: 30%; }
-
-.movements-table__group + .movements-table__group > tr:first-child > * {
-  border-top: var(--space-2) solid var(--gray-0);
-}
-
-.movements-table__operation {
-  padding: var(--space-3) var(--space-5);
-  border-bottom: 0;
-  background: var(--gray-50);
-  color: var(--gray-900);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  letter-spacing: normal;
-  text-align: left;
-  text-transform: none;
-  vertical-align: top !important;
-}
-
-// Le badge était centré dans une cellule centrée ; en tête de groupe, il
-// s'aligne sur le reste des informations.
-.movements-table__operation .type-badge {
-  margin-inline: 0;
-}
-
-.operation__date {
-  display: block;
-  margin-top: var(--space-2);
-  color: var(--gray-900);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.operation__author {
-  display: block;
-  color: var(--gray-500);
-  font-size: var(--text-xs);
-  overflow-wrap: anywhere;
-}
-
-// Affiché seulement au-delà d'une ligne : un mouvement seul reste compact.
-.operation__count {
-  display: inline-block;
-  margin-top: var(--space-1);
-  padding: 0 var(--space-2);
-  border: var(--border-subtle);
-  border-radius: var(--radius-pill);
-  background: var(--gray-0);
-  color: var(--gray-500);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-// ─── Alignements des colonnes ────────────────────────────────────────────────
-.movement-product {
-  overflow-wrap: anywhere;
-}
-
-.movement-location {
-  color: var(--gray-900);
-  overflow-wrap: anywhere;
-}
-
-.movement-location__arrow {
-  margin: 0 var(--space-1);
-  color: var(--gray-500);
-}
-
-// ─── Badge de type (via typeKind) ────────────────────────────────────────────
-// Style sobre : petit point coloré + libellé neutre (même registre que
-// .stock-badge). Discret, dans la palette, contraste AA (texte neutre).
-.type-badge {
+.operations {
   display: grid;
-  grid-template-columns: 8px minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.operation-card {
+  overflow: hidden;
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-0);
+  box-shadow: var(--shadow-xs);
+}
+
+.operation-card__header {
+  display: flex;
   align-items: center;
-  column-gap: var(--space-2);
-  inline-size: min(16ch, 100%);
-  margin-inline: auto;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--gray-900);
-  text-align: left;
-  white-space: nowrap;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-subtle);
+  background: var(--gray-50);
 }
 
-.type-badge__label {
-  text-align: left;
+.operation-card__identity {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: var(--space-3);
 }
 
-.type-badge::before {
-  content: '';
-  width: 8px;
-  height: 8px;
+.operation-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border: 1px solid var(--gray-200);
   border-radius: 50%;
-  flex-shrink: 0;
-  background: var(--gray-400);
+  background: var(--gray-100);
+  color: var(--gray-500);
+  font-size: var(--text-lg);
+  font-weight: 700;
 }
 
-// Réception : entrée de stock → vert.
-.type-badge--ENTRY::before   { background: var(--success-600); }
-// Vente : sortie liée à une vente → accent.
-.type-badge--EXIT::before    { background: var(--accent-600); }
-// Transfert : déplacement interne → ambre.
-.type-badge--TRANSFER::before { background: var(--warning-600); }
+.operation-icon--ENTRY {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+  color: var(--success-600);
+}
 
-// ─── Responsive ──────────────────────────────────────────────────────────────
-@media (max-width: 900px) {
+.operation-icon--EXIT {
+  border-color: var(--gray-200);
+  background: var(--gray-100);
+  color: var(--accent-700);
+}
+
+.operation-icon--TRANSFER {
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
+  color: var(--warning-600);
+}
+
+.operation-card__title-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.operation-card__title-line h2 {
+  font-size: var(--text-base);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.operation-card__reference {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--gray-100);
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.operation-card__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.operation-card__author {
+  overflow-wrap: anywhere;
+}
+
+.operation-products {
+  display: grid;
+}
+
+.operation-product {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(360px, 1.6fr);
+  align-items: center;
+  gap: var(--space-6);
+  min-height: 76px;
+  padding: var(--space-3) var(--space-5);
+}
+
+.operation-product + .operation-product {
+  border-top: var(--border-subtle);
+}
+
+.operation-product__identity {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-1);
+}
+
+.operation-product__identity strong {
+  overflow-wrap: anywhere;
+}
+
+.operation-product__identity span {
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+}
+
+.allocation-list {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.allocation {
+  display: inline-grid;
+  grid-template-columns: minmax(0, auto) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 168px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+}
+
+.allocation__location {
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.allocation__arrow {
+  color: var(--gray-400);
+}
+
+.allocation__quantity {
+  color: var(--gray-900);
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.history-page app-pagination {
+  display: block;
+}
+
+@media (max-width: 760px) {
   .history-page {
-    padding: var(--space-5);
+    padding: var(--space-5) var(--space-4) var(--space-7);
   }
 
-  // Le tableau garde ses colonnes et défile horizontalement si besoin.
-  .movements-table {
-    min-width: 820px;
+  .history-header {
+    align-items: flex-start;
+  }
+
+  .history-count {
+    justify-items: start;
+  }
+
+  .operation-product {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-4);
+  }
+
+  .allocation-list {
+    justify-content: flex-start;
   }
 }
 
-@media (max-width: 560px) {
-  .history-page {
-    padding: var(--space-4) var(--space-3);
+@media (max-width: 520px) {
+  .history-header {
+    flex-direction: column;
+  }
+
+  .operation-card__header,
+  .operation-product {
+    padding-inline: var(--space-4);
+  }
+
+  .allocation {
+    width: 100%;
   }
 }

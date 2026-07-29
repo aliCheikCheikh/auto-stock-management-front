@@ -1,12 +1,18 @@
 <main class="history-page">
-  <header class="page-header">
+  <header class="page-header history-header">
     <div>
-      <p class="page-kicker">Stock</p>
+      <p class="page-kicker">Journal du stock</p>
       <h1>Historique des mouvements</h1>
+      <p class="history-header__description">
+        Chaque carte rassemble les produits et les emplacements d’une même opération.
+      </p>
     </div>
 
     @if (state() === 'success') {
-      <p class="history-count">{{ page().totalElements }} mouvement(s)</p>
+      <div class="history-count" aria-label="Nombre de lignes de stock">
+        <strong>{{ page().totalElements }}</strong>
+        <span>{{ page().totalElements > 1 ? 'lignes enregistrées' : 'ligne enregistrée' }}</span>
+      </div>
     }
   </header>
 
@@ -19,81 +25,75 @@
       <p class="history-error">{{ errorMessage() }}</p>
       <button class="btn btn--secondary" type="button" (click)="goToPage(page().page)">Réessayer</button>
     </section>
+  } @else if (groups().length === 0) {
+    <section class="card history-state">
+      <app-empty-state
+        illustration="movements"
+        title="Aucun mouvement"
+        text="Réceptions, ventes et transferts alimenteront ce journal au fil de l'activité."
+      />
+    </section>
   } @else {
-    <section class="card history-section" aria-labelledby="movements-history-title">
-      <div class="section-heading">
-        <h2 id="movements-history-title">Historique des mouvements</h2>
-      </div>
-
-      @if (movements().length === 0) {
-        <app-empty-state
-          illustration="movements"
-          title="Aucun mouvement"
-          text="Réceptions, ventes et transferts alimenteront ce journal au fil de l'activité."
-        />
-      } @else {
-        <div class="data-grid-scroll">
-          <table
-            class="data-grid movements-table"
-            aria-label="Historique des mouvements, regroupé par opération"
-          >
-            <colgroup>
-              <col class="movements-table__operation-col" />
-              <col class="movements-table__product-col" />
-              <col class="movements-table__quantity-col" />
-              <col class="movements-table__location-col" />
-            </colgroup>
-            <thead>
-              <tr>
-                <th scope="col">Opération</th>
-                <th scope="col" class="data-grid__start">Produit</th>
-                <th scope="col" class="data-grid__num">Quantité</th>
-                <th scope="col">Emplacement</th>
-              </tr>
-            </thead>
-
-            <!-- Un <tbody> par opération : une réception de trois produits se
-                 lit comme un seul événement. -->
-            @for (group of groups(); track group.operationId) {
-              <tbody class="movements-table__group">
-                @for (line of group.lines; track line.movementId; let isFirst = $first) {
-                <tr>
-                  @if (isFirst) {
-                  <th
-                    class="movements-table__operation"
-                    scope="rowgroup"
-                    [attr.rowspan]="group.lines.length"
-                  >
-                    <span class="type-badge type-badge--{{ group.typeKind }}">
-                      <span class="type-badge__label">{{ group.typeLabel }}</span>
-                    </span>
-                    <time class="operation__date" [attr.datetime]="group.date">
-                      {{ group.date | date: 'dd/MM/yyyy HH:mm' }}
-                    </time>
-                    <span class="operation__author">{{ group.authorName }}</span>
-                    @if (group.lines.length > 1) {
-                    <span class="operation__count">{{ group.lines.length }} articles</span>
-                    }
-                  </th>
-                  }
-
-                  <td class="movement-product data-grid__start">{{ line.productName }}</td>
-
-                  <td class="data-grid__center">{{ line.quantity }}</td>
-
-                  <td class="movement-location data-grid__center">
-                    {{ line.locationLabel }}
-                    @if (line.destinationLabel) {
-                      <span class="movement-location__arrow" aria-hidden="true">→</span>
-                      {{ line.destinationLabel }}
-                    }
-                  </td>
-                </tr>
+    <section class="operations" aria-label="Opérations de stock">
+      @for (group of groups(); track group.operationId) {
+        <article class="operation-card">
+          <header class="operation-card__header">
+            <div class="operation-card__identity">
+              <span class="operation-icon operation-icon--{{ group.typeKind }}" aria-hidden="true">
+                @switch (group.typeKind) {
+                  @case ('ENTRY') { ↓ }
+                  @case ('EXIT') { ↑ }
+                  @case ('TRANSFER') { → }
                 }
-              </tbody>
+              </span>
+              <div>
+                <div class="operation-card__title-line">
+                  <h2>{{ group.typeLabel }}</h2>
+                  <span class="operation-card__reference">
+                    {{ group.products.length }}
+                    {{ group.products.length > 1 ? 'références' : 'référence' }} ·
+                    {{ group.totalQuantity }}
+                    {{ group.totalQuantity > 1 ? 'unités' : 'unité' }}
+                  </span>
+                </div>
+                <p class="operation-card__meta">
+                  <time [attr.datetime]="group.date">{{ group.date | date: 'dd MMM yyyy, HH:mm' }}</time>
+                  <span aria-hidden="true">•</span>
+                  <span class="operation-card__author">{{ group.authorName }}</span>
+                </p>
+              </div>
+            </div>
+          </header>
+
+          <div class="operation-products">
+            @for (product of group.products; track product.productId) {
+              <div class="operation-product">
+                <div class="operation-product__identity">
+                  <strong>{{ product.productName }}</strong>
+                  <span>
+                    {{ product.totalQuantity }}
+                    {{ product.totalQuantity > 1 ? 'unités au total' : 'unité au total' }}
+                  </span>
+                </div>
+
+                <div class="allocation-list" aria-label="Répartition de {{ product.productName }}">
+                  @for (allocation of product.allocations; track allocation.movementId) {
+                    <div class="allocation">
+                      <span class="allocation__location">
+                        {{ allocation.locationLabel }}
+                        @if (allocation.destinationLabel) {
+                          <span class="allocation__arrow" aria-hidden="true">→</span>
+                          {{ allocation.destinationLabel }}
+                        }
+                      </span>
+                      <strong class="allocation__quantity">{{ allocation.quantity }}</strong>
+                    </div>
+                  }
+                </div>
+              </div>
             }
-          </table>
-        </div>
+          </div>
+        </article>
       }
     </section>
 

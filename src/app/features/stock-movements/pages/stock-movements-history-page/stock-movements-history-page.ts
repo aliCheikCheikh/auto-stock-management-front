@@ -82,6 +82,7 @@ export class StockMovementsHistoryPage implements OnInit {
     return {
       movementId: movement.movementId,
       operationId: movement.operationId,
+      productId: movement.productId,
       date: movement.executedAt,
       typeKind: movement.type,
       typeLabel: StockMovementsHistoryPage.TYPE_LABELS[movement.type] ?? movement.type,

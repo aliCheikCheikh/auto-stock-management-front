@@ -4,6 +4,7 @@ function row(overrides: Partial<MovementRow> = {}): MovementRow {
   return {
     movementId: 'mov-1',
     operationId: 'op-1',
+    productId: 'product-1',
     date: '2026-07-29T09:00:00Z',
     typeKind: 'ENTRY',
     typeLabel: 'Réception',
@@ -29,6 +30,27 @@ describe('groupByOperation', () => {
     expect(groups[0].lines.length).toBe(3);
     expect(groups[0].typeLabel).toBe('Réception');
     expect(groups[0].authorName).toBe('Ahmat');
+  });
+
+  it('réunit les affectations réserve et surface d’un même produit', () => {
+    const [group] = groupByOperation([
+      row({ movementId: 'mov-reserve', quantity: 12, locationLabel: 'Réserve' }),
+      row({ movementId: 'mov-shop', quantity: 8, locationLabel: 'Surface de vente' }),
+      row({
+        movementId: 'mov-filter',
+        productId: 'product-2',
+        productName: 'Filtre à huile',
+        quantity: 5,
+      }),
+    ]);
+
+    expect(group.products.length).toBe(2);
+    expect(group.products[0].totalQuantity).toBe(20);
+    expect(group.products[0].allocations.map((allocation) => allocation.locationLabel)).toEqual([
+      'Réserve',
+      'Surface de vente',
+    ]);
+    expect(group.totalQuantity).toBe(25);
   });
 
   it('sépare deux opérations distinctes en conservant l’ordre du serveur', () => {
