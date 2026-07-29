@@ -12,6 +12,10 @@ import { DatePipe } from '@angular/common';
 import { sumMoney } from '../../../../shared/utils/money-math';
 import { authorLabel } from '../../../../shared/utils/author';
 
+// Produit absent du catalogue chargé : on nomme la situation plutôt que
+// d'afficher son identifiant technique.
+const UNKNOWN_PRODUCT = 'Produit hors catalogue';
+
 interface SaleLineRow {
   readonly productName: string;
   readonly quantity: number;
@@ -99,7 +103,7 @@ export class SalesHistoryPage implements OnInit {
       sellerName: authorLabel(sale.sellerName),
       total: sale.totalAmount,
       lines: sale.lines.map((line) => ({
-        productName: this.productNames.get(line.productId) ?? line.productId,
+        productName: this.productNames.get(line.productId) ?? UNKNOWN_PRODUCT,
         quantity: line.quantity,
         unitPrice: line.unitPrice,
         subtotal: line.subtotal,

@@ -12,6 +12,11 @@ import { DatePipe } from '@angular/common';
 import { groupByOperation, MovementGroup, MovementRow } from '../../models/movement-group';
 import { authorLabel } from '../../../../shared/utils/author';
 
+// Replis lisibles : un libellé absent ne doit jamais laisser apparaître un
+// identifiant technique à l'écran.
+const UNKNOWN_PRODUCT = 'Produit hors catalogue';
+const UNKNOWN_LOCATION = 'Emplacement inconnu';
+
 @Component({
   selector: 'app-stock-movements-history-page',
   imports: [DatePipe, Spinner, Pagination, EmptyState],
@@ -81,7 +86,7 @@ export class StockMovementsHistoryPage implements OnInit {
       typeKind: movement.type,
       typeLabel: StockMovementsHistoryPage.TYPE_LABELS[movement.type] ?? movement.type,
       authorName: authorLabel(movement.executedByName),
-      productName: this.productNames.get(movement.productId) ?? movement.productId,
+      productName: this.productNames.get(movement.productId) ?? UNKNOWN_PRODUCT,
       quantity: movement.quantity,
       locationLabel: this.locationLabel(movement.locationId),
       destinationLabel: movement.destinationLocationId ? this.locationLabel(movement.destinationLocationId) : null,
@@ -89,7 +94,10 @@ export class StockMovementsHistoryPage implements OnInit {
   }
 
   private locationLabel(locationId: string): string {
-    return this.sessionContext.context()?.locations.find((l) => l.locationId === locationId)?.label ?? locationId;
+    return (
+      this.sessionContext.context()?.locations.find((l) => l.locationId === locationId)?.label ??
+      UNKNOWN_LOCATION
+    );
   }
 
   private fail(): void {

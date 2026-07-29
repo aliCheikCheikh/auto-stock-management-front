@@ -1,7 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetail } from '../../../core/api/problem-detail.model';
 
-export const CATEGORY_NAME_ALREADY_USED_MESSAGE = 'Une famille porte déjà ce nom.';
+// L'unicité est insensible à la casse côté serveur : « freinage » entre en
+// conflit avec « Freinage ». Le message le dit, sinon le refus passe pour un bug.
+export const CATEGORY_NAME_ALREADY_USED_MESSAGE =
+  'Une famille porte déjà ce nom. Les majuscules et minuscules ne les distinguent pas.';
 export const CATEGORY_IN_USE_MESSAGE =
   'Cette famille contient encore des produits. Reclassez-les avant de la supprimer.';
 
