@@ -3,7 +3,12 @@ import { Money } from '../../../../core/api/money.model';
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
 import { CustomerPicker } from '../../../customers/ui/customer-picker/customer-picker';
 import { CustomerResponse, customerDisplayName } from '../../../customers/models/customer.model';
-import { compareAmounts, isPositiveAmount, subtractAmounts } from '../../../../shared/utils/money-math';
+import {
+  compareAmounts,
+  isPositiveAmount,
+  sanitizeAmountInput,
+  subtractAmounts,
+} from '../../../../shared/utils/money-math';
 
 export type PaymentMode = 'FULL' | 'CREDIT';
 
@@ -36,7 +41,7 @@ export class PaymentPanel {
   // Au comptant, le montant encaissé vaut le total du panier.
   readonly paidMoney = computed<Money>(() => {
     const total = this.total();
-    return this.isCredit() ? { amount: sanitizeAmount(this.amountPaid()), currency: total.currency } : total;
+    return this.isCredit() ? { amount: sanitizeAmountInput(this.amountPaid()), currency: total.currency } : total;
   });
 
   // Affichage temps réel ; la valeur faisant foi reste l'`amountDue` du backend.
@@ -115,18 +120,4 @@ export class PaymentPanel {
     this.customer.set(null);
     this.customerPicker()?.reset();
   }
-}
-
-// Saisie libre → montant décimal exploitable. Champ vide (le client ne paie
-// rien) ou saisie parasite retombent sur 0 ; la virgule française est acceptée.
-export function sanitizeAmount(value: string | null | undefined): string {
-  const raw = String(value ?? '')
-    .replace(',', '.')
-    .replace(/[^\d.]/g, '')
-    .trim();
-  if (!raw || raw === '.') {
-    return '0';
-  }
-  const [integerPart = '0', fraction] = raw.split('.');
-  return fraction ? `${integerPart || '0'}.${fraction}` : integerPart || '0';
 }

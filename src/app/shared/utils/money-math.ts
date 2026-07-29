@@ -48,6 +48,23 @@ export function sumMoney(values: readonly Money[], fallbackCurrency = 'XAF'): Mo
   return { amount: total, currency: values[0]?.currency ?? fallbackCurrency };
 }
 
+/**
+ * Saisie libre → montant décimal exploitable. Un champ vide (le client ne paie
+ * rien) ou une saisie parasite retombent sur « 0 » ; la virgule française est
+ * acceptée. Le résultat reste une chaîne : aucune conversion en Number.
+ */
+export function sanitizeAmountInput(value: string | null | undefined): string {
+  const raw = String(value ?? '')
+    .replace(',', '.')
+    .replace(/[^\d.]/g, '')
+    .trim();
+  if (!raw || raw === '.') {
+    return '0';
+  }
+  const [integerPart = '0', fraction] = raw.split('.');
+  return fraction ? `${integerPart || '0'}.${fraction}` : integerPart || '0';
+}
+
 function sanitize(amount: string | null | undefined): string {
   const raw = String(amount ?? '').trim();
   return AMOUNT_PATTERN.test(raw) ? raw : '0';
