@@ -1,0 +1,108 @@
+<main class="categories-page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">Administration</p>
+      <h1>Familles de pièces</h1>
+    </div>
+  </header>
+
+  <div class="categories-content">
+    <app-category-create-form (created)="loadCategories()" />
+
+    @if (state() === 'loading') {
+      <div class="state-block">
+        <app-spinner label="Chargement des familles de pièces" />
+      </div>
+    } @else if (state() === 'error') {
+      <div class="state-block state-block--error" role="alert">
+        <p>Impossible de charger les familles de pièces.</p>
+        <button class="btn btn--secondary" type="button" (click)="loadCategories()">Réessayer</button>
+      </div>
+    } @else {
+      <section class="card" aria-labelledby="categories-list-title">
+        <div class="section-heading">
+          <h2 id="categories-list-title">Familles de pièces existantes</h2>
+        </div>
+
+        @if (categories().length === 0) {
+          <app-empty-state
+            illustration="products"
+            title="Aucune famille de pièces"
+            text="Créez une première famille pour organiser le catalogue du magasin."
+          />
+        } @else {
+          <div class="data-grid-scroll">
+            <table class="data-grid data-grid--cards categories-table" aria-labelledby="categories-list-title">
+              <colgroup>
+                <col class="categories-table__name-col" />
+                <col class="categories-table__actions-col" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col" class="data-grid__start">Famille</th>
+                  <th scope="col" class="data-grid__actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (category of categories(); track category.id) {
+                  <tr>
+                    <td class="data-grid__start" data-label="Famille">
+                      @if (editingCategory()?.id === category.id) {
+                        <form class="categories-rename" [formGroup]="renameForm" (ngSubmit)="renameCategory()" novalidate>
+                          <label class="sr-only" [for]="'category-name-' + category.id">
+                            Nouveau nom de la famille {{ category.name }}
+                          </label>
+                          <div class="categories-rename__control">
+                            <input
+                              #renameInput
+                              [id]="'category-name-' + category.id"
+                              type="text"
+                              formControlName="name"
+                              maxlength="255"
+                              autocomplete="off"
+                              [attr.aria-invalid]="renameErrorMessage() ? true : null"
+                              [attr.aria-describedby]="renameErrorMessage() ? 'rename-error-' + category.id : null"
+                              (keydown.escape)="cancelRename()"
+                            />
+                            <button
+                              class="btn btn--primary"
+                              type="submit"
+                              [disabled]="renameForm.invalid || isRenaming()"
+                              [attr.aria-busy]="isRenaming()"
+                            >
+                              @if (isRenaming()) { Enregistrement… } @else { Enregistrer }
+                            </button>
+                            <button class="btn btn--ghost" type="button" [disabled]="isRenaming()" (click)="cancelRename()">
+                              Annuler
+                            </button>
+                          </div>
+                          @if (renameErrorMessage(); as error) {
+                            <p class="field-error" [id]="'rename-error-' + category.id">{{ error }}</p>
+                          }
+                        </form>
+                      } @else {
+                        {{ category.name }}
+                      }
+                    </td>
+                    <td class="data-grid__actions" data-label="Actions">
+                      @if (editingCategory()?.id === category.id) {
+                        <span class="categories-table__editing">Modification en cours</span>
+                      } @else {
+                        <div class="categories-table__actions">
+                          <button class="btn btn--secondary" type="button" (click)="startRename(category)">Renommer</button>
+                          <button class="btn btn--danger" type="button" (click)="deleteDialog.open(category)">Supprimer</button>
+                        </div>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    }
+  </div>
+
+  <app-category-delete-dialog #deleteDialog (changed)="loadCategories()" />
+</main>

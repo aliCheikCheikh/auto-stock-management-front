@@ -20,7 +20,7 @@ export class App {
   private readonly authService = inject(AuthService);
   private readonly themeService = inject(ThemeService);
   readonly theme = this.themeService.theme;
-  // Lien « Administration » réservé à l'OWNER.
+  // Liens d'administration réservés à l'OWNER.
   readonly isOwner = computed(() => this.authService.currentUser()?.role === 'OWNER');
   readonly currentUser = this.authService.currentUser;
   // Initiales dérivées de l'email du compte connecté (aucun appel backend).

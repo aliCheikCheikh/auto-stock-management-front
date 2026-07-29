@@ -1,0 +1,11 @@
+@if (category(); as selectedCategory) {
+  <app-confirm-dialog
+    title="Supprimer cette famille ?"
+    [message]="message(selectedCategory)"
+    [errorMessage]="errorMessage()"
+    confirmLabel="Supprimer"
+    [isSubmitting]="isSubmitting()"
+    (confirmed)="confirm()"
+    (cancelled)="cancel()"
+  />
+}
