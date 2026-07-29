@@ -3,12 +3,30 @@ import { App } from './app';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
+import { of } from 'rxjs';
+import { AuthService } from './core/auth/auth.service';
+import { AuthenticatedUser } from './core/auth/auth.model';
 
 describe('App', () => {
+  const currentUser = signal<AuthenticatedUser | null>(null);
+
   beforeEach(async () => {
+    currentUser.set(null);
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()]
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: AuthService,
+          useValue: {
+            currentUser: currentUser.asReadonly(),
+            logout: () => of(undefined),
+          },
+        },
+      ],
     }).compileComponents();
   });
 
@@ -17,4 +35,31 @@ describe('App', () => {
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
+
+  it('cache la gestion des familles au vendeur et la montre au propriétaire', () => {
+    const fixture = TestBed.createComponent(App);
+    currentUser.set({
+      userId: 'seller-1',
+      email: 'vendeur@autostock.test',
+      role: 'SELLER',
+      passwordTemporary: false,
+    });
+    fixture.detectChanges();
+
+    expect(categoryLinks(fixture.nativeElement).length).toBe(0);
+
+    currentUser.set({
+      userId: 'owner-1',
+      email: 'patron@autostock.test',
+      role: 'OWNER',
+      passwordTemporary: false,
+    });
+    fixture.detectChanges();
+
+    expect(categoryLinks(fixture.nativeElement).length).toBe(1);
+  });
 });
+
+function categoryLinks(root: HTMLElement): HTMLAnchorElement[] {
+  return Array.from(root.querySelectorAll<HTMLAnchorElement>('a[href="/admin/categories"]'));
+}
