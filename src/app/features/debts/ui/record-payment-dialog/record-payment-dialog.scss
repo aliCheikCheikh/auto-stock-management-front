@@ -1,0 +1,109 @@
+// Habillage du dialogue : gabarit .dialog-* du design system. Ce fichier ne
+// décrit que la mise en page propre à l'encaissement (rappel de la créance,
+// champ montant + raccourci).
+.payment-dialog__recap {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--gray-50);
+}
+
+.payment-dialog__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.payment-dialog__row dt {
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.payment-dialog__row dd {
+  margin: 0;
+  color: var(--gray-900);
+  font-size: var(--text-base);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+// Reste dû : l'information qui décide du montant à saisir.
+.payment-dialog__row--due {
+  align-items: center;
+  margin-top: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: var(--border-subtle);
+}
+
+.payment-dialog__row--due dt {
+  color: var(--gray-900);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.payment-dialog__row--due dd {
+  color: var(--warning-600);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.payment-dialog__amount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.payment-dialog__amount input {
+  flex: 1;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+}
+
+.payment-dialog__after {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+}
+
+.payment-dialog__after strong {
+  color: var(--gray-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.payment-dialog__error {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-md);
+  background: var(--danger-bg);
+  color: var(--danger-600);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.payment-dialog__blocked {
+  margin: 0;
+  color: var(--warning-600);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .payment-dialog__amount {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payment-dialog__amount .btn {
+    width: 100%;
+  }
+}

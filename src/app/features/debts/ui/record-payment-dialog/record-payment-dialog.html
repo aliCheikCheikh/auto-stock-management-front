@@ -1,0 +1,81 @@
+<div class="dialog-backdrop" (click)="cancelled.emit()">
+  <div
+    #card
+    class="dialog-card payment-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="payment-dialog-title"
+    (click)="$event.stopPropagation()"
+    (keydown)="onKeydown($event)"
+  >
+    <h2 class="dialog-title" id="payment-dialog-title">Encaisser un remboursement</h2>
+    <p class="dialog-message">{{ debt().customerName }}</p>
+
+    <dl class="payment-dialog__recap">
+      <div class="payment-dialog__row">
+        <dt>Total de la vente</dt>
+        <dd>{{ debt().totalAmount | money }}</dd>
+      </div>
+      <div class="payment-dialog__row">
+        <dt>Déjà payé</dt>
+        <dd>{{ debt().amountPaid | money }}</dd>
+      </div>
+      <div class="payment-dialog__row payment-dialog__row--due">
+        <dt>Reste dû</dt>
+        <dd>{{ debt().amountDue | money }}</dd>
+      </div>
+    </dl>
+
+    <div class="field">
+      <label for="payment-amount">Montant reçu</label>
+      <div class="payment-dialog__amount">
+        <input
+          #amountInput
+          id="payment-amount"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          [formControl]="amountControl"
+          (focus)="$any($event.target).select()"
+          (keydown.enter)="$event.preventDefault(); submit()"
+          aria-describedby="payment-after"
+        />
+        <button class="btn btn--secondary" type="button" (click)="fillFullBalance()">
+          Solde complet
+        </button>
+      </div>
+      <p class="payment-dialog__after" id="payment-after" aria-live="polite">
+        Reste à payer après encaissement : <strong>{{ remainingAfter() | money }}</strong>
+      </p>
+    </div>
+
+    @if (errorMessage()) {
+    <p class="payment-dialog__error" role="alert">{{ errorMessage() }}</p>
+    }
+
+    @if (blockedReason()) {
+    <p class="payment-dialog__blocked" id="payment-blocked">{{ blockedReason() }}</p>
+    }
+
+    <div class="dialog-actions">
+      <button
+        class="btn btn--secondary"
+        type="button"
+        (click)="cancelled.emit()"
+        [disabled]="isSubmitting()"
+      >
+        Annuler
+      </button>
+      <button
+        class="btn btn--primary"
+        type="button"
+        (click)="submit()"
+        [disabled]="!canSubmit()"
+        [attr.aria-busy]="isSubmitting()"
+        [attr.aria-describedby]="blockedReason() ? 'payment-blocked' : null"
+      >
+        @if (isSubmitting()) { Encaissement… } @else { Encaisser }
+      </button>
+    </div>
+  </div>
+</div>
