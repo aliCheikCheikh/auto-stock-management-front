@@ -1,52 +1,66 @@
-// Page historique des ventes — une carte de données sobre, structurée par
-// vente afin de conserver l'association immédiate entre chaque achat et ses
-// articles. Tokens du design system uniquement.
 .history-page {
-  min-height: calc(100vh - var(--nav-height));
-  padding: var(--space-6) var(--space-7) var(--space-8);
+  min-height: calc(100vh - var(--chrome-height));
+  padding: var(--space-7) var(--space-7) var(--space-9);
   background: var(--gray-50);
   color: var(--gray-900);
-  display: grid;
-  // Les pages peu remplies ne doivent pas étirer les rangées de la grille :
-  // le tableau garde ainsi la même distance avec l'en-tête à chaque page.
-  align-content: start;
-  place-items: start center;
 }
 
-.history-page > * {
-  width: 100%;
-  max-width: var(--content-lg);
-}
-
+.sales-header,
+.sales-list,
+.history-state,
 .history-page app-pagination {
-  display: block;
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
 }
 
-// ─── En-tête de page ─────────────────────────────────────────────────────────
-.page-header {
-  margin-bottom: var(--space-6);
+.sales-header {
+  align-items: flex-end;
 }
 
-.page-header__content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
-  flex-wrap: wrap;
-}
-
-.history-count {
-  margin: 0;
+.sales-header__description {
+  max-width: 620px;
+  margin-top: var(--space-2);
   color: var(--gray-500);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
 }
 
-.history-count__total {
+.sales-summary {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-0);
+  box-shadow: var(--shadow-xs);
+}
+
+.sales-summary__item {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.sales-summary__item span,
+.sale-card__total span {
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+}
+
+.sales-summary__item strong {
   color: var(--gray-900);
-  font-weight: 600;
+  font-size: var(--text-base);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.sales-summary__item--total strong {
+  color: var(--accent-700);
+}
+
+.sales-summary__separator {
+  width: 1px;
+  background: var(--gray-200);
 }
 
 .history-error {
@@ -54,119 +68,225 @@
   font-weight: 600;
 }
 
-.history-state {
+.sales-list {
   display: grid;
+  gap: var(--space-4);
+}
+
+.sale-card {
+  overflow: hidden;
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-0);
+  box-shadow: var(--shadow-xs);
+}
+
+.sale-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-subtle);
+  background: var(--gray-50);
+}
+
+.sale-card__identity {
+  display: flex;
+  align-items: center;
+  min-width: 0;
   gap: var(--space-3);
-  justify-items: start;
 }
 
-// ─── Grille des ventes ───────────────────────────────────────────────────────
-// Chaque <tbody> représente une vente : la cellule « Vente » traverse son
-// groupe, afin que les filets internes démarrent à la colonne Produit.
-.sales-table {
-  min-width: 900px; // colonne Vendeur comprise
-  border-collapse: separate;
-  border-spacing: 0;
+.sale-card__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border: 1px solid var(--success-border);
+  border-radius: 50%;
+  background: var(--success-bg);
+  color: var(--success-600);
 }
 
-.sales-table__sale-col { width: 18%; }
-.sales-table__seller-col { width: 14%; }
-.sales-table__product-col { width: 26%; }
-.sales-table__quantity-col { width: 12%; }
-.sales-table__price-col { width: 15%; }
-.sales-table__subtotal-col { width: 15%; }
-
-.sales-table__group + .sales-table__group > tr:first-child > * {
-  border-top: var(--space-2) solid var(--gray-0);
+.sale-card__icon svg {
+  width: 20px;
+  height: 20px;
 }
 
-.sales-table__sale {
-  padding: var(--space-3) var(--space-5);
-  border-bottom: 0;
-  background: var(--gray-50);
-  color: var(--gray-900);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  letter-spacing: normal;
-  text-align: center;
+.sale-card__title-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.sale-card__title-line h2 {
+  font-size: var(--text-base);
   text-transform: none;
-  vertical-align: top !important;
-}
-
-.sales-table__group:hover .sales-table__sale {
-  background: var(--gray-50);
-}
-
-// Vendeur : porté par la vente entière, donc rendu une fois par groupe.
-.sales-table__seller {
-  padding: var(--space-3) var(--space-5);
-  border-bottom: 0;
-  background: var(--gray-50);
-  color: var(--gray-900);
-  font-size: var(--text-sm);
-  font-weight: 600;
   letter-spacing: normal;
-  text-transform: none;
-  overflow-wrap: anywhere;
 }
 
-.sale-group__date {
-  display: block;
-  color: var(--gray-900);
-  font-size: var(--text-sm);
+.sale-card__count {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--gray-100);
+  color: var(--gray-500);
+  font-size: var(--text-xs);
   font-weight: 600;
+}
+
+.sale-card__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.sale-card__meta strong {
+  color: var(--gray-900);
+  font-weight: 600;
+}
+
+.sale-card__total {
+  display: grid;
+  justify-items: end;
+  flex-shrink: 0;
+  gap: var(--space-1);
+}
+
+.sale-card__total strong {
+  color: var(--gray-900);
+  font-size: var(--text-lg);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.sale-group__count {
-  display: block;
-  margin-top: var(--space-1);
+.sale-lines {
+  display: grid;
+}
+
+.sale-lines__header,
+.sale-line {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 100px 180px 180px;
+  align-items: center;
+  gap: var(--space-4);
+  padding-inline: var(--space-5);
+}
+
+.sale-lines__header {
+  min-height: 36px;
+  border-bottom: var(--border-subtle);
   color: var(--gray-500);
   font-size: var(--text-xs);
-  white-space: nowrap;
-}
-
-.sales-table__product {
-  overflow-wrap: anywhere;
-  color: var(--gray-900);
-  font-weight: 400;
-}
-
-.sales-table__group-total td {
-  padding-block: var(--space-2);
-  border-bottom: 0;
-  background: var(--gray-50);
-}
-
-.sales-table__total-label {
-  color: var(--gray-500) !important;
-  font-size: var(--text-xs) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.05em;
-  text-align: right !important;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.sales-table__total-amount {
-  color: var(--gray-900) !important;
-  font-size: var(--text-sm) !important;
-  font-weight: 700 !important;
+.sale-lines__header span:not(:first-child) {
+  text-align: right;
 }
 
-// ─── Responsive ──────────────────────────────────────────────────────────────
-@media (max-width: 900px) {
+.sale-line {
+  min-height: 56px;
+}
+
+.sale-line + .sale-line {
+  border-top: var(--border-subtle);
+}
+
+.sale-line__product {
+  overflow-wrap: anywhere;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.sale-line__quantity,
+.sale-line__money {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.sale-line__quantity,
+.sale-line__money:not(.sale-line__subtotal) {
+  color: var(--gray-500);
+}
+
+.sale-line__subtotal {
+  color: var(--gray-900);
+}
+
+.history-page app-pagination {
+  display: block;
+}
+
+@media (max-width: 760px) {
   .history-page {
-    padding: var(--space-5);
+    padding: var(--space-5) var(--space-4) var(--space-7);
+  }
+
+  .sales-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sale-lines__header {
+    display: none;
+  }
+
+  .sale-line {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-2) var(--space-5);
+    padding-block: var(--space-3);
+  }
+
+  .sale-line__product {
+    grid-column: 1 / -1;
+  }
+
+  .sale-line__quantity,
+  .sale-line__money {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    grid-column: 1 / -1;
+  }
+
+  .sale-line__quantity::before,
+  .sale-line__money::before {
+    content: attr(data-label);
+    color: var(--gray-500);
+    font-weight: 400;
   }
 }
 
-@media (max-width: 560px) {
-  .history-page {
-    padding: var(--space-4) var(--space-3);
+@media (max-width: 520px) {
+  .sales-summary {
+    width: 100%;
   }
 
-  .sales-table {
-    min-width: 900px; // colonne Vendeur comprise
+  .sale-card__header {
+    align-items: flex-start;
+    padding-inline: var(--space-4);
+  }
+
+  .sale-card__icon {
+    display: none;
+  }
+
+  .sale-card__total strong {
+    font-size: var(--text-base);
+  }
+
+  .sale-line {
+    padding-inline: var(--space-4);
   }
 }

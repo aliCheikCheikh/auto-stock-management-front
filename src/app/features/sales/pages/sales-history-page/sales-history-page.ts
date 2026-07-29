@@ -49,12 +49,6 @@ export class SalesHistoryPage implements OnInit {
   readonly state = signal<'loading' | 'success' | 'error'>('loading');
   readonly sales = signal<SaleRow[]>([]);
 
-  readonly pageDisplayCount = computed(() => {
-    const currentCount = this.sales().length;
-    const totalCount = this.page().totalElements;
-    return `${currentCount}/${totalCount}`;
-  });
-
   // Total de la page, sommé en chaîne (BigDecimal) : aucune arithmétique
   // flottante sur des montants.
   readonly pageTotal = computed<Money>(() => sumMoney(this.sales().map((sale) => sale.total)));
