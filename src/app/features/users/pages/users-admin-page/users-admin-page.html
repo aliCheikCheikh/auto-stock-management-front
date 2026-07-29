@@ -1,13 +1,14 @@
 <main class="users-admin-page">
   <header class="page-header users-header">
     <div>
-      <p class="page-kicker">Administration</p>
-      <h1>Utilisateurs</h1>
+      <p class="page-kicker">Administration du magasin</p>
+      <h1>Équipe et accès</h1>
       <p class="users-header__description">
-        Ces comptes donnent accès aux données du magasin. Accordez uniquement les accès nécessaires.
+        Gérez les personnes qui peuvent accéder au magasin et leurs autorisations.
       </p>
     </div>
     <button class="btn btn--primary" type="button" (click)="openCreateDialog()">
+      <span class="users-header__button-icon" aria-hidden="true">+</span>
       Ajouter un vendeur
     </button>
   </header>
@@ -15,16 +16,25 @@
   <div class="users-content">
     <section class="users-summary" aria-label="Résumé des comptes">
       <div class="users-summary__item">
-        <span>Total</span>
-        <strong>{{ store.totalCount() }}</strong>
+        <span class="users-summary__icon users-summary__icon--total" aria-hidden="true">◎</span>
+        <div>
+          <strong>{{ store.totalCount() }}</strong>
+          <span>Membres</span>
+        </div>
       </div>
       <div class="users-summary__item">
-        <span>Actifs</span>
-        <strong>{{ store.activeCount() }}</strong>
+        <span class="users-summary__icon users-summary__icon--active" aria-hidden="true">✓</span>
+        <div>
+          <strong>{{ store.activeCount() }}</strong>
+          <span>Comptes actifs</span>
+        </div>
       </div>
       <div class="users-summary__item">
-        <span>Désactivés</span>
-        <strong>{{ store.inactiveCount() }}</strong>
+        <span class="users-summary__icon users-summary__icon--inactive" aria-hidden="true">—</span>
+        <div>
+          <strong>{{ store.inactiveCount() }}</strong>
+          <span>Comptes désactivés</span>
+        </div>
       </div>
     </section>
 
@@ -49,20 +59,24 @@
         </button>
       </section>
     } @else {
-      <section class="card users-list" aria-labelledby="users-list-title">
+      <section class="users-list" aria-labelledby="users-list-title">
         <div class="users-list__heading">
           <div>
-            <p class="page-kicker">Accès au magasin</p>
-            <h2 id="users-list-title">Comptes existants</h2>
+            <h2 id="users-list-title">Membres de l’équipe</h2>
+            <p>
+              {{ filteredUsers().length }}
+              {{ filteredUsers().length > 1 ? 'comptes affichés' : 'compte affiché' }}
+            </p>
           </div>
           @if (store.users().length > 1) {
             <div class="users-search">
-              <label for="users-search">Rechercher</label>
+              <label class="sr-only" for="users-search">Rechercher un utilisateur</label>
+              <span class="users-search__icon" aria-hidden="true">⌕</span>
               <input
                 id="users-search"
                 type="search"
                 autocomplete="off"
-                placeholder="Nom ou email"
+                placeholder="Rechercher par nom ou email…"
                 [value]="searchTerm()"
                 (input)="onSearch($any($event.target).value)"
               />
