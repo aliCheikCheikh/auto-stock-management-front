@@ -1,8 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { NotificationService } from '../../../../core/notifications/notification.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { passwordChangeFailureFrom } from '../../../../core/auth/password-change-failure';
+import { NotificationService } from '../../../../core/notifications/notification.service';
 
 @Component({
   selector: 'app-change-password-page',
@@ -15,9 +17,12 @@ export class ChangePasswordPage {
   private readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
 
-  isSubmitting = false;
+  readonly isSubmitting = signal(false);
   readonly showCurrentPassword = signal(false);
   readonly showNewPassword = signal(false);
+  readonly currentPasswordServerError = signal('');
+  readonly newPasswordServerError = signal('');
+  readonly submissionError = signal('');
 
   readonly form = new FormGroup({
     currentPassword: new FormControl('', {
@@ -30,6 +35,18 @@ export class ChangePasswordPage {
     }),
   });
 
+  constructor() {
+    this.form.controls.currentPassword.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.currentPasswordServerError.set(''));
+    this.form.controls.newPassword.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.newPasswordServerError.set(''));
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.submissionError.set(''));
+  }
+
   toggleCurrentPassword(): void {
     this.showCurrentPassword.update((visible) => !visible);
   }
@@ -38,28 +55,68 @@ export class ChangePasswordPage {
     this.showNewPassword.update((visible) => !visible);
   }
 
-  onSubmit(): void {
-    if (this.isSubmitting) {
-      return;
-    }
+  currentPasswordError(): string {
+    if (this.currentPasswordServerError()) return this.currentPasswordServerError();
+    return this.form.controls.currentPassword.touched && this.form.controls.currentPassword.invalid
+      ? 'Saisissez votre mot de passe actuel.'
+      : '';
+  }
 
+  newPasswordError(): string {
+    if (this.newPasswordServerError()) return this.newPasswordServerError();
+    const control = this.form.controls.newPassword;
+    if (!control.touched) return '';
+    if (control.hasError('required')) return 'Saisissez un nouveau mot de passe.';
+    if (control.hasError('minlength')) return 'Utilisez au moins 8 caractères.';
+    if (control.hasError('maxlength')) return 'Limitez le mot de passe à 72 caractères.';
+    return '';
+  }
+
+  onSubmit(): void {
+    if (this.isSubmitting()) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
     this.authService.changePassword(this.form.getRawValue()).subscribe({
+      next: () => this.reloadSession(),
+      error: (error: unknown) => {
+        this.isSubmitting.set(false);
+        const failure = passwordChangeFailureFrom(error);
+        if (failure.field === 'currentPassword') {
+          this.currentPasswordServerError.set(failure.message);
+        } else if (failure.field === 'newPassword') {
+          this.newPasswordServerError.set(failure.message);
+        } else {
+          this.submissionError.set(failure.message);
+        }
+      },
+    });
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe(() => void this.router.navigate(['/login']));
+  }
+
+  private reloadSession(): void {
+    // /me confirme que le backend a retiré l'obligation de changement avant
+    // de rouvrir les écrans métier. Un échec réseau à cette étape ne remet pas
+    // en cause le changement déjà effectué : on demande une reconnexion claire.
+    this.authService.me().subscribe({
       next: () => {
-        this.isSubmitting = false;
-        this.notificationService.success('Mot de passe mis à jour');
-        this.router.navigate(['/products']);
+        this.isSubmitting.set(false);
+        this.notificationService.success('Votre mot de passe a été mis à jour.');
+        void this.router.navigate(['/products']);
       },
       error: () => {
-        this.isSubmitting = false;
-        this.notificationService.error(
-          'Impossible de changer le mot de passe. Vérifiez votre mot de passe actuel.'
+        this.isSubmitting.set(false);
+        this.authService.clearSession();
+        this.notificationService.info(
+          'Votre mot de passe a été modifié. Reconnectez-vous avec le nouveau mot de passe.'
         );
+        void this.router.navigate(['/login']);
       },
     });
   }

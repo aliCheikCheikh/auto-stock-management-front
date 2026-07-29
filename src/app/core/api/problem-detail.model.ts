@@ -17,7 +17,13 @@ export type ProblemCode =
   | 'PAYMENT_EXCEEDS_AMOUNT_DUE'
   | 'CATEGORY_NAME_ALREADY_USED'
   | 'CATEGORY_IN_USE'
-  | 'CATEGORY_NOT_FOUND';
+  | 'CATEGORY_NOT_FOUND'
+  | 'USER_EMAIL_ALREADY_USED'
+  | 'USER_NOT_FOUND'
+  | 'LAST_ACTIVE_OWNER'
+  | 'OWNER_PASSWORD_RESET_FORBIDDEN'
+  | 'CURRENT_PASSWORD_INCORRECT'
+  | 'INVALID_USER_DATA';
 
 export interface ProblemValidationError {
   readonly field: string;

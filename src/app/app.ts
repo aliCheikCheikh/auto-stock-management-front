@@ -7,6 +7,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from './core/auth/auth.service';
 import { ThemeService } from './core/theme/theme.service';
 import { ProductSearch } from './features/products/ui/product-search/product-search';
+import { SessionContextService } from './core/session/session-context.service';
 
 @Component({
   selector: 'app-root',
@@ -15,25 +16,26 @@ import { ProductSearch } from './features/products/ui/product-search/product-sea
   styleUrl: './app.scss'
 })
 export class App {
-  readonly showChrome = signal(true);
-  private readonly router = inject(Router)
+  readonly showChrome = signal(false);
+  private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly sessionContext = inject(SessionContextService);
   private readonly themeService = inject(ThemeService);
   readonly theme = this.themeService.theme;
   // Liens d'administration réservés à l'OWNER.
   readonly isOwner = computed(() => this.authService.currentUser()?.role === 'OWNER');
   readonly currentUser = this.authService.currentUser;
-  // Initiales dérivées de l'email du compte connecté (aucun appel backend).
-  readonly userInitials = computed(() => initialsFromEmail(this.currentUser()?.email));
+  readonly userInitials = computed(() => initialsFromName(this.currentUser()?.displayName));
   readonly userMenuOpen = signal(false);
   // Reflète l'état plein écran pour basculer l'icône du bouton.
   readonly isFullscreen = signal(false);
   constructor() {
+    this.showChrome.set(shouldShowChrome(this.router.url));
     this.router.events.pipe(
       filter((e) => e instanceof NavigationEnd),
       takeUntilDestroyed()
     ).subscribe(() => {
-      this.showChrome.set(!this.router.url.includes('/login'));
+      this.showChrome.set(shouldShowChrome(this.router.url));
       this.userMenuOpen.set(false);
     })
   }
@@ -89,21 +91,23 @@ export class App {
 
   logout() {
     this.authService.logout().subscribe(() => {
-      this.router.navigate(['/login'])
-    })
+      this.sessionContext.clear();
+      void this.router.navigate(['/login']);
+    });
   }
 }
 
-// Initiales à partir de l'email : 1 à 2 lettres tirées de la partie locale
-// (avant @), découpée sur . _ - + . Ex. « owner@… » → « O », « ali.k@… » → « AK ».
-function initialsFromEmail(email: string | undefined): string {
-  const local = (email ?? '').split('@')[0];
-  const parts = local.split(/[.\-_+]+/).filter(Boolean);
+function shouldShowChrome(url: string): boolean {
+  return !url.startsWith('/login') && !url.startsWith('/change-password');
+}
+
+function initialsFromName(displayName: string | undefined): string {
+  const parts = (displayName ?? '').trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) {
     return '';
   }
   const first = parts[0]!.charAt(0);
-  const second = parts.length > 1 ? parts[1]!.charAt(0) : '';
+  const second = parts.length > 1 ? parts[parts.length - 1]!.charAt(0) : '';
   return (first + second).toUpperCase();
 }
 
