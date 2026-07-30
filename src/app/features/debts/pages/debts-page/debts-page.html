@@ -128,11 +128,26 @@
               </thead>
               <tbody>
                 @for (row of debtsPage.items(); track row.saleId) {
-                <tr [class.debts-row--overdue]="row.overdue">
-                  <td class="debt-customer data-grid__start" data-label="Client">{{ row.customerName }}</td>
+                <tr
+                  class="data-grid__row--link"
+                  [class.debts-row--overdue]="row.overdue"
+                  [routerLink]="['/creances', row.saleId]"
+                >
+                  <td class="debt-customer data-grid__start" data-label="Client">
+                    <!-- Lien porté par le nom : la ligne entière est cliquable
+                         à la souris, ce lien la rend atteignable au clavier. -->
+                    <a
+                      class="debt-customer__link"
+                      [routerLink]="['/creances', row.saleId]"
+                      (click)="$event.stopPropagation()"
+                      [attr.aria-label]="'Voir le détail de la créance de ' + row.customerName"
+                    >
+                      {{ row.customerName }}
+                    </a>
+                  </td>
 
                   <td class="debt-phone data-grid__center" data-label="Téléphone">
-                    <a [href]="row.phoneHref">{{ row.phoneNumber }}</a>
+                    <a [href]="row.phoneHref" (click)="$event.stopPropagation()">{{ row.phoneNumber }}</a>
                   </td>
 
                   <td class="debt-date data-grid__center" data-label="Date de la vente">
@@ -160,7 +175,7 @@
                     <button
                       class="btn btn--secondary"
                       type="button"
-                      (click)="startPayment(row)"
+                      (click)="$event.stopPropagation(); startPayment(row)"
                       [attr.aria-label]="'Encaisser un remboursement de ' + row.customerName"
                     >
                       Encaisser

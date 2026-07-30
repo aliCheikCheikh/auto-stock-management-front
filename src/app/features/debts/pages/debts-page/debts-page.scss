@@ -161,6 +161,16 @@
 
 // L'alignement vient du design system (.data-grid__start, posé sur th ET td) :
 // cette page ne redéfinit plus d'axe pour elle seule.
+.debt-customer__link {
+  color: var(--gray-900);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.debt-customer__link:hover {
+  text-decoration: underline;
+}
+
 .debt-customer {
   font-weight: 600;
   overflow-wrap: anywhere;
@@ -288,7 +298,17 @@
     text-transform: uppercase;
   }
 
-  .debts-table .debt-customer {
+  .debts-table .debt-customer__link {
+  color: var(--gray-900);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.debt-customer__link:hover {
+  text-decoration: underline;
+}
+
+.debt-customer {
     font-size: var(--text-md);
   }
 

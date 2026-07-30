@@ -1,0 +1,21 @@
+@if (entries().length === 0) {
+  <p class="timeline__empty">Aucun versement enregistré pour cette vente.</p>
+} @else {
+  <ol class="timeline">
+    @for (entry of entries(); track entry.paymentId) {
+      <li class="timeline__item">
+        <span class="timeline__marker" aria-hidden="true"></span>
+        <div class="timeline__body">
+          <strong class="timeline__amount">{{ entry.amount | money }}</strong>
+          <p class="timeline__meta">
+            <time [attr.datetime]="entry.receivedAt">
+              {{ entry.receivedAt | date: 'dd MMM yyyy, HH:mm' }}
+            </time>
+            <span aria-hidden="true">•</span>
+            <span>Reçu par {{ entry.receivedBy }}</span>
+          </p>
+        </div>
+      </li>
+    }
+  </ol>
+}

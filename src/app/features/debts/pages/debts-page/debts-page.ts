@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { map } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -41,6 +42,7 @@ interface DebtRow {
   selector: 'app-debts-page',
   imports: [
     DatePipe,
+    RouterLink,
     ReactiveFormsModule,
     MoneyPipe,
     Spinner,

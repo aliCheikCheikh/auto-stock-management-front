@@ -1,0 +1,65 @@
+.timeline {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-5);
+  list-style: none;
+}
+
+.timeline__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-3);
+}
+
+// Filet reliant les versements : la suite se lit d'un coup d'œil.
+.timeline__item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: var(--space-4);
+  bottom: calc(var(--space-4) * -1);
+  left: var(--space-1);
+  width: 1px;
+  background: var(--gray-200);
+}
+
+.timeline__marker {
+  position: relative;
+  display: block;
+  width: var(--space-2);
+  height: var(--space-2);
+  margin-top: var(--space-2);
+  border-radius: 50%;
+  background: var(--success-600);
+}
+
+.timeline__body {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.timeline__amount {
+  color: var(--gray-900);
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+}
+
+.timeline__empty {
+  margin: 0;
+  padding: var(--space-6) var(--space-5);
+  color: var(--gray-500);
+  text-align: center;
+}

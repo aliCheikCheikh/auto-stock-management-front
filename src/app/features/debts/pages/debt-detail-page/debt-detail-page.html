@@ -1,0 +1,103 @@
+<main class="debt-detail-page">
+  <header class="page-header">
+    <div>
+      <p class="page-kicker">
+        <a routerLink="/debts">Créances</a>
+      </p>
+      <h1>Détail de la créance</h1>
+    </div>
+  </header>
+
+  @if (state() === 'loading') {
+    <section class="state-block detail-state" aria-live="polite">
+      <app-spinner label="Chargement de la créance…" />
+    </section>
+  } @else if (state() === 'not-found') {
+    <section class="card detail-state">
+      <app-empty-state
+        illustration="search"
+        title="Cette vente n’est pas une créance"
+        text="Elle a été réglée au comptant, ou elle n’existe pas. Revenez à la liste pour retrouver les créances en cours."
+      >
+        <a class="btn btn--primary" routerLink="/debts">Retour aux créances</a>
+      </app-empty-state>
+    </section>
+  } @else if (state() === 'error') {
+    <section class="state-block state-block--error detail-state" role="alert">
+      <p class="detail-error">Impossible de charger cette créance.</p>
+      <button class="btn btn--secondary" type="button" (click)="load()">Réessayer</button>
+    </section>
+  } @else if (detail(); as sale) {
+    <!-- 1. Qui, et pour combien : l'information qu'on vient chercher. -->
+    <section class="card detail-summary" aria-labelledby="detail-summary-title">
+      <div class="detail-summary__identity">
+        <h2 id="detail-summary-title">{{ customerName() }}</h2>
+        <a class="detail-summary__phone" [href]="phoneHref()">{{ sale.customerPhoneNumber }}</a>
+      </div>
+
+      <div class="detail-summary__balance" aria-live="polite">
+        @if (sale.settled) {
+          <p class="detail-badge detail-badge--settled">Créance soldée</p>
+          <p class="detail-summary__label">Réglée en totalité</p>
+        } @else {
+          <p class="detail-summary__label">Reste à payer</p>
+          <p class="detail-summary__due">{{ sale.amountDue | money }}</p>
+        }
+      </div>
+
+      @if (!sale.settled) {
+        <div class="detail-summary__actions">
+          <button class="btn btn--primary btn--lg" type="button" (click)="openPayment()">
+            Encaisser un remboursement
+          </button>
+        </div>
+      }
+    </section>
+
+    <!-- 3. Quand et par qui. -->
+    <section class="card detail-facts" aria-label="Informations de la vente">
+      <div class="detail-fact">
+        <span class="detail-fact__label">Date</span>
+        <time class="detail-fact__value" [attr.datetime]="sale.occurredAt">
+          {{ sale.occurredAt | date: 'dd MMM yyyy' }}
+        </time>
+      </div>
+      <div class="detail-fact">
+        <span class="detail-fact__label">Heure</span>
+        <span class="detail-fact__value">{{ sale.occurredAt | date: 'HH:mm' }}</span>
+      </div>
+      <div class="detail-fact">
+        <span class="detail-fact__label">Vendeur</span>
+        <span class="detail-fact__value">{{ sellerName() }}</span>
+      </div>
+      <div class="detail-fact">
+        <span class="detail-fact__label">Déjà payé</span>
+        <span class="detail-fact__value">{{ sale.amountPaid | money }}</span>
+      </div>
+    </section>
+
+    <!-- 2. Quoi : ce qui justifie le montant. -->
+    <section class="card detail-section" aria-labelledby="detail-lines-title">
+      <div class="section-heading">
+        <h2 id="detail-lines-title">Produits vendus</h2>
+      </div>
+      <app-credit-sale-lines [lines]="sale.lines" [total]="sale.totalAmount" />
+    </section>
+
+    <!-- 4. Ce qui a déjà été versé. -->
+    <section class="card detail-section" aria-labelledby="detail-payments-title">
+      <div class="section-heading">
+        <h2 id="detail-payments-title">Versements</h2>
+      </div>
+      <app-payment-timeline [payments]="sale.payments" />
+    </section>
+  }
+
+  @if (isPaymentOpen() && paymentTarget(); as target) {
+    <app-record-payment-dialog
+      [debt]="target"
+      (cancelled)="closePayment()"
+      (recorded)="onPaymentRecorded($event)"
+    />
+  }
+</main>

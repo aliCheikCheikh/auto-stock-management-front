@@ -1,0 +1,58 @@
+// Habillage repris du design system (.data-grid, .data-grid--cards) : seules
+// les largeurs de colonnes et le total de pied sont propres à cet écran.
+.sale-lines {
+  min-width: 720px;
+}
+
+.sale-lines__product-col { width: 30%; }
+.sale-lines__reference-col { width: 18%; }
+.sale-lines__quantity-col { width: 14%; }
+.sale-lines__price-col { width: 19%; }
+.sale-lines__total-col { width: 19%; }
+
+.sale-lines tbody td {
+  height: var(--control-h);
+}
+
+.sale-lines__product {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.sale-lines__reference {
+  color: var(--gray-500);
+  overflow-wrap: anywhere;
+}
+
+.sale-lines__total {
+  font-weight: 700;
+}
+
+.sale-lines__grand-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-3) var(--space-5);
+  border-top: var(--border-subtle);
+  background: var(--gray-50);
+}
+
+.sale-lines__grand-total span {
+  color: var(--gray-500);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.sale-lines__grand-total strong {
+  color: var(--gray-900);
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 760px) {
+  .sale-lines {
+    min-width: 0;
+  }
+}
