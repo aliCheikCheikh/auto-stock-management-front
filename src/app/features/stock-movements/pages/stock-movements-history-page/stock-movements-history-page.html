@@ -49,6 +49,25 @@
               <div>
                 <div class="operation-card__title-line">
                   <h2>{{ group.typeLabel }}</h2>
+
+                  <!-- Toujours affiché sur une vente : sans badge, il faudrait
+                       déduire la forme du règlement de son absence. -->
+                  @if (group.settlement; as settlement) {
+                    @if (settlement.kind === 'paid') {
+                      <span class="settlement-badge settlement-badge--paid">Payée</span>
+                    } @else if (group.saleId) {
+                      <a
+                        class="settlement-badge settlement-badge--credit"
+                        [routerLink]="['/creances', group.saleId]"
+                      >
+                        À crédit — reste {{ settlement.amountDue | money }}
+                      </a>
+                    } @else {
+                      <span class="settlement-badge settlement-badge--credit">
+                        À crédit — reste {{ settlement.amountDue | money }}
+                      </span>
+                    }
+                  }
                   <span class="operation-card__reference">
                     {{ group.products.length }}
                     {{ group.products.length > 1 ? 'références' : 'référence' }} ·

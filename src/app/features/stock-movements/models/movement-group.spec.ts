@@ -1,9 +1,11 @@
-import { groupByOperation, MovementRow } from './movement-group';
+import { groupByOperation, MovementRow, saleSettlementOf } from './movement-group';
 
 function row(overrides: Partial<MovementRow> = {}): MovementRow {
   return {
     movementId: 'mov-1',
     operationId: 'op-1',
+    saleId: null,
+    settlement: null,
     productId: 'product-1',
     date: '2026-07-29T09:00:00Z',
     typeKind: 'ENTRY',
@@ -81,5 +83,23 @@ describe('groupByOperation', () => {
     ]);
 
     expect(groups.map((group) => group.operationId)).toEqual(['mov-1', 'mov-2']);
+  });
+});
+
+describe('saleSettlementOf', () => {
+  it('ne qualifie pas une opération sans vente', () => {
+    // Réception et transfert : le serveur n'envoie pas saleAmountDue.
+    expect(saleSettlementOf(null)).toBeNull();
+    expect(saleSettlementOf(undefined)).toBeNull();
+  });
+
+  it('lit une vente réglée quand le solde vaut zéro', () => {
+    expect(saleSettlementOf({ amount: '0', currency: 'XAF' })).toEqual({ kind: 'paid' });
+  });
+
+  it('lit une vente à crédit et conserve le reste dû du serveur', () => {
+    const amountDue = { amount: '30000', currency: 'XAF' };
+
+    expect(saleSettlementOf(amountDue)).toEqual({ kind: 'credit', amountDue });
   });
 });

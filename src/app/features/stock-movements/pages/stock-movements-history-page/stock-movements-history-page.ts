@@ -9,7 +9,14 @@ import { Spinner } from '../../../../shared/ui/spinner/spinner';
 import { Pagination } from '../../../../shared/ui/pagination/pagination';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import { DatePipe } from '@angular/common';
-import { groupByOperation, MovementGroup, MovementRow } from '../../models/movement-group';
+import { RouterLink } from '@angular/router';
+import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
+import {
+  groupByOperation,
+  MovementGroup,
+  MovementRow,
+  saleSettlementOf,
+} from '../../models/movement-group';
 import { authorLabel } from '../../../../shared/utils/author';
 
 // Replis lisibles : un libellé absent ne doit jamais laisser apparaître un
@@ -19,7 +26,7 @@ const UNKNOWN_LOCATION = 'Emplacement inconnu';
 
 @Component({
   selector: 'app-stock-movements-history-page',
-  imports: [DatePipe, Spinner, Pagination, EmptyState],
+  imports: [DatePipe, RouterLink, MoneyPipe, Spinner, Pagination, EmptyState],
   templateUrl: './stock-movements-history-page.html',
   styleUrl: './stock-movements-history-page.scss',
 })
@@ -82,6 +89,8 @@ export class StockMovementsHistoryPage implements OnInit {
     return {
       movementId: movement.movementId,
       operationId: movement.operationId,
+      saleId: movement.saleId,
+      settlement: saleSettlementOf(movement.saleAmountDue),
       productId: movement.productId,
       date: movement.executedAt,
       typeKind: movement.type,
