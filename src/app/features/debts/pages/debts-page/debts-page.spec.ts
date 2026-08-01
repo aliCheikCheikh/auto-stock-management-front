@@ -155,6 +155,19 @@ describe('DebtsPage', () => {
     expect(component.store.debts()[0].amountDue.amount).toBe('100000.00');
   });
 
+  it('annule la requête en vol quand le filtre change vite', () => {
+    setUp();
+    const first = expectDebtsRequest();
+
+    queryParams.next(convertToParamMap({ status: 'ALL' }));
+    fixture.detectChanges();
+
+    // La réponse de la première n'a plus de sens : elle est abandonnée, pas
+    // empilée derrière la seconde.
+    expect(first.cancelled).toBeTrue();
+    expectDebtsRequest().flush(page([debt()]));
+  });
+
   it('affiche une erreur récupérable', () => {
     setUp();
     expectDebtsRequest().flush({ code: 'INTERNAL' }, { status: 500, statusText: 'Server Error' });
