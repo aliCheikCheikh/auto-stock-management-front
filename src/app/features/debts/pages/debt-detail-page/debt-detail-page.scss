@@ -7,7 +7,6 @@
   color: var(--gray-900);
 }
 
-.back-row,
 .page-header,
 .detail-summary,
 .detail-facts,
@@ -16,13 +15,6 @@
   width: 100%;
   max-width: var(--content-md);
   margin-inline: auto;
-}
-
-// La rangée occupe la largeur du contenu ; le lien se cale sur son bord gauche,
-// à l'aplomb du titre et des cartes.
-.back-row {
-  display: flex;
-  justify-content: flex-start;
 }
 
 .detail-summary,

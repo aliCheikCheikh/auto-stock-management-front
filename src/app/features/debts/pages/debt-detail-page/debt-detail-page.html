@@ -1,14 +1,13 @@
 <main class="debt-detail-page">
-  <!-- Retour explicite, posé au-dessus du titre et aligné sur le bord gauche du
-       contenu : c'est le geste le plus fréquent une fois la créance consultée. -->
-  <div class="back-row">
-    <a class="back-link" routerLink="/debts">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M10 3.5 5.5 8l4.5 4.5" />
-      </svg>
-      Retour aux créances
-    </a>
-  </div>
+  <!-- Même position que sur la fiche produit : en haut à gauche de l'écran,
+       hors de la colonne centrée. Le geste doit se trouver au même endroit
+       partout. -->
+  <a class="back-link" routerLink="/debts">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M10 3.5 5.5 8l4.5 4.5" />
+    </svg>
+    Retour aux créances
+  </a>
 
   <header class="page-header">
     <div>

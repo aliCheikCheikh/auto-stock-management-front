@@ -5,17 +5,11 @@
   color: var(--gray-900);
 }
 
-.back-row,
 .page-header,
 .customer-section {
   width: 100%;
   max-width: var(--content-lg);
   margin-inline: auto;
-}
-
-.back-row {
-  display: flex;
-  justify-content: flex-start;
 }
 
 .customer-section {

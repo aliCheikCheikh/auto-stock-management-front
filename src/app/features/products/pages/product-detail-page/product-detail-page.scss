@@ -1,6 +1,8 @@
 .product-detail-page {
-  min-height: calc(100vh - var(--nav-height));
-  padding: 28px 32px 40px;
+  // Mêmes marges que les autres écrans de détail : le lien de retour tombe
+  // exactement au même endroit d'un écran à l'autre.
+  min-height: calc(100vh - var(--chrome-height));
+  padding: var(--space-6) var(--space-7) var(--space-8);
   background: var(--color-canvas);
   color: var(--color-ink);
 }
