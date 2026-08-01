@@ -49,13 +49,18 @@
             {{ row.amountDue | money }}
           </td>
 
-          <!-- L'état se lit en toutes lettres : jamais par la seule couleur. -->
+          <!-- L'état se lit en toutes lettres : jamais par la seule couleur.
+               La mise en page vit dans un conteneur interne : un <td> en
+               display:flex sort du tableau et son contenu déborde sur la ligne
+               suivante. -->
           <td class="data-grid__start debt-list__age" data-label="État">
-            <app-settlement-badge [amountDue]="row.amountDue" [showAmount]="false" />
-            <span class="debt-list__age-text">{{ row.age.text }}</span>
-            @if (row.age.warning) {
-              <span class="debt-list__warning">{{ row.age.warning }}</span>
-            }
+            <div class="debt-list__age-content">
+              <app-settlement-badge [amountDue]="row.amountDue" [showAmount]="false" />
+              <span class="debt-list__age-text">{{ row.age.text }}</span>
+              @if (row.age.warning) {
+                <span class="debt-list__warning">{{ row.age.warning }}</span>
+              }
+            </div>
           </td>
         </tr>
       }

@@ -37,7 +37,12 @@
   font-weight: 700;
 }
 
+// Le <td> reste une cellule de tableau : le flex est porté par son contenu.
 .debt-list__age {
+  vertical-align: middle;
+}
+
+.debt-list__age-content {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -68,11 +73,11 @@
   // En carte, l'état reprend la pleine largeur : les mentions restent lisibles
   // sans défilement horizontal.
   .debt-list td.debt-list__age {
-    justify-content: flex-start;
+    align-items: flex-start;
     text-align: left !important;
   }
 
-  .debt-list td.debt-list__age::before {
-    flex: 1 0 100%;
+  .debt-list__age-content {
+    justify-content: flex-end;
   }
 }
