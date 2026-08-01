@@ -1,31 +1,14 @@
 import { Money } from '../../../core/api/money.model';
-import { isPositiveAmount } from '../../../shared/utils/money-math';
 import { MovementType } from './stock-movement.model';
-
-/**
- * Forme du règlement d'une vente, telle que le serveur la renvoie :
- *  - `null` hors vente (réception, transfert) ;
- *  - `paid` quand le solde vaut zéro ;
- *  - `credit` avec le reste dû quand il est positif.
- * Aucun montant n'est recalculé : on lit `saleAmountDue`.
- */
-export type SaleSettlement =
-  | { readonly kind: 'paid' }
-  | { readonly kind: 'credit'; readonly amountDue: Money };
-
-export function saleSettlementOf(amountDue: Money | null | undefined): SaleSettlement | null {
-  if (!amountDue) {
-    return null;
-  }
-  return isPositiveAmount(amountDue.amount) ? { kind: 'credit', amountDue } : { kind: 'paid' };
-}
 
 /** Une ligne de détail : un produit déplacé au sein d'une opération. */
 export interface MovementRow {
   readonly movementId: string;
   readonly operationId: string;
   readonly saleId: string | null;
-  readonly settlement: SaleSettlement | null;
+  // Champ brut du serveur : le repère de règlement s'en déduit à l'affichage,
+  // aucun booléen local ne le double.
+  readonly saleAmountDue: Money | null;
   readonly productId: string;
   readonly date: string;
   readonly typeKind: MovementType;
@@ -65,7 +48,7 @@ export interface MovementGroup {
   readonly saleId: string | null;
   // Renseigné pour une vente uniquement : réception et transfert n'ont pas de
   // forme de règlement.
-  readonly settlement: SaleSettlement | null;
+  readonly saleAmountDue: Money | null;
   readonly lines: readonly MovementRow[];
   readonly products: readonly MovementProductGroup[];
   readonly totalQuantity: number;
@@ -102,7 +85,7 @@ export function groupByOperation(rows: readonly MovementRow[]): MovementGroup[] 
     typeLabel: lines[0].typeLabel,
     authorName: lines[0].authorName,
     saleId: lines[0].saleId,
-    settlement: lines[0].settlement,
+    saleAmountDue: lines[0].saleAmountDue,
     lines,
     products: groupProducts(lines),
     totalQuantity: lines.reduce((total, line) => total + line.quantity, 0),

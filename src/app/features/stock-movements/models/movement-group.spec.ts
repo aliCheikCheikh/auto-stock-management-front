@@ -1,11 +1,12 @@
-import { groupByOperation, MovementRow, saleSettlementOf } from './movement-group';
+import { groupByOperation, MovementRow } from './movement-group';
+import { saleSettlementOf } from '../../../shared/utils/sale-settlement';
 
 function row(overrides: Partial<MovementRow> = {}): MovementRow {
   return {
     movementId: 'mov-1',
     operationId: 'op-1',
     saleId: null,
-    settlement: null,
+    saleAmountDue: null,
     productId: 'product-1',
     date: '2026-07-29T09:00:00Z',
     typeKind: 'ENTRY',
