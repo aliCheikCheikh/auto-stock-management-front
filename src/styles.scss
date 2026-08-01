@@ -622,18 +622,24 @@ select option[disabled] {
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  margin-bottom: var(--space-2);
-  padding: var(--space-1) var(--space-2) var(--space-1) 0;
-  border-radius: var(--radius-sm);
-  color: var(--accent-700);
+  gap: var(--space-2);
+  min-height: var(--control-h-sm);
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-4) 0 var(--space-3);
+  border: var(--border-field);
+  border-radius: var(--radius-pill);
+  background: var(--gray-0);
+  color: var(--gray-900);
   font-size: var(--text-sm);
   font-weight: 600;
   text-decoration: none;
+  box-shadow: var(--shadow-xs);
+  transition: background 0.12s, border-color 0.12s;
 }
 
 .back-link:hover {
-  text-decoration: underline;
+  border-color: var(--gray-400);
+  background: var(--gray-50);
 }
 
 .back-link:focus-visible {
@@ -642,8 +648,9 @@ select option[disabled] {
 }
 
 .back-link svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
+  color: var(--gray-500);
 }
 
 // ─── Squelettes de chargement ────────────────────────────────────────────────
