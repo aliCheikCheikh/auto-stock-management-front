@@ -616,6 +616,38 @@ select option[disabled] {
   padding: var(--space-1) 0 0;
 }
 
+// ─── Squelettes de chargement ────────────────────────────────────────────────
+// Occupent la place du contenu à venir : l'arrivée des données ne provoque
+// aucun saut de mise en page.
+.skeleton {
+  display: block;
+  height: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--gray-100);
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.skeleton--wide {
+  height: var(--space-4);
+}
+
+.skeleton--narrow {
+  max-width: var(--space-10);
+  justify-self: end;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% { opacity: 1; }
+  50%  { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
 // ─── Dialogues modaux ────────────────────────────────────────────────────────
 // Gabarit commun à tous les dialogues (confirmation, encaissement, …) : voile,
 // carte centrée, titre, texte, pied d'actions. Un nouveau dialogue compose ces

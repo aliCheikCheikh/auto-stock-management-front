@@ -1,0 +1,21 @@
+@if (settlement(); as state) {
+  @if (state.kind === 'paid') {
+    <span class="settlement-badge settlement-badge--paid">Payée</span>
+  } @else if (isLink()) {
+    <a class="settlement-badge settlement-badge--credit" [routerLink]="['/creances', saleId()]">
+      @if (showAmount()) {
+        À crédit — reste {{ state.amountDue | money }}
+      } @else {
+        À crédit
+      }
+    </a>
+  } @else {
+    <span class="settlement-badge settlement-badge--credit">
+      @if (showAmount()) {
+        À crédit — reste {{ state.amountDue | money }}
+      } @else {
+        À crédit
+      }
+    </span>
+  }
+}
