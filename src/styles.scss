@@ -616,6 +616,36 @@ select option[disabled] {
   padding: var(--space-1) 0 0;
 }
 
+// ─── Lien de retour ──────────────────────────────────────────────────────────
+// Placé au-dessus du titre d'un écran de détail : le geste le plus fréquent
+// après consultation, donc une vraie cible cliquable et non un surtitre.
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-1) 0;
+  border-radius: var(--radius-sm);
+  color: var(--accent-700);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.back-link:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.back-link svg {
+  width: 14px;
+  height: 14px;
+}
+
 // ─── Squelettes de chargement ────────────────────────────────────────────────
 // Occupent la place du contenu à venir : l'arrivée des données ne provoque
 // aucun saut de mise en page.

@@ -1,9 +1,14 @@
 <main class="debt-detail-page">
   <header class="page-header">
     <div>
-      <p class="page-kicker">
-        <a routerLink="/debts">Créances</a>
-      </p>
+      <!-- Retour explicite : un surtitre cliquable ne se lit pas comme une
+           action, et c'est le geste le plus fréquent après consultation. -->
+      <a class="back-link" routerLink="/debts">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10 3.5 5.5 8l4.5 4.5" />
+        </svg>
+        Retour aux créances
+      </a>
       <h1>Détail de la créance</h1>
     </div>
   </header>
