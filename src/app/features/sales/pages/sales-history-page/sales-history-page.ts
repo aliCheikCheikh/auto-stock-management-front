@@ -11,6 +11,8 @@ import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import { DatePipe } from '@angular/common';
 import { sumMoney } from '../../../../shared/utils/money-math';
 import { authorLabel } from '../../../../shared/utils/author';
+import { SettlementBadge } from '../../../../shared/ui/settlement-badge/settlement-badge';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 // Produit absent du catalogue chargé : on nomme la situation plutôt que
 // d'afficher son identifiant technique.
@@ -27,13 +29,16 @@ interface SaleRow {
   readonly saleId: string;
   readonly date: string;
   readonly sellerName: string;
+  // Solde restant renvoyé par le serveur : absent hors vente à crédit, zéro
+  // quand elle est réglée. Aucun état dérivé n'est stocké à côté.
+  readonly amountDue: Money | null;
   readonly total: Money;
   readonly lines: SaleLineRow[];
 }
 
 @Component({
   selector: 'app-sales-history-page',
-  imports: [MoneyPipe, DatePipe, Spinner, Pagination, EmptyState],
+  imports: [MoneyPipe, DatePipe, Spinner, Pagination, EmptyState, SettlementBadge],
   templateUrl: './sales-history-page.html',
   styleUrl: './sales-history-page.scss',
 })
@@ -42,6 +47,11 @@ export class SalesHistoryPage implements OnInit {
 
   private readonly salesApi = inject(SalesApiService);
   private readonly productsApi = inject(ProductsApiService);
+  private readonly authService = inject(AuthService);
+
+  // Seul le propriétaire peut ouvrir une créance : pour un vendeur, la mention
+  // reste informative.
+  readonly isOwner = computed(() => this.authService.currentUser()?.role === 'OWNER');
 
   // Résolution des noms produits (le back ne renvoie que des ids).
   private productNames = new Map<string, string>();
@@ -95,6 +105,7 @@ export class SalesHistoryPage implements OnInit {
       saleId: sale.saleId,
       date: sale.createdAt,
       sellerName: authorLabel(sale.sellerName),
+      amountDue: sale.amountDue ?? null,
       total: sale.totalAmount,
       lines: sale.lines.map((line) => ({
         productName: this.productNames.get(line.productId) ?? UNKNOWN_PRODUCT,
