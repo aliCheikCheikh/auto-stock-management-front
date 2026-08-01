@@ -1,0 +1,64 @@
+<div class="data-grid-scroll">
+  <table class="data-grid data-grid--cards debt-list" [attr.aria-label]="caption()">
+    <colgroup>
+      <col class="debt-list__customer-col" />
+      <col class="debt-list__phone-col" />
+      <col class="debt-list__date-col" />
+      <col class="debt-list__amount-col" />
+      <col class="debt-list__amount-col" />
+      <col class="debt-list__due-col" />
+      <col class="debt-list__age-col" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col" class="data-grid__start">Client</th>
+        <th scope="col">Téléphone</th>
+        <th scope="col">Date de la vente</th>
+        <th scope="col" class="data-grid__num">Total</th>
+        <th scope="col" class="data-grid__num">Versé</th>
+        <th scope="col" class="data-grid__num">Reste dû</th>
+        <th scope="col" class="data-grid__start">État</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row.saleId) {
+        <tr class="data-grid__row--link" [routerLink]="['/creances', row.saleId]">
+          <td class="data-grid__start debt-list__customer" data-label="Client">
+            <a
+              class="debt-list__link"
+              [routerLink]="['/creances', row.saleId]"
+              (click)="$event.stopPropagation()"
+            >
+              {{ row.customerName }}
+            </a>
+          </td>
+
+          <td class="data-grid__center debt-list__phone" data-label="Téléphone">
+            <a [href]="row.phoneHref" (click)="$event.stopPropagation()">{{ row.phoneNumber }}</a>
+          </td>
+
+          <td class="data-grid__center debt-list__date" data-label="Date de la vente">
+            {{ row.occurredAt | date: 'd MMMM y' }}
+          </td>
+
+          <td class="data-grid__num" data-label="Total">{{ row.totalAmount | money }}</td>
+
+          <td class="data-grid__num" data-label="Versé">{{ row.amountPaid | money }}</td>
+
+          <td class="data-grid__num debt-list__due" data-label="Reste dû">
+            {{ row.amountDue | money }}
+          </td>
+
+          <!-- L'état se lit en toutes lettres : jamais par la seule couleur. -->
+          <td class="data-grid__start debt-list__age" data-label="État">
+            <app-settlement-badge [amountDue]="row.amountDue" [showAmount]="false" />
+            <span class="debt-list__age-text">{{ row.age.text }}</span>
+            @if (row.age.warning) {
+              <span class="debt-list__warning">{{ row.age.warning }}</span>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

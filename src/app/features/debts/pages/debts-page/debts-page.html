@@ -1,205 +1,85 @@
 <main class="debts-page">
-  <header class="page-header">
+  <header class="page-header debts-header">
     <div>
       <p class="page-kicker">Ventes à crédit</p>
       <h1>Créances</h1>
+      <p class="debts-header__description">Ce que les clients doivent encore au magasin.</p>
     </div>
 
-    @if (state() === 'success' && rows().length > 0) {
-    <p class="debts-count">{{ filteredRows().length }} créance(s)</p>
+    @if (showAmountDue() && store.state() === 'ready' && store.debts().length > 0) {
+      <div class="debts-total" aria-live="polite">
+        <span class="debts-total__label">Restant dû</span>
+        <strong class="debts-total__value">{{ store.pageAmountDue() | money }}</strong>
+        <span class="debts-total__note">
+          Sur les {{ store.debts().length }} créances affichées
+        </span>
+      </div>
     }
   </header>
 
-  @if (state() === 'loading') {
-    <section class="state-block debts-state" aria-live="polite">
-      <app-spinner label="Chargement des créances…" />
+  <!-- Le filtre est un jeu de liens : l'état part dans l'URL, donc il survit à
+       un rafraîchissement et se partage. -->
+  <nav class="debts-filters" aria-label="Filtrer les créances">
+    <a
+      routerLink="."
+      [queryParams]="{ status: 'OUTSTANDING' }"
+      class="debts-filter"
+      [class.is-selected]="status() === 'OUTSTANDING'"
+      [attr.aria-current]="status() === 'OUTSTANDING' ? 'page' : null"
+    >
+      En cours
+    </a>
+    <a
+      routerLink="."
+      [queryParams]="{ status: 'SETTLED' }"
+      class="debts-filter"
+      [class.is-selected]="status() === 'SETTLED'"
+      [attr.aria-current]="status() === 'SETTLED' ? 'page' : null"
+    >
+      Soldées
+    </a>
+    <a
+      routerLink="."
+      [queryParams]="{ status: 'ALL' }"
+      class="debts-filter"
+      [class.is-selected]="status() === 'ALL'"
+      [attr.aria-current]="status() === 'ALL' ? 'page' : null"
+    >
+      Toutes
+    </a>
+  </nav>
+
+  @if (store.state() === 'loading') {
+    <section class="card debts-section" aria-busy="true" aria-live="polite">
+      <app-debt-list-skeleton />
     </section>
-  } @else if (state() === 'error') {
+  } @else if (store.state() === 'error') {
     <section class="state-block state-block--error debts-state" role="alert">
-      <p class="debts-error">{{ errorMessage() }}</p>
-      <button class="btn btn--secondary" type="button" (click)="load()">Réessayer</button>
+      <p class="debts-error">Impossible de charger les créances.</p>
+      <button class="btn btn--secondary" type="button" (click)="store.retry()">Réessayer</button>
+    </section>
+  } @else if (store.isEmpty()) {
+    <section class="card debts-section">
+      <app-empty-state
+        illustration="sales"
+        [title]="emptyMessage().title"
+        [text]="emptyMessage().text"
+      />
     </section>
   } @else {
-    <!-- Ce que le patron cherche en premier : combien, à qui, et ce qui traîne. -->
-    <section class="debts-summary" aria-live="polite">
-      <div class="debts-stat debts-stat--main">
-        <p class="debts-stat__label">Total dû</p>
-        <p class="debts-stat__value">{{ totalDue() | money }}</p>
-        @if (searchControl.value) {
-        <p class="debts-stat__note">Sur les résultats de la recherche en cours.</p>
-        }
-      </div>
-
-      <div class="debts-stat">
-        <p class="debts-stat__label">Clients concernés</p>
-        <p class="debts-stat__value debts-stat__value--sm">{{ customerCount() }}</p>
-      </div>
-
-      <div class="debts-stat" [class.debts-stat--warning]="overdueRows().length > 0">
-        <p class="debts-stat__label">Montant en retard</p>
-        <p class="debts-stat__value debts-stat__value--sm">{{ overdueAmount() | money }}</p>
-        <p class="debts-stat__note">{{ overdueRows().length }} créance(s) en retard</p>
-      </div>
-    </section>
-
-    <section class="card debts-section" aria-labelledby="debts-title">
+    <section class="card debts-section" aria-labelledby="debts-list-title">
       <div class="section-heading">
-        <h2 id="debts-title">Créances en cours</h2>
+        <h2 id="debts-list-title">
+          {{ store.pageMeta().totalElements }}
+          {{ store.pageMeta().totalElements > 1 ? 'créances' : 'créance' }}
+        </h2>
       </div>
 
-      @if (rows().length === 0) {
-        <app-empty-state
-          illustration="sales"
-          title="Aucune créance en cours"
-          text="Tous les clients sont à jour : aucune vente à crédit n’attend de règlement."
-        />
-      } @else {
-        <div class="debts-toolbar">
-          <div class="field debts-search">
-            <label for="debts-search">Rechercher un client</label>
-            <input
-              id="debts-search"
-              type="search"
-              [formControl]="searchControl"
-              placeholder="Nom ou téléphone…"
-              autocomplete="off"
-            />
-          </div>
-
-          <div class="debts-sort" role="group" aria-label="Trier les créances">
-            <span class="debts-sort__label">Trier par</span>
-            <button
-              class="debts-sort__option"
-              type="button"
-              [class.is-selected]="sort() === 'oldest'"
-              [attr.aria-pressed]="sort() === 'oldest'"
-              (click)="sortBy('oldest')"
-            >
-              Ancienneté
-            </button>
-            <button
-              class="debts-sort__option"
-              type="button"
-              [class.is-selected]="sort() === 'amountDue'"
-              [attr.aria-pressed]="sort() === 'amountDue'"
-              (click)="sortBy('amountDue')"
-            >
-              Reste dû
-            </button>
-          </div>
-        </div>
-
-        @if (filteredRows().length === 0) {
-          <app-empty-state
-            illustration="search"
-            title="Aucun résultat"
-            text="Aucun client ne correspond à cette recherche. Vérifiez le nom ou le numéro saisi."
-          />
-        } @else {
-          <div class="data-grid-scroll">
-            <table class="data-grid debts-table" aria-label="Créances en cours">
-              <colgroup>
-                <col class="debts-table__customer-col" />
-                <col class="debts-table__phone-col" />
-                <col class="debts-table__date-col" />
-                <col class="debts-table__amount-col" />
-                <col class="debts-table__amount-col" />
-                <col class="debts-table__due-col" />
-                <col class="debts-table__actions-col" />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th scope="col" class="data-grid__start">Client</th>
-                  <th scope="col">Téléphone</th>
-                  <th scope="col" [attr.aria-sort]="sort() === 'oldest' ? 'ascending' : 'none'">
-                    Date de la vente
-                  </th>
-                  <th scope="col" class="data-grid__num">Total</th>
-                  <th scope="col" class="data-grid__num">Payé</th>
-                  <th
-                    scope="col"
-                    class="data-grid__num"
-                    [attr.aria-sort]="sort() === 'amountDue' ? 'descending' : 'none'"
-                  >
-                    Reste dû
-                  </th>
-                  <th scope="col" class="data-grid__actions">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (row of debtsPage.items(); track row.saleId) {
-                <tr
-                  class="data-grid__row--link"
-                  [class.debts-row--overdue]="row.overdue"
-                  [routerLink]="['/creances', row.saleId]"
-                >
-                  <td class="debt-customer data-grid__start" data-label="Client">
-                    <!-- Lien porté par le nom : la ligne entière est cliquable
-                         à la souris, ce lien la rend atteignable au clavier. -->
-                    <a
-                      class="debt-customer__link"
-                      [routerLink]="['/creances', row.saleId]"
-                      (click)="$event.stopPropagation()"
-                      [attr.aria-label]="'Voir le détail de la créance de ' + row.customerName"
-                    >
-                      {{ row.customerName }}
-                    </a>
-                  </td>
-
-                  <td class="debt-phone data-grid__center" data-label="Téléphone">
-                    <a [href]="row.phoneHref" (click)="$event.stopPropagation()">{{ row.phoneNumber }}</a>
-                  </td>
-
-                  <td class="debt-date data-grid__center" data-label="Date de la vente">
-                    <span>{{ row.occurredAt | date: 'dd/MM/yyyy' }}</span>
-                    <span
-                      class="age-badge"
-                      [class.age-badge--overdue]="row.overdue"
-                      [attr.aria-label]="
-                        row.overdue
-                          ? 'En retard — ' + row.daysOutstanding + ' jours'
-                          : row.daysOutstanding + ' jours'
-                      "
-                    >
-                      {{ row.daysOutstanding }} j
-                    </span>
-                  </td>
-
-                  <td class="data-grid__num" data-label="Total">{{ row.totalAmount | money }}</td>
-
-                  <td class="data-grid__num" data-label="Payé">{{ row.amountPaid | money }}</td>
-
-                  <td class="data-grid__num debt-due" data-label="Reste dû">{{ row.amountDue | money }}</td>
-
-                  <td class="data-grid__actions" data-label="Actions">
-                    <button
-                      class="btn btn--secondary"
-                      type="button"
-                      (click)="$event.stopPropagation(); startPayment(row)"
-                      [attr.aria-label]="'Encaisser un remboursement de ' + row.customerName"
-                    >
-                      Encaisser
-                    </button>
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-
-          @if (debtsPage.isPaginated()) {
-            <app-pagination [meta]="debtsPage.meta()" (goTo)="debtsPage.goTo($event)" />
-          }
-        }
-      }
+      <app-debt-list [debts]="store.debts()" caption="Créances du magasin" />
     </section>
-  }
 
-  @if (payingDebt(); as debt) {
-  <app-record-payment-dialog
-    [debt]="debt"
-    (cancelled)="cancelPayment()"
-    (recorded)="onPaymentRecorded($event)"
-  />
+    @if (store.pageMeta().totalPages > 1) {
+      <app-pagination [meta]="store.pageMeta()" (goTo)="store.goToPage($event)" />
+    }
   }
 </main>

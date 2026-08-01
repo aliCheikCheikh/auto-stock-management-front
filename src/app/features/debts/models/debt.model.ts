@@ -1,10 +1,30 @@
 import { Money } from '../../../core/api/money.model';
 
 /**
- * Créance en cours : une vente à crédit dont le solde n'est pas soldé.
- * Le backend renvoie la liste triée du plus ancien au plus récent.
+ * Filtre de statut accepté par le serveur. L'ordre de la liste en découle et
+ * n'est pas négociable côté front : les créances en cours arrivent de la plus
+ * ancienne à la plus récente (c'est celle-là qu'on relance), les soldées du
+ * règlement le plus récent au plus ancien.
  */
-export interface OutstandingDebtResponse {
+export type DebtStatus = 'OUTSTANDING' | 'SETTLED' | 'ALL';
+
+export const DEBT_STATUSES: readonly DebtStatus[] = ['OUTSTANDING', 'SETTLED', 'ALL'];
+
+export function isDebtStatus(value: string | null | undefined): value is DebtStatus {
+  return value === 'OUTSTANDING' || value === 'SETTLED' || value === 'ALL';
+}
+
+/**
+ * Une vente à crédit, réglée ou non.
+ *
+ * `daysOutstanding` et `overdue` sont arrêtés par le serveur (`CreditPolicy`)
+ * et **changent de sens** selon `settled` :
+ *  - créance ouverte : nombre de jours écoulés depuis la vente, et « en retard
+ *    aujourd'hui » ;
+ *  - créance soldée : nombre de jours qu'il a fallu pour régler, et « a été
+ *    réglée au-delà du délai toléré ».
+ */
+export interface DebtResponse {
   readonly saleId: string;
   readonly occurredAt: string;
   readonly customerId: string;
@@ -14,8 +34,16 @@ export interface OutstandingDebtResponse {
   readonly totalAmount: Money;
   readonly amountPaid: Money;
   readonly amountDue: Money;
-  // Ancienneté et statut de retard calculés par le backend (`CreditPolicy`) :
-  // le seuil de retard est une règle métier, jamais recalculée côté front.
+  readonly settled: boolean;
+  // Date du dernier encaissement ; null tant que la créance est ouverte.
+  readonly settledAt: string | null;
   readonly daysOutstanding: number;
   readonly overdue: boolean;
+}
+
+export interface DebtQuery {
+  readonly status?: DebtStatus;
+  readonly customerId?: string;
+  readonly page?: number;
+  readonly size?: number;
 }

@@ -1,0 +1,78 @@
+// Habillage repris du design system (.data-grid, .data-grid--cards) : seules
+// les largeurs et la colonne d'état sont propres aux créances.
+.debt-list {
+  min-width: 980px;
+}
+
+.debt-list__customer-col { width: 18%; }
+.debt-list__phone-col { width: 13%; }
+.debt-list__date-col { width: 14%; }
+.debt-list__amount-col { width: 12%; }
+.debt-list__due-col { width: 13%; }
+.debt-list__age-col { width: 18%; }
+
+.debt-list tbody td {
+  height: var(--control-h);
+}
+
+.debt-list__link {
+  color: var(--gray-900);
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.debt-list__link:hover {
+  text-decoration: underline;
+}
+
+.debt-list__phone,
+.debt-list__date {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.debt-list__due {
+  font-size: var(--text-base) !important;
+  font-weight: 700;
+}
+
+.debt-list__age {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.debt-list__age-text {
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+}
+
+.debt-list__warning {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-pill);
+  background: var(--danger-bg);
+  color: var(--danger-600);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .debt-list {
+    min-width: 0;
+  }
+
+  // En carte, l'état reprend la pleine largeur : les mentions restent lisibles
+  // sans défilement horizontal.
+  .debt-list td.debt-list__age {
+    justify-content: flex-start;
+    text-align: left !important;
+  }
+
+  .debt-list td.debt-list__age::before {
+    flex: 1 0 100%;
+  }
+}
