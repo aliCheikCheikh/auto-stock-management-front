@@ -2,7 +2,6 @@ import { Component, computed, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
-import { SettlementBadge } from '../../../../shared/ui/settlement-badge/settlement-badge';
 import { customerDisplayName, telHref } from '../../../customers/models/customer.model';
 import { debtAgeLabel, DebtAgeLabel } from '../../models/debt-age';
 import { DebtResponse } from '../../models/debt.model';
@@ -27,7 +26,7 @@ interface DebtRow {
  */
 @Component({
   selector: 'app-debt-list',
-  imports: [DatePipe, RouterLink, MoneyPipe, SettlementBadge],
+  imports: [DatePipe, RouterLink, MoneyPipe],
   templateUrl: './debt-list.html',
   styleUrl: './debt-list.scss',
 })

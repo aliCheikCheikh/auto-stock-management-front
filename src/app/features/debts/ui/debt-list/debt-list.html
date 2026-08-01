@@ -49,13 +49,13 @@
             {{ row.amountDue | money }}
           </td>
 
-          <!-- L'état se lit en toutes lettres : jamais par la seule couleur.
+          <!-- Pas de repère « à crédit » ici : dans une liste de créances,
+               toutes les ventes le sont. L'état utile est ouverte / réglée, et
+               il se lit dans la phrase d'ancienneté, jamais par la couleur.
                La mise en page vit dans un conteneur interne : un <td> en
-               display:flex sort du tableau et son contenu déborde sur la ligne
-               suivante. -->
+               display:flex sort du tableau et déborde sur la ligne suivante. -->
           <td class="data-grid__start debt-list__age" data-label="État">
             <div class="debt-list__age-content">
-              <app-settlement-badge [amountDue]="row.amountDue" [showAmount]="false" />
               <span class="debt-list__age-text">{{ row.age.text }}</span>
               @if (row.age.warning) {
                 <span class="debt-list__warning">{{ row.age.warning }}</span>
