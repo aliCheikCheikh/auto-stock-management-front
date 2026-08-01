@@ -38,7 +38,13 @@
       <div class="detail-summary__balance" aria-live="polite">
         @if (sale.settled) {
           <p class="detail-badge detail-badge--settled">Créance soldée</p>
-          <p class="detail-summary__label">Réglée en totalité</p>
+          @if (settledOn(); as settledAt) {
+            <p class="detail-summary__label">
+              Soldée le {{ settledAt | date: 'd MMMM y' }}
+            </p>
+          } @else {
+            <p class="detail-summary__label">Réglée en totalité</p>
+          }
         } @else {
           <p class="detail-summary__label">Reste à payer</p>
           <p class="detail-summary__due">{{ sale.amountDue | money }}</p>
@@ -82,6 +88,9 @@
         <h2 id="detail-lines-title">Produits vendus</h2>
       </div>
       <app-credit-sale-lines [lines]="sale.lines" [total]="sale.totalAmount" />
+      <!-- La créance se discute sur les prix pratiqués ce jour-là, pas sur le
+           tarif actuel du catalogue. -->
+      <p class="detail-note">Prix pratiqués le jour de la vente.</p>
     </section>
 
     <!-- 4. Ce qui a déjà été versé. -->

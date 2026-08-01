@@ -130,6 +130,13 @@
   overflow: hidden;
 }
 
+.detail-note {
+  margin: 0;
+  padding: var(--space-2) var(--space-5) var(--space-3);
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+}
+
 @media (max-width: 760px) {
   .debt-detail-page {
     padding: var(--space-5) var(--space-4) var(--space-7);

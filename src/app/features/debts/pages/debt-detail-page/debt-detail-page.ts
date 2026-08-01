@@ -60,6 +60,13 @@ export class DebtDetailPage implements OnInit {
 
   readonly phoneHref = computed(() => telHref(this.detail()?.customerPhoneNumber ?? ''));
 
+  // Date du règlement : celle du dernier encaissement reçu du serveur, pas une
+  // date reconstituée.
+  readonly settledOn = computed(() => {
+    const payments = this.detail()?.payments ?? [];
+    return payments.length > 0 ? payments[payments.length - 1].receivedAt : null;
+  });
+
   // Cible du dialogue d'encaissement, déjà écrit pour la liste des créances.
   readonly paymentTarget = computed<DebtPaymentTarget | null>(() => {
     const detail = this.detail();
