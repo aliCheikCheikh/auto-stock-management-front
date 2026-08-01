@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ProductsApiService } from '../../data-access/products-api.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
@@ -16,6 +16,8 @@ export class ProductEditPage implements OnInit {
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationService);
   private productId!: string;
+  // Exposé au gabarit pour le lien de retour vers la fiche.
+  readonly backLink = signal<readonly string[]>(['/products']);
   isSubmitting = false;
 
   readonly form = new FormGroup({
@@ -45,6 +47,7 @@ export class ProductEditPage implements OnInit {
       return;
     }
     this.productId = productId;
+    this.backLink.set(['/products', productId]);
 
     this.productsApi.getProduct(productId).subscribe({
       next: (product) => {

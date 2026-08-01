@@ -9,7 +9,12 @@
       <button class="btn btn--secondary" type="button" (click)="load()">Réessayer</button>
     </div>
   } @else if (summary(); as summary) {
-    <a routerLink="/products" class="back-link">← Retour au catalogue</a>
+    <a class="back-link" routerLink="/products">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 3.5 5.5 8l4.5 4.5" />
+      </svg>
+      Retour au catalogue
+    </a>
 
     <div class="product-header">
       <h1>{{ summary.productName || '—' }}</h1>
