@@ -11,13 +11,19 @@ registerLocaleData(localeFr);
 import { routes } from './app.routes';
 import { credentialsInterceptor } from './core/auth/credentials.interceptor';
 import { refreshInterceptor } from './core/auth/refresh.interceptor';
+import { forbiddenInterceptor } from './core/auth/forbidden.interceptor';
 import { loadingInterceptor } from './core/loading/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withInterceptors([loadingInterceptor, refreshInterceptor, credentialsInterceptor])),
+    provideHttpClient(withInterceptors([
+      loadingInterceptor,
+      refreshInterceptor,
+      forbiddenInterceptor,
+      credentialsInterceptor,
+    ])),
     provideRouter(routes),
     { provide: LOCALE_ID, useValue: 'fr-FR' },
   ]
