@@ -13,6 +13,8 @@ import { authGuard, forcePasswordChangeGuard, ownerGuard } from './core/auth/aut
 import { ProductEditPage } from './features/products/pages/product-edit-page/product-edit-page';
 import { NotFoundPage } from './features/errors/not-found-page/not-found-page';
 import { DebtsPage } from './features/debts/pages/debts-page/debts-page';
+import { DebtDetailPage } from './features/debts/pages/debt-detail-page/debt-detail-page';
+import { CustomerDebtsPage } from './features/customers/pages/customer-debts-page/customer-debts-page';
 import { CategoriesPage } from './features/categories/pages/categories-page/categories-page';
 
 export const routes: Routes = [
@@ -69,6 +71,18 @@ export const routes: Routes = [
     {
         path: 'debts',
         component: DebtsPage,
+        canActivate: [authGuard, ownerGuard]
+    },
+
+    {
+        path: 'clients/:customerId/creances',
+        component: CustomerDebtsPage,
+        canActivate: [authGuard, ownerGuard]
+    },
+
+    {
+        path: 'creances/:saleId',
+        component: DebtDetailPage,
         canActivate: [authGuard, ownerGuard]
     },
 

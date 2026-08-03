@@ -1,0 +1,80 @@
+<main class="customer-page">
+  <!-- Même position que sur la fiche produit : en haut à gauche de l'écran,
+       hors de la colonne centrée. Le geste doit se trouver au même endroit
+       partout. -->
+  <a class="back-link" routerLink="/debts">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M10 3.5 5.5 8l4.5 4.5" />
+    </svg>
+    Retour aux créances
+  </a>
+
+  <header class="page-header">
+    <div>
+      <h1>{{ customerName() || 'Fiche client' }}</h1>
+      @if (customer(); as client) {
+        <a class="customer-page__phone" [href]="phoneHref()">{{ client.phoneNumber }}</a>
+      }
+    </div>
+
+    @if (outstanding.state() === 'ready' && outstanding.debts().length > 0) {
+      <div class="customer-page__total" aria-live="polite">
+        <span class="customer-page__total-label">Restant dû</span>
+        <strong class="customer-page__total-value">{{ outstanding.pageAmountDue() | money }}</strong>
+        <span class="customer-page__total-note">
+          Sur les {{ outstanding.debts().length }} créances affichées
+        </span>
+      </div>
+    }
+  </header>
+
+  <!-- Ce qu'il doit encore. -->
+  <section class="card customer-section" aria-labelledby="customer-outstanding-title">
+    <div class="section-heading">
+      <h2 id="customer-outstanding-title">Créances en cours</h2>
+    </div>
+
+    @if (outstanding.state() === 'loading') {
+      <app-debt-list-skeleton [rows]="3" />
+    } @else if (outstanding.state() === 'error') {
+      <div class="state-block state-block--error" role="alert">
+        <p>Impossible de charger les créances de ce client.</p>
+        <button class="btn btn--secondary" type="button" (click)="outstanding.retry()">
+          Réessayer
+        </button>
+      </div>
+    } @else if (outstanding.isEmpty()) {
+      <app-empty-state
+        illustration="sales"
+        title="Ce client ne vous doit rien."
+        text="Toutes ses ventes à crédit ont été réglées."
+      />
+    } @else {
+      <app-debt-list [debts]="outstanding.debts()" caption="Créances en cours du client" />
+    }
+  </section>
+
+  <!-- Ce qu'il a déjà réglé : de quoi décider si on lui fait encore crédit. -->
+  <section class="card customer-section" aria-labelledby="customer-settled-title">
+    <div class="section-heading">
+      <h2 id="customer-settled-title">Créances réglées</h2>
+    </div>
+
+    @if (settled.state() === 'loading') {
+      <app-debt-list-skeleton [rows]="3" />
+    } @else if (settled.state() === 'error') {
+      <div class="state-block state-block--error" role="alert">
+        <p>Impossible de charger l’historique de ce client.</p>
+        <button class="btn btn--secondary" type="button" (click)="settled.retry()">Réessayer</button>
+      </div>
+    } @else if (settled.isEmpty()) {
+      <app-empty-state
+        illustration="sales"
+        title="Aucun règlement enregistré."
+        text="Ce client n’a encore soldé aucune vente à crédit."
+      />
+    } @else {
+      <app-debt-list [debts]="settled.debts()" caption="Créances réglées du client" />
+    }
+  </section>
+</main>

@@ -10,6 +10,8 @@ import { Pagination } from '../../../../shared/ui/pagination/pagination';
 import { EmptyState } from '../../../../shared/ui/empty-state/empty-state';
 import { DatePipe } from '@angular/common';
 import { groupByOperation, MovementGroup, MovementRow } from '../../models/movement-group';
+import { SettlementBadge } from '../../../../shared/ui/settlement-badge/settlement-badge';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { authorLabel } from '../../../../shared/utils/author';
 
 // Replis lisibles : un libellé absent ne doit jamais laisser apparaître un
@@ -19,7 +21,7 @@ const UNKNOWN_LOCATION = 'Emplacement inconnu';
 
 @Component({
   selector: 'app-stock-movements-history-page',
-  imports: [DatePipe, Spinner, Pagination, EmptyState],
+  imports: [DatePipe, Spinner, Pagination, EmptyState, SettlementBadge],
   templateUrl: './stock-movements-history-page.html',
   styleUrl: './stock-movements-history-page.scss',
 })
@@ -34,6 +36,11 @@ export class StockMovementsHistoryPage implements OnInit {
   private readonly movementsApi = inject(StockMovementsApiService);
   private readonly productsApi = inject(ProductsApiService);
   private readonly sessionContext = inject(SessionContextService);
+  private readonly authService = inject(AuthService);
+
+  // Seul le propriétaire peut ouvrir une créance : pour les autres, le repère
+  // reste une simple mention.
+  readonly isOwner = computed(() => this.authService.currentUser()?.role === 'OWNER');
 
   private productNames = new Map<string, string>();
 
@@ -82,6 +89,8 @@ export class StockMovementsHistoryPage implements OnInit {
     return {
       movementId: movement.movementId,
       operationId: movement.operationId,
+      saleId: movement.saleId,
+      saleAmountDue: movement.saleAmountDue ?? null,
       productId: movement.productId,
       date: movement.executedAt,
       typeKind: movement.type,

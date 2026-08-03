@@ -4,7 +4,7 @@
       <p class="page-kicker">Journal du stock</p>
       <h1>Historique des mouvements</h1>
       <p class="history-header__description">
-        Chaque carte rassemble les produits et les emplacements d’une même opération.
+        Le journal de toutes les entrées, sorties et transferts de stock.
       </p>
     </div>
 
@@ -49,12 +49,15 @@
               <div>
                 <div class="operation-card__title-line">
                   <h2>{{ group.typeLabel }}</h2>
-                  <span class="operation-card__reference">
-                    {{ group.products.length }}
-                    {{ group.products.length > 1 ? 'références' : 'référence' }} ·
-                    {{ group.totalQuantity }}
-                    {{ group.totalQuantity > 1 ? 'unités' : 'unité' }}
-                  </span>
+
+                  <!-- Repère partagé avec les listes de créances : un seul
+                       vocabulaire pour dire la forme d'une vente. Le lien vers
+                       le détail n'existe que pour le propriétaire. -->
+                  <app-settlement-badge
+                    [amountDue]="group.saleAmountDue"
+                    [saleId]="group.saleId"
+                    [linkable]="isOwner()"
+                  />
                 </div>
                 <p class="operation-card__meta">
                   <time [attr.datetime]="group.date">{{ group.date | date: 'dd MMM yyyy, HH:mm' }}</time>

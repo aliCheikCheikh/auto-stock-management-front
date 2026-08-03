@@ -1,0 +1,40 @@
+<div class="data-grid-scroll">
+  <table class="data-grid data-grid--cards sale-lines" aria-label="Produits vendus">
+    <colgroup>
+      <col class="sale-lines__product-col" />
+      <col class="sale-lines__reference-col" />
+      <col class="sale-lines__quantity-col" />
+      <col class="sale-lines__price-col" />
+      <col class="sale-lines__total-col" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col" class="data-grid__start">Produit</th>
+        <th scope="col" class="data-grid__start">Référence</th>
+        <th scope="col" class="data-grid__num">Quantité</th>
+        <th scope="col" class="data-grid__num">Prix unitaire</th>
+        <th scope="col" class="data-grid__num">Total ligne</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (line of lines(); track line.productId) {
+        <tr>
+          <td class="data-grid__start sale-lines__product" data-label="Produit">{{ line.productName }}</td>
+          <td class="data-grid__start sale-lines__reference" data-label="Référence">
+            {{ line.productReference }}
+          </td>
+          <td class="data-grid__num" data-label="Quantité">{{ line.quantity }}</td>
+          <td class="data-grid__num" data-label="Prix unitaire">{{ line.unitPrice | money }}</td>
+          <td class="data-grid__num sale-lines__total" data-label="Total ligne">
+            {{ line.lineTotal | money }}
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<p class="sale-lines__grand-total">
+  <span>Total de la vente</span>
+  <strong>{{ total() | money }}</strong>
+</p>

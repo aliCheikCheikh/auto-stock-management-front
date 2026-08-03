@@ -616,6 +616,75 @@ select option[disabled] {
   padding: var(--space-1) 0 0;
 }
 
+// ─── Lien de retour ──────────────────────────────────────────────────────────
+// Placé au-dessus du titre d'un écran de détail : le geste le plus fréquent
+// après consultation, donc une vraie cible cliquable et non un surtitre.
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-h-sm);
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-4) 0 var(--space-3);
+  border: var(--border-field);
+  border-radius: var(--radius-pill);
+  background: var(--gray-0);
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow-xs);
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.back-link:hover {
+  border-color: var(--gray-400);
+  background: var(--gray-50);
+}
+
+.back-link:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.back-link svg {
+  width: 16px;
+  height: 16px;
+  color: var(--gray-500);
+}
+
+// ─── Squelettes de chargement ────────────────────────────────────────────────
+// Occupent la place du contenu à venir : l'arrivée des données ne provoque
+// aucun saut de mise en page.
+.skeleton {
+  display: block;
+  height: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--gray-100);
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+.skeleton--wide {
+  height: var(--space-4);
+}
+
+.skeleton--narrow {
+  max-width: var(--space-10);
+  justify-self: end;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% { opacity: 1; }
+  50%  { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
 // ─── Dialogues modaux ────────────────────────────────────────────────────────
 // Gabarit commun à tous les dialogues (confirmation, encaissement, …) : voile,
 // carte centrée, titre, texte, pied d'actions. Un nouveau dialogue compose ces

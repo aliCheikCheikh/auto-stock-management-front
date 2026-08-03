@@ -1,0 +1,23 @@
+.skeleton-list {
+  display: grid;
+}
+
+.skeleton-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--control-h);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: var(--border-subtle);
+}
+
+.skeleton-row:last-child {
+  border-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .skeleton-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}

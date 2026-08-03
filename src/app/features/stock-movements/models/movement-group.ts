@@ -1,9 +1,14 @@
+import { Money } from '../../../core/api/money.model';
 import { MovementType } from './stock-movement.model';
 
 /** Une ligne de détail : un produit déplacé au sein d'une opération. */
 export interface MovementRow {
   readonly movementId: string;
   readonly operationId: string;
+  readonly saleId: string | null;
+  // Champ brut du serveur : le repère de règlement s'en déduit à l'affichage,
+  // aucun booléen local ne le double.
+  readonly saleAmountDue: Money | null;
   readonly productId: string;
   readonly date: string;
   readonly typeKind: MovementType;
@@ -40,6 +45,10 @@ export interface MovementGroup {
   readonly typeKind: MovementType;
   readonly typeLabel: string;
   readonly authorName: string;
+  readonly saleId: string | null;
+  // Renseigné pour une vente uniquement : réception et transfert n'ont pas de
+  // forme de règlement.
+  readonly saleAmountDue: Money | null;
   readonly lines: readonly MovementRow[];
   readonly products: readonly MovementProductGroup[];
   readonly totalQuantity: number;
@@ -75,6 +84,8 @@ export function groupByOperation(rows: readonly MovementRow[]): MovementGroup[] 
     typeKind: lines[0].typeKind,
     typeLabel: lines[0].typeLabel,
     authorName: lines[0].authorName,
+    saleId: lines[0].saleId,
+    saleAmountDue: lines[0].saleAmountDue,
     lines,
     products: groupProducts(lines),
     totalQuantity: lines.reduce((total, line) => total + line.quantity, 0),

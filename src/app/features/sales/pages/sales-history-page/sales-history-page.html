@@ -63,6 +63,14 @@
                     {{ sale.lines.length }}
                     {{ sale.lines.length > 1 ? 'articles' : 'article' }}
                   </span>
+                  <!-- La forme du règlement se lit ici : c'est une question sur
+                       la vente, pas sur les mouvements de stock. Sur une vente à
+                       crédit, le repère ouvre la créance. -->
+                  <app-settlement-badge
+                    [amountDue]="sale.amountDue"
+                    [saleId]="sale.saleId"
+                    [linkable]="isOwner()"
+                  />
                 </div>
                 <p class="sale-card__meta">
                   <time [attr.datetime]="sale.date">{{ sale.date | date: 'HH:mm' }}</time>

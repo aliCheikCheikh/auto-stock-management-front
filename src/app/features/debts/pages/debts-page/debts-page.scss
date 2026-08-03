@@ -1,26 +1,103 @@
-// Page « Créances » (OWNER) : total dû en tête, puis le détail par vente.
+// Écran « Créances » (propriétaire) : filtre de statut, puis la liste.
 .debts-page {
-  min-height: calc(100vh - var(--nav-height));
+  min-height: calc(100vh - var(--chrome-height));
   padding: var(--space-6) var(--space-7) var(--space-8);
   background: var(--gray-50);
   color: var(--gray-900);
 }
 
 .page-header,
-.debts-summary,
+.debts-filters,
 .debts-section,
-.debts-state {
+.debts-state,
+.debts-page app-pagination {
+  width: 100%;
   max-width: var(--content-lg);
-  margin-left: auto;
-  margin-right: auto;
+  margin-inline: auto;
 }
 
-.debts-count {
-  margin: 0;
+.debts-page app-pagination {
+  display: block;
+}
+
+.debts-header {
+  align-items: flex-end;
+}
+
+.debts-header__description {
+  margin-top: var(--space-2);
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+
+// ─── Restant dû : affiché sur « En cours » seulement ─────────────────────────
+.debts-total {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-1);
+  text-align: right;
+}
+
+.debts-total__label {
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.debts-total__value {
+  color: var(--gray-900);
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.debts-total__note {
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+}
+
+// ─── Filtre de statut ────────────────────────────────────────────────────────
+.debts-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.debts-filter {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-h-sm);
+  padding: 0 var(--space-4);
+  border: var(--border-field);
+  border-radius: var(--radius-pill);
+  background: var(--gray-0);
   color: var(--gray-500);
   font-size: var(--text-sm);
-  font-weight: 500;
-  white-space: nowrap;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.debts-filter:hover {
+  background: var(--gray-50);
+}
+
+.debts-filter.is-selected {
+  border-color: var(--accent-600);
+  background: var(--accent-600);
+  color: var(--gray-0);
+}
+
+.debts-filter:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.debts-section {
+  margin-bottom: var(--space-4);
+  overflow: hidden;
 }
 
 .debts-error {
@@ -28,295 +105,23 @@
   font-weight: 600;
 }
 
-// ─── Bandeau de synthèse : total dû, clients concernés, montant en retard ────
-.debts-summary {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.4fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
-}
-
-.debts-stat {
-  display: grid;
-  align-content: start;
-  gap: var(--space-1);
-  padding: var(--space-4) var(--space-5);
-  border: var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--gray-0);
-  box-shadow: var(--shadow-xs);
-}
-
-.debts-stat--warning {
-  border-color: var(--warning-border);
-  background: var(--warning-bg);
-}
-
-.debts-stat--warning .debts-stat__value {
-  color: var(--warning-600);
-}
-
-.debts-stat__label {
-  color: var(--gray-500);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.debts-stat__value {
-  color: var(--gray-900);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.2;
-}
-
-.debts-stat__value--sm {
-  font-size: var(--text-lg);
-}
-
-.debts-stat__note {
-  color: var(--gray-500);
-  font-size: var(--text-sm);
-}
-
-// ─── Barre d'outils : recherche + tri ────────────────────────────────────────
-// Barre d'outils : même respiration au-dessus et en dessous — sinon elle flotte
-// sous le titre et vient toucher l'en-tête du tableau.
-.debts-toolbar {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-6);
-}
-
-.debts-search {
-  flex: 1;
-  min-width: 0;
-  max-width: 420px;
-}
-
-.debts-sort {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.debts-sort__label {
-  margin-right: var(--space-1);
-  color: var(--gray-500);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.debts-sort__option {
-  min-height: var(--control-h-sm);
-  padding: 0 var(--space-4);
-  border: var(--border-field);
-  border-radius: var(--radius-pill);
-  background: var(--gray-0);
-  color: var(--gray-500);
-  cursor: pointer;
-  font-size: var(--text-sm);
-  font-weight: 600;
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
-}
-
-.debts-sort__option:hover {
-  background: var(--gray-50);
-}
-
-.debts-sort__option.is-selected {
-  border-color: var(--accent-600);
-  background: var(--accent-600);
-  color: var(--gray-0);
-}
-
-.debts-sort__option:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-
-// ─── Tableau ─────────────────────────────────────────────────────────────────
-.debts-table {
-  min-width: 980px; // sept colonnes, action comprise
-}
-
-.debts-table__customer-col { width: 20%; }
-.debts-table__phone-col { width: 14%; }
-.debts-table__date-col { width: 16%; }
-.debts-table__amount-col { width: 12%; }
-.debts-table__due-col { width: 14%; }
-.debts-table__actions-col { width: 12%; }
-
-// Lignes hautes : lisibles à distance, sans zébrure.
-.debts-table tbody td {
-  height: var(--control-h);
-}
-
-// L'alignement vient du design system (.data-grid__start, posé sur th ET td) :
-// cette page ne redéfinit plus d'axe pour elle seule.
-.debt-customer {
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-
-.debt-phone {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.debt-date {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-// Colonne mise en valeur : c'est le montant que le patron réclame.
-.debt-due {
-  color: var(--gray-900);
-  font-size: var(--text-base) !important;
-  font-weight: 700;
-}
-
-// Créance de plus de 30 jours : fond ambre, c'est ce qui déclenche la relance.
-.debts-row--overdue,
-.data-grid tbody tr.debts-row--overdue:hover {
-  background: var(--warning-bg);
-}
-
-.age-badge {
-  display: inline-block;
-  margin-left: var(--space-2);
-  padding: 0 var(--space-2);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-pill);
-  background: var(--gray-100);
-  color: var(--gray-500);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.age-badge--overdue {
-  border-color: var(--warning-border);
-  background: var(--gray-0);
-  color: var(--warning-600);
-}
-
-// ─── Responsive ──────────────────────────────────────────────────────────────
-// Sous 760px, le tableau devient une pile de cartes : le patron consulte aussi
-// depuis son téléphone, un défilement horizontal y serait inexploitable.
 @media (max-width: 900px) {
   .debts-page {
-    padding: var(--space-5);
+    padding: var(--space-5) var(--space-4) var(--space-7);
   }
 
-  .debts-summary {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
+  .debts-header {
+    align-items: flex-start;
   }
 
-  .debts-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .debts-search {
-    max-width: none;
-  }
-}
-
-@media (max-width: 760px) {
-  .data-grid-scroll {
-    overflow-x: visible;
-  }
-
-  .debts-table {
-    min-width: 0;
-    table-layout: auto;
-  }
-
-  .debts-table colgroup,
-  .debts-table thead {
-    display: none;
-  }
-
-  .debts-table,
-  .debts-table tbody,
-  .debts-table tr,
-  .debts-table td {
-    display: block;
-    width: 100%;
-  }
-
-  .debts-table tr {
-    margin: var(--space-4) var(--space-4) 0;
-    padding: var(--space-3) var(--space-4);
-    border: var(--border-subtle);
-    border-radius: var(--radius-md);
-    width: auto;
-  }
-
-  .debts-table tbody tr:last-child {
-    margin-bottom: var(--space-4);
-  }
-
-  .debts-table td,
-  .debts-table td.data-grid__num,
-  .debts-table td.data-grid__center {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-3);
-    padding: var(--space-1) 0 !important;
-    border-bottom: 0;
-    text-align: right !important;
-  }
-
-  .debts-table td::before {
-    content: attr(data-label);
-    color: var(--gray-500);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 0.05em;
+  .debts-total {
+    justify-items: start;
     text-align: left;
-    text-transform: uppercase;
-  }
-
-  .debts-table .debt-customer {
-    font-size: var(--text-md);
-  }
-
-  // En carte, l'action occupe toute la largeur : l'intitulé de colonne
-  // « Actions » n'apprend rien, le bouton se suffit.
-  .debts-table td.data-grid__actions {
-    padding-top: var(--space-3) !important;
-  }
-
-  .debts-table td.data-grid__actions::before {
-    content: none;
-  }
-
-  .debts-table td.data-grid__actions .btn {
-    width: 100%;
-  }
-
-  .debts-toolbar {
-    padding: var(--space-4);
   }
 }
 
 @media (max-width: 560px) {
   .debts-page {
     padding: var(--space-4) var(--space-3);
-  }
-
-  .debts-stat {
-    padding: var(--space-4);
   }
 }

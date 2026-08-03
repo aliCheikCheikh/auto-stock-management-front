@@ -1,6 +1,8 @@
 .product-detail-page {
-  min-height: calc(100vh - var(--nav-height));
-  padding: 28px 32px 40px;
+  // Mêmes marges que les autres écrans de détail : le lien de retour tombe
+  // exactement au même endroit d'un écran à l'autre.
+  min-height: calc(100vh - var(--chrome-height));
+  padding: var(--space-6) var(--space-7) var(--space-8);
   background: var(--color-canvas);
   color: var(--color-ink);
 }
@@ -13,27 +15,8 @@
   gap: 14px;
 }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding: 5px 10px;
-  border-radius: var(--radius-md);
-  color: var(--color-brand);
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  width: fit-content;
-  cursor: pointer;
-  transition: background 0.12s, color 0.12s;
-}
-
-.back-link:hover {
-  background: var(--color-canvas-soft);
-  color: var(--color-brand-dark);
-  text-decoration: underline;
-}
+// Le lien de retour vient du design system (.back-link dans styles.scss) :
+// il doit être identique d'un écran à l'autre.
 
 // ─── Tuiles de stats ──────────────────────────────────────────────────────────
 .stat-tiles {

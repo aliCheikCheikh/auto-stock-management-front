@@ -2,7 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { Page } from '../../../core/api/page.model';
-import { OutstandingDebtResponse } from '../../debts/models/debt.model';
+import { DebtQuery, DebtResponse } from '../../debts/models/debt.model';
+import { debtParams } from '../../debts/data-access/debts-api.service';
 import { CreateCustomerRequest, CustomerResponse } from '../models/customer.model';
 
 @Injectable({
@@ -34,9 +35,12 @@ export class CustomersApiService {
         return this.http.post<CustomerResponse>(`${this.apiBaseUrl}/customers`, request);
     }
 
-    getCustomerDebts(customerId: string): Observable<OutstandingDebtResponse[]> {
-        return this.http.get<OutstandingDebtResponse[]>(
-            `${this.apiBaseUrl}/customers/${customerId}/debts`
+    // Mêmes filtres et même pagination que /debts : c'est la même question,
+    // posée sur un périmètre plus étroit.
+    getCustomerDebts(customerId: string, query: DebtQuery = {}): Observable<Page<DebtResponse>> {
+        return this.http.get<Page<DebtResponse>>(
+            `${this.apiBaseUrl}/customers/${customerId}/debts`,
+            { params: debtParams(query) }
         );
     }
 }
