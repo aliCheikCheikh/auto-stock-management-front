@@ -181,7 +181,7 @@
   color: var(--accent-700);
   font-size: var(--text-sm);
   font-weight: 650;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .dashboard-row {
@@ -218,10 +218,6 @@
 .dashboard-row__amount > strong {
   font-size: var(--text-sm);
   white-space: nowrap;
-}
-
-.dashboard-row__chevron {
-  color: var(--gray-400);
 }
 
 .status-badge {
@@ -455,13 +451,13 @@
     padding-inline: var(--space-4);
   }
 
-  .dashboard-row .status-badge {
+  .dashboard-row__action {
     grid-column: 1 / -1;
-    justify-self: start;
   }
 
-  .dashboard-row__chevron {
-    display: none;
+  .dashboard-row--stock .dashboard-row__action {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
   }
 
   .dashboard-debt-overview,

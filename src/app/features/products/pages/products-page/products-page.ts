@@ -141,12 +141,12 @@ function getProductsErrorMessage(error: unknown): string {
 }
 
 
-function getStockStatus(product: Product, globalQuantity: number): StockStatus {
+export function getStockStatus(product: Product, globalQuantity: number): StockStatus {
   if (globalQuantity === 0) {
     return 'critical';
   }
 
-  if (globalQuantity <= product.minimumGlobalThreshold) {
+  if (globalQuantity < product.minimumGlobalThreshold) {
     return 'low';
   }
 

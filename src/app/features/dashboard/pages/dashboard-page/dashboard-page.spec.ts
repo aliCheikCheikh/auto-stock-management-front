@@ -37,6 +37,10 @@ describe('DashboardPage', () => {
     expect(root.textContent).toContain('3 produits sous seuil');
     expect(root.textContent).toContain('125 000 FCFA');
     expect(root.textContent).toContain('Alternateur');
+    expect(root.textContent).toContain('Voir le catalogue');
+    expect(root.textContent).toContain('Réceptionner');
+    expect(root.textContent).toContain('Voir la créance');
+    expect(root.textContent).toContain('Voir le produit');
     expect(root.querySelector('a[href="/stock-receipts/new"]')).not.toBeNull();
     expect(
       root.querySelector('a.dashboard-row[href="/stock-receipts/new?productId=product-1"]')
