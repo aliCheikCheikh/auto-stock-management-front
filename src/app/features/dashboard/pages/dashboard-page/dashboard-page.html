@@ -53,6 +53,7 @@
                 <span>
                   {{ summary.attention.outOfStockCount > 1 ? 'produits en rupture' : 'produit en rupture' }}
                   <small>Stock disponible à zéro</small>
+                  <span class="dashboard-text-action">Voir le catalogue →</span>
                 </span>
               </a>
               <a class="dashboard-alert dashboard-alert--warning" routerLink="/products">
@@ -60,6 +61,7 @@
                 <span>
                   {{ summary.attention.belowThresholdCount > 1 ? 'produits sous seuil' : 'produit sous seuil' }}
                   <small>Réapprovisionnement à prévoir</small>
+                  <span class="dashboard-text-action">Voir le catalogue →</span>
                 </span>
               </a>
               <a class="dashboard-alert dashboard-alert--debt" routerLink="/debts">
@@ -67,6 +69,7 @@
                 <span>
                   {{ summary.attention.overdueCustomerCount > 1 ? 'clients à relancer' : 'client à relancer' }}
                   <small>Créances de plus de 30 jours</small>
+                  <span class="dashboard-text-action">Voir les créances →</span>
                 </span>
               </a>
             </nav>
@@ -77,7 +80,7 @@
                   <h3 id="stock-alerts-title">Produits à réapprovisionner</h3>
                   <p>Classés par niveau d’urgence.</p>
                 </div>
-                <a class="dashboard-text-action" routerLink="/stock-receipts/new">Nouvelle réception</a>
+                <a class="dashboard-text-action" routerLink="/stock-receipts/new">Nouvelle réception →</a>
               </header>
 
               @if (summary.stock.alerts.length === 0) {
@@ -86,7 +89,7 @@
                 <div class="dashboard-list">
                   @for (alert of summary.stock.alerts; track alert.productId) {
                     <a
-                      class="dashboard-row"
+                      class="dashboard-row dashboard-row--stock"
                       routerLink="/stock-receipts/new"
                       [queryParams]="{ productId: alert.productId }"
                       [attr.aria-label]="'Réceptionner ' + alert.name"
@@ -100,8 +103,11 @@
                         <strong>Stock : {{ alert.availableQuantity }}</strong>
                         <small>Seuil configuré : {{ alert.threshold }}</small>
                       </span>
-                      <span class="status-badge status-badge--{{ alert.status === 'OUT_OF_STOCK' ? 'critical' : 'warning' }}">
-                        {{ stockStatus(alert) }}
+                      <span class="dashboard-row__action dashboard-row__amount">
+                        <span class="status-badge status-badge--{{ alert.status === 'OUT_OF_STOCK' ? 'critical' : 'warning' }}">
+                          {{ stockStatus(alert) }}
+                        </span>
+                        <span class="dashboard-text-action">Réceptionner →</span>
                       </span>
                     </a>
                   }
@@ -115,7 +121,7 @@
                   <h3 id="debt-alerts-title">Clients à relancer</h3>
                   <p>Créances ouvertes depuis plus de 30 jours.</p>
                 </div>
-                <a class="dashboard-text-action" routerLink="/debts">Toutes les créances</a>
+                <a class="dashboard-text-action" routerLink="/debts">Toutes les créances →</a>
               </header>
 
               <div class="dashboard-debt-overview">
@@ -141,7 +147,9 @@
                         <strong>{{ customer.totalDue | money }}</strong>
                         <small>Plus ancienne : {{ customer.daysOutstanding }} jours</small>
                       </span>
-                      <span class="dashboard-row__chevron" aria-hidden="true">›</span>
+                      <span class="dashboard-row__action dashboard-row__amount">
+                        <span class="dashboard-text-action">Voir la créance →</span>
+                      </span>
                     </a>
                   }
                 </div>
@@ -196,6 +204,7 @@
                   <span>Produit le plus vendu</span>
                   <strong>{{ bestSeller.name }}</strong>
                   <small>{{ bestSeller.quantitySold }} vendu{{ bestSeller.quantitySold > 1 ? 's' : '' }} · {{ bestSeller.revenue | money }}</small>
+                  <span class="dashboard-text-action">Voir le produit →</span>
                 </a>
               }
             </section>
@@ -206,7 +215,7 @@
                   <p class="page-kicker dashboard-section-label">7 derniers jours</p>
                   <h2 id="top-products-title">Meilleures ventes</h2>
                 </div>
-                <a class="dashboard-text-action" routerLink="/sales">Historique</a>
+                <a class="dashboard-text-action" routerLink="/sales">Historique →</a>
               </header>
 
               @if (summary.sales.topProducts.length === 0) {
@@ -217,7 +226,7 @@
                     <li class="dashboard-ranking__row">
                       <span class="dashboard-ranking__rank">{{ rank + 1 }}</span>
                       <a class="dashboard-row__main dashboard-ranking__link" [routerLink]="['/products', product.productId]">
-                        <strong>{{ product.name }}</strong>
+                        <strong class="dashboard-text-action">{{ product.name }} →</strong>
                         <small>{{ product.reference }}</small>
                       </a>
                       <span class="dashboard-row__amount">
@@ -238,7 +247,7 @@
               <p class="page-kicker dashboard-section-label">Journal du magasin</p>
               <h2 id="recent-activity-title">Activité récente</h2>
             </div>
-            <a class="dashboard-text-action" routerLink="/stock-movements">Voir les mouvements</a>
+            <a class="dashboard-text-action" routerLink="/stock-movements">Voir les mouvements →</a>
           </header>
 
           @if (summary.recentActivity.length === 0) {
@@ -262,7 +271,7 @@
                       </td>
                       <td class="data-grid__start">
                         <a class="dashboard-activity-link" [routerLink]="activityLink(activity)">
-                          <strong>{{ activityTitle(activity) }}</strong>
+                          <strong class="dashboard-text-action">{{ activityTitle(activity) }} →</strong>
                           <small>{{ activityDetail(activity) }}</small>
                         </a>
                       </td>
