@@ -49,4 +49,16 @@ describe('debtAgeLabel', () => {
   it('accorde le singulier', () => {
     expect(debtAgeLabel(debt({ daysOutstanding: 1 })).text).toBe('Ouverte depuis 1 jour');
   });
+
+  it('affiche l’heure de création au lieu de zéro jour pour une créance récente', () => {
+    expect(
+      debtAgeLabel(debt({ occurredAt: '2026-08-05T14:35:00', daysOutstanding: 0 })).text
+    ).toBe('Ouverte depuis moins de 24 h · 14:35');
+  });
+
+  it('indique un règlement effectué le jour même', () => {
+    expect(debtAgeLabel(debt({ settled: true, daysOutstanding: 0 })).text).toBe(
+      'Réglée le jour même'
+    );
+  });
 });

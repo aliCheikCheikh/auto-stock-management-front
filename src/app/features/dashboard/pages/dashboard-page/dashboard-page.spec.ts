@@ -38,6 +38,9 @@ describe('DashboardPage', () => {
     expect(root.textContent).toContain('125 000 FCFA');
     expect(root.textContent).toContain('Alternateur');
     expect(root.querySelector('a[href="/stock-receipts/new"]')).not.toBeNull();
+    expect(
+      root.querySelector('a.dashboard-row[href="/stock-receipts/new?productId=product-1"]')
+    ).not.toBeNull();
     expect(root.querySelector('a[href="/clients/customer-1/creances"]')).not.toBeNull();
   });
 

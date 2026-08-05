@@ -19,15 +19,28 @@ export interface DebtAgeLabel {
 export function debtAgeLabel(debt: DebtResponse): DebtAgeLabel {
   if (debt.settled) {
     return {
-      text: `Réglée en ${dayCount(debt.daysOutstanding)}`,
+      text:
+        debt.daysOutstanding === 0
+          ? 'Réglée le jour même'
+          : `Réglée en ${dayCount(debt.daysOutstanding)}`,
       warning: debt.overdue ? 'Réglée hors délai' : null,
     };
   }
 
   return {
-    text: `Ouverte depuis ${dayCount(debt.daysOutstanding)}`,
+    text:
+      debt.daysOutstanding === 0
+        ? recentDebtLabel(debt.occurredAt)
+        : `Ouverte depuis ${dayCount(debt.daysOutstanding)}`,
     warning: debt.overdue ? 'En retard' : null,
   };
+}
+
+function recentDebtLabel(occurredAt: string): string {
+  // Le serveur renvoie l'heure métier de N'Djamena sans fuseau. On conserve
+  // donc HH:mm tel quel au lieu de la reconvertir selon le poste qui consulte.
+  const time = occurredAt.match(/T(\d{2}:\d{2})/)?.[1];
+  return time ? `Ouverte depuis moins de 24 h · ${time}` : 'Ouverte depuis moins de 24 h';
 }
 
 function dayCount(days: number): string {
