@@ -21,7 +21,9 @@
           [disabled]="line.quantity <= 1"
           [attr.aria-label]="'Diminuer la quantité de ' + line.productLabel"
         >
-          −
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+            <path d="M3.5 8h9" />
+          </svg>
         </button>
         <input
           class="qty-input"
@@ -39,7 +41,9 @@
           (click)="step(line, 1)"
           [attr.aria-label]="'Augmenter la quantité de ' + line.productLabel"
         >
-          +
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+            <path d="M8 3.5v9M3.5 8h9" />
+          </svg>
         </button>
       </div>
 
