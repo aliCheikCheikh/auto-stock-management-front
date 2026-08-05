@@ -20,13 +20,14 @@
   width: 40%;
   border-radius: 0 3px 3px 0;
   background: var(--accent-600);
-  animation: lo-bar 1.1s ease-in-out infinite;
+  transform: translateX(-100%);
+  will-change: transform;
+  animation: lo-bar 1.1s linear infinite;
 }
 
 @keyframes lo-bar {
-  0%   { left: -40%; width: 40%; }
-  50%  { left: 30%;  width: 45%; }
-  100% { left: 100%; width: 40%; }
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(250%); }
 }
 
 // ─── Overlay bloquant : fond flouté + assombri, spinner centré ────────────────
@@ -49,8 +50,9 @@
 @media (prefers-reduced-motion: reduce) {
   .loading-bar::before {
     animation: none;
-    left: 0;
     width: 100%;
     opacity: 0.6;
+    transform: none;
+    will-change: auto;
   }
 }

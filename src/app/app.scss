@@ -1,6 +1,7 @@
 // Navbar à deux niveaux : bandeau marque/actions au-dessus, rangée de
 // navigation en dessous. Fond navy commun, séparateur discret entre les deux.
 .app-topbar {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--brand-900);
@@ -10,27 +11,18 @@
 // Bandeau haut : marque à gauche, actions (plein écran, thème, compte) à droite
 .app-topbar__band {
   min-height: var(--nav-height);
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(320px, 720px) minmax(220px, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-4);
   padding: 0 var(--space-7);
 }
 
-.app-brand {
-  color: var(--on-brand);
-  font-size: var(--text-md);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  text-decoration: none;
-}
-
 .app-topbar app-product-search {
   display: flex;
-  flex: 1 1 0;
   justify-content: center;
-  min-width: 0;
-  margin: 0 var(--space-4) 0 calc(var(--space-6) + 48px);
+  width: 100%;
+  margin: 0;
 }
 
 // Rangée basse de navigation : même fond navy, séparée du bandeau par un filet
@@ -40,6 +32,7 @@
   gap: var(--space-1);
   padding: 0 var(--space-7);
   border-top: 1px solid rgba(255, 255, 255, 0.10);
+  background: var(--brand-900);
 }
 
 // Onglet de navigation — repos neutre, actif « allumé » (façon OVHcloud).
@@ -85,7 +78,7 @@
 .app-nav a.is-active {
   color: var(--on-brand);
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .app-nav a.is-active::after {
@@ -111,7 +104,19 @@
   background: none;
   color: var(--on-brand-soft);
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    transform 120ms var(--ease-out),
+    background-color 120ms ease,
+    color 120ms ease;
+}
+
+.app-icon-btn:not(:disabled):active,
+.app-user__trigger:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+.app-menu-toggle {
+  display: none;
 }
 
 .app-icon-btn svg {
@@ -181,14 +186,17 @@
   gap: var(--space-2);
   min-height: 40px;
   padding: var(--space-1) var(--space-2);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-md);
-  background: none;
+  background: rgba(255, 255, 255, 0.06);
   color: var(--on-brand-soft);
   font: inherit;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    transform 120ms var(--ease-out),
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
 .app-user__trigger:hover {
@@ -210,7 +218,7 @@
   width: 14px;
   height: 14px;
   opacity: 0.85;
-  transition: transform 0.15s ease;
+  transition: transform 120ms var(--ease-out);
 }
 
 .app-user__trigger[aria-expanded='true'] .app-user__chevron {
@@ -253,7 +261,7 @@
   // Reset indispensable : la topbar impose color:on-brand (blanc) en héritage.
   color: var(--gray-900);
   box-shadow: var(--shadow-overlay);
-  animation: app-user-menu-in 120ms ease-out;
+  animation: app-user-menu-in 120ms var(--ease-out);
 }
 
 @keyframes app-user-menu-in {
@@ -264,6 +272,21 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes app-user-menu-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-user__chevron {
+    transition: none;
+  }
+
+  .app-user__menu {
+    animation-name: app-user-menu-fade;
   }
 }
 
@@ -362,26 +385,120 @@
   box-shadow: var(--focus-ring);
 }
 
-@media (max-width: 900px) {
+.app-user__mobile-action {
+  display: none;
+}
+
+@media (max-width: 1200px) {
   .app-topbar__band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
     padding: var(--space-2) var(--space-4);
   }
 
-  // Nav défilable horizontalement sur tablette : la boutique garde tous
-  // les onglets sans repli, glissables du doigt.
-  .app-nav {
-    padding: 0 var(--space-4);
-    overflow-x: auto;
-    scrollbar-width: none;
+  .app-brand {
+    grid-column: 1;
+    grid-row: 1;
   }
 
-  .app-nav::-webkit-scrollbar {
+  .app-brand__copy small {
     display: none;
   }
 
+  .app-topbar app-product-search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    margin: 0;
+  }
+
+  .app-topbar__actions {
+    grid-column: 2;
+    grid-row: 1;
+    gap: var(--space-1);
+  }
+
+  .app-menu-toggle {
+    display: grid;
+  }
+
+  .app-fullscreen-toggle,
+  .app-theme-toggle,
+  .app-user__label,
+  .app-user__chevron {
+    display: none;
+  }
+
+  .app-user__trigger {
+    padding-inline: var(--space-2);
+  }
+
+  .app-user__mobile-action {
+    display: flex;
+  }
+
+  .app-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    display: none;
+    max-height: calc(100vh - var(--chrome-height));
+    padding: var(--space-3) var(--space-4) var(--space-4);
+    border-top-color: rgba(255, 255, 255, 0.16);
+    background: var(--brand-900);
+    box-shadow: var(--shadow-overlay);
+    overflow-y: auto;
+  }
+
+  .app-nav.is-mobile-open {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-1);
+  }
+
   .app-nav a {
-    min-height: 42px;
-    padding: 0 var(--space-3);
-    white-space: nowrap;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  .app-nav a::after {
+    display: none;
+  }
+
+  .app-nav a.is-active {
+    box-shadow: inset 3px 0 0 var(--on-brand);
+  }
+
+  .app-user__menu {
+    position: fixed;
+    top: calc(var(--chrome-height) + var(--space-2));
+    right: var(--space-4);
+    left: var(--space-4);
+    min-width: 0;
+    max-height: calc(100vh - var(--chrome-height) - var(--space-4));
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-nav.is-mobile-open {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-icon-btn,
+  .app-user__trigger {
+    transition-property: background-color, color;
+  }
+
+  .app-icon-btn:not(:disabled):active,
+  .app-user__trigger:not(:disabled):active {
+    transform: none;
   }
 }
