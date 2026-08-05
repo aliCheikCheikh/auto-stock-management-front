@@ -7,6 +7,11 @@ import { DebtListSkeleton } from '../../../debts/ui/debt-list-skeleton/debt-list
 import { DebtsListStore } from '../../../debts/state/debts-list.store';
 import { CustomersApiService } from '../../data-access/customers-api.service';
 import { CustomerResponse, customerDisplayName, telHref } from '../../models/customer.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Pagination } from '../../../../shared/ui/pagination/pagination';
+import { Spinner } from '../../../../shared/ui/spinner/spinner';
+
+type CustomerLoadState = 'loading' | 'ready' | 'not-found' | 'error';
 
 // Deux listes indépendantes sur le même écran : chacune son état de
 // chargement et sa pagination.
@@ -24,7 +29,7 @@ const SETTLED_STORE = new InjectionToken<DebtsListStore>('SettledDebtsStore');
  */
 @Component({
   selector: 'app-customer-debts-page',
-  imports: [RouterLink, MoneyPipe, EmptyState, DebtList, DebtListSkeleton],
+  imports: [RouterLink, MoneyPipe, EmptyState, DebtList, DebtListSkeleton, Pagination, Spinner],
   templateUrl: './customer-debts-page.html',
   styleUrl: './customer-debts-page.scss',
   providers: [
@@ -40,6 +45,8 @@ export class CustomerDebtsPage implements OnInit {
   readonly settled = inject(SETTLED_STORE);
 
   readonly customer = signal<CustomerResponse | null>(null);
+  readonly customerState = signal<CustomerLoadState>('loading');
+  private customerId = '';
 
   readonly customerName = computed(() => {
     const customer = this.customer();
@@ -49,17 +56,37 @@ export class CustomerDebtsPage implements OnInit {
   readonly phoneHref = computed(() => telHref(this.customer()?.phoneNumber ?? ''));
 
   ngOnInit(): void {
-    const customerId = this.route.snapshot.paramMap.get('customerId') ?? '';
+    this.customerId = this.route.snapshot.paramMap.get('customerId') ?? '';
 
-    this.customersApi.getCustomer(customerId).subscribe({
-      next: (customer) => this.customer.set(customer),
-      error: () => this.customer.set(null),
-    });
+    if (!this.customerId) {
+      this.customerState.set('not-found');
+      return;
+    }
 
-    this.outstanding.scopeToCustomer(customerId);
+    this.loadCustomer();
+
+    this.outstanding.scopeToCustomer(this.customerId);
     this.outstanding.load('OUTSTANDING');
 
-    this.settled.scopeToCustomer(customerId);
+    this.settled.scopeToCustomer(this.customerId);
     this.settled.load('SETTLED');
+  }
+
+  loadCustomer(): void {
+    this.customer.set(null);
+    this.customerState.set('loading');
+
+    this.customersApi.getCustomer(this.customerId).subscribe({
+      next: (customer) => {
+        this.customer.set(customer);
+        this.customerState.set('ready');
+      },
+      error: (error: unknown) => {
+        this.customer.set(null);
+        this.customerState.set(
+          error instanceof HttpErrorResponse && error.status === 404 ? 'not-found' : 'error'
+        );
+      },
+    });
   }
 }
