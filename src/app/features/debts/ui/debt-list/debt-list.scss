@@ -22,6 +22,10 @@
   overflow-wrap: anywhere;
 }
 
+.debt-list tbody tr:hover .debt-list__link {
+  color: var(--accent-700);
+}
+
 .debt-list__link:hover {
   text-decoration: underline;
 }
@@ -35,6 +39,7 @@
 .debt-list__due {
   font-size: var(--text-base) !important;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 // Le <td> reste une cellule de tableau : le flex est porté par son contenu.
@@ -66,7 +71,7 @@
   white-space: nowrap;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 600px) {
   .debt-list {
     min-width: 0;
   }

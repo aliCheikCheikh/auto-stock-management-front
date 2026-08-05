@@ -27,6 +27,7 @@ export class App {
   readonly currentUser = this.authService.currentUser;
   readonly userInitials = computed(() => initialsFromName(this.currentUser()?.displayName));
   readonly userMenuOpen = signal(false);
+  readonly mobileNavOpen = signal(false);
   // Reflète l'état plein écran pour basculer l'icône du bouton.
   readonly isFullscreen = signal(false);
   constructor() {
@@ -37,6 +38,7 @@ export class App {
     ).subscribe(() => {
       this.showChrome.set(shouldShowChrome(this.router.url));
       this.userMenuOpen.set(false);
+      this.mobileNavOpen.set(false);
     })
   }
 
@@ -79,14 +81,22 @@ export class App {
 
   toggleUserMenu(event: Event) {
     event.stopPropagation();
+    this.mobileNavOpen.set(false);
     this.userMenuOpen.update((open) => !open);
   }
 
-  // Ferme le menu sur un clic ailleurs ou sur la touche Échap.
+  toggleMobileNav(event: Event) {
+    event.stopPropagation();
+    this.userMenuOpen.set(false);
+    this.mobileNavOpen.update((open) => !open);
+  }
+
+  // Ferme les panneaux temporaires sur un clic ailleurs ou sur Échap.
   @HostListener('document:click')
   @HostListener('document:keydown.escape')
-  closeUserMenu() {
+  closeTransientMenus() {
     this.userMenuOpen.set(false);
+    this.mobileNavOpen.set(false);
   }
 
   logout() {

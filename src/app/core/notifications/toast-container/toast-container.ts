@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { NotificationService } from '../notification.service';
 
-const LEAVE_ANIMATION_MS = 140;
+const LEAVE_ANIMATION_MS = 120;
 
 @Component({
   selector: 'app-toast-container',

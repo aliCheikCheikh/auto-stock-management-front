@@ -63,7 +63,6 @@ $offset: calc(var(--spinner-size, 40px) * -0.4);
 
 @media (prefers-reduced-motion: reduce) {
   .spinner {
-    animation-duration: 2.4s;
-    animation-timing-function: linear;
+    animation: none;
   }
 }

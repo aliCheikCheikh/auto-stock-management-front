@@ -11,7 +11,9 @@
 
   <header class="page-header">
     <div>
+      <p class="page-kicker">Créances</p>
       <h1>Détail de la créance</h1>
+      <p class="detail-header__description">Consultez le solde, la vente d’origine et les remboursements enregistrés.</p>
     </div>
   </header>
 
@@ -36,8 +38,14 @@
     </section>
   } @else if (detail(); as sale) {
     <!-- 1. Qui, et pour combien : l'information qu'on vient chercher. -->
-    <section class="card detail-summary" aria-labelledby="detail-summary-title">
+    <section
+      class="card detail-summary"
+      [class.detail-summary--settled]="sale.settled"
+      [class.detail-summary--outstanding]="!sale.settled"
+      aria-labelledby="detail-summary-title"
+    >
       <div class="detail-summary__identity">
+        <span class="detail-summary__eyebrow">Client</span>
         <h2 id="detail-summary-title">{{ customerName() }}</h2>
         <a class="detail-summary__phone" [href]="phoneHref()">{{ sale.customerPhoneNumber }}</a>
       </div>
@@ -93,6 +101,9 @@
     <section class="card detail-section" aria-labelledby="detail-lines-title">
       <div class="section-heading">
         <h2 id="detail-lines-title">Produits vendus</h2>
+        <span class="section-heading__meta">
+          {{ sale.lines.length }} {{ sale.lines.length > 1 ? 'lignes' : 'ligne' }}
+        </span>
       </div>
       <app-credit-sale-lines [lines]="sale.lines" [total]="sale.totalAmount" />
       <!-- La créance se discute sur les prix pratiqués ce jour-là, pas sur le
@@ -104,6 +115,9 @@
     <section class="card detail-section" aria-labelledby="detail-payments-title">
       <div class="section-heading">
         <h2 id="detail-payments-title">Versements</h2>
+        <span class="section-heading__meta">
+          {{ sale.payments.length }} {{ sale.payments.length > 1 ? 'versements' : 'versement' }}
+        </span>
       </div>
       <app-payment-timeline [payments]="sale.payments" />
     </section>

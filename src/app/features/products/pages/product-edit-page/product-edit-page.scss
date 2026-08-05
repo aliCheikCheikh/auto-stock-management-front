@@ -9,6 +9,13 @@
   max-width: var(--content-md);
 }
 
+.edit-page__description {
+  max-width: 58ch;
+  margin-top: var(--space-2);
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+
 .edit-form {
   display: grid;
   gap: var(--space-5);

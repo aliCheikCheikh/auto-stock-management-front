@@ -17,6 +17,7 @@
     </a>
 
     <div class="product-header">
+      <p class="page-kicker">Catalogue</p>
       <h1>{{ summary.productName || '—' }}</h1>
 
       <div class="stat-tiles">
@@ -45,6 +46,7 @@
       <section class="form-section" aria-labelledby="actions-section-title">
         <div class="section-heading">
           <h2 id="actions-section-title">Actions</h2>
+          <span class="section-heading__meta">Opérations disponibles pour ce produit</span>
         </div>
 
         <div class="action-bar">
@@ -62,6 +64,9 @@
       <section class="form-section" aria-labelledby="location-section-title">
         <div class="section-heading">
           <h2 id="location-section-title">Stock par emplacement</h2>
+          <span class="section-heading__meta">
+            {{ summary.byLocation.length }} {{ summary.byLocation.length > 1 ? 'emplacements' : 'emplacement' }}
+          </span>
         </div>
 
         <div class="data-grid-scroll">
@@ -72,14 +77,14 @@
             </colgroup>
             <thead>
               <tr>
-                <th scope="col">Emplacement</th>
+                <th scope="col" class="data-grid__start">Emplacement</th>
                 <th scope="col" class="data-grid__num">Quantité</th>
               </tr>
             </thead>
             <tbody>
               @for (location of summary.byLocation; track location.locationId) {
               <tr>
-                <td class="location-name">
+                <td class="location-name data-grid__start">
                   {{ location.locationName || (location.locationType === 'SHOP_FLOOR' ? 'Surface de vente' : 'Réserve') }}
                 </td>
                 <td class="location-quantity data-grid__center">{{ location.quantity }}</td>

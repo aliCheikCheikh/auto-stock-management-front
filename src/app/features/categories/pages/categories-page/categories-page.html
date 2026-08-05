@@ -3,6 +3,7 @@
     <div>
       <p class="page-kicker">Administration</p>
       <h1>Familles de pièces</h1>
+      <p class="categories-page__description">Structurez le catalogue avec des familles cohérentes et faciles à retrouver.</p>
     </div>
   </header>
 
@@ -22,6 +23,11 @@
       <section class="card" aria-labelledby="categories-list-title">
         <div class="section-heading">
           <h2 id="categories-list-title">Familles de pièces existantes</h2>
+          @if (categories().length > 0) {
+            <span class="section-heading__meta">
+              {{ categories().length }} {{ categories().length > 1 ? 'familles' : 'famille' }}
+            </span>
+          }
         </div>
 
         @if (categories().length === 0) {
@@ -81,7 +87,7 @@
                           }
                         </form>
                       } @else {
-                        {{ category.name }}
+                        <strong class="categories-table__name">{{ category.name }}</strong>
                       }
                     </td>
                     <td class="data-grid__actions" data-label="Actions">
@@ -90,7 +96,7 @@
                       } @else {
                         <div class="categories-table__actions">
                           <button class="btn btn--secondary" type="button" (click)="startRename(category)">Renommer</button>
-                          <button class="btn btn--danger" type="button" (click)="deleteDialog.open(category)">Supprimer</button>
+                          <button class="btn categories-delete" type="button" (click)="deleteDialog.open(category)">Supprimer</button>
                         </div>
                       }
                     </td>

@@ -6,6 +6,9 @@
 
 .payment__title {
   margin: 0;
+  color: var(--gray-900);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
 }
 
 // ─── Choix binaire comptant / crédit ─────────────────────────────────────────
@@ -15,8 +18,8 @@
   gap: var(--space-1);
   padding: var(--space-1);
   border: var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--gray-100);
+  border-radius: var(--radius-lg);
+  background: var(--gray-50);
 }
 
 .payment__mode {
@@ -118,9 +121,10 @@
   gap: var(--space-2);
   margin: 0;
   padding: var(--space-3) var(--space-4);
-  border: var(--border-subtle);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-lg);
   background: var(--gray-50);
+  box-shadow: inset 3px 0 0 var(--accent-600);
 }
 
 .payment__row {

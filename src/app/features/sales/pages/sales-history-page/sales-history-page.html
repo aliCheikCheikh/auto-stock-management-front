@@ -73,9 +73,9 @@
                   />
                 </div>
                 <p class="sale-card__meta">
-                  <time [attr.datetime]="sale.date">{{ sale.date | date: 'HH:mm' }}</time>
+                  <time class="sale-card__time" [attr.datetime]="sale.date">{{ sale.date | date: 'HH:mm' }}</time>
                   <span aria-hidden="true">•</span>
-                  <span>Enregistrée par <strong>{{ sale.sellerName }}</strong></span>
+                  <span class="sale-card__seller">Enregistrée par <strong>{{ sale.sellerName }}</strong></span>
                 </p>
               </div>
             </div>

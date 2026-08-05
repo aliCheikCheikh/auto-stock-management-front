@@ -10,8 +10,9 @@
 
     @if (state() === 'success') {
       <div class="history-count" aria-label="Nombre de lignes de stock">
+        <span>Journal enregistré</span>
         <strong>{{ page().totalElements }}</strong>
-        <span>{{ page().totalElements > 1 ? 'lignes enregistrées' : 'ligne enregistrée' }}</span>
+        <small>{{ page().totalElements > 1 ? 'lignes de mouvement' : 'ligne de mouvement' }}</small>
       </div>
     }
   </header>
@@ -36,7 +37,7 @@
   } @else {
     <section class="operations" aria-label="Opérations de stock">
       @for (group of groups(); track group.operationId) {
-        <article class="operation-card">
+        <article class="operation-card operation-card--{{ group.typeKind }}">
           <header class="operation-card__header">
             <div class="operation-card__identity">
               <span class="operation-icon operation-icon--{{ group.typeKind }}" aria-hidden="true">

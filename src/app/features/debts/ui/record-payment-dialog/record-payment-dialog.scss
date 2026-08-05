@@ -7,8 +7,9 @@
   margin: 0;
   padding: var(--space-3) var(--space-4);
   border: var(--border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--gray-50);
+  box-shadow: inset 3px 0 0 var(--warning-600);
 }
 
 .payment-dialog__row {

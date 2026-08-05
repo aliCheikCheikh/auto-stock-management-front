@@ -9,6 +9,26 @@
     Retour aux créances
   </a>
 
+  @if (customerState() === 'loading') {
+  <section class="state-block customer-state" aria-live="polite">
+    <app-spinner label="Chargement du client…" />
+  </section>
+  } @else if (customerState() === 'not-found') {
+  <section class="customer-state" role="status">
+    <app-empty-state
+      illustration="search"
+      title="Client introuvable"
+      text="Ce client n’existe pas ou n’est plus accessible."
+    />
+  </section>
+  } @else if (customerState() === 'error') {
+  <section class="state-block state-block--error customer-state" role="alert">
+    <p>Impossible de charger les informations du client.</p>
+    <button class="btn btn--secondary" type="button" (click)="loadCustomer()">
+      Réessayer
+    </button>
+  </section>
+  } @else {
   <header class="page-header">
     <div>
       <h1>{{ customerName() || 'Fiche client' }}</h1>
@@ -19,17 +39,17 @@
 
     @if (outstanding.state() === 'ready' && outstanding.debts().length > 0) {
       <div class="customer-page__total" aria-live="polite">
-        <span class="customer-page__total-label">Restant dû</span>
+        <span class="customer-page__total-label">Restant dû sur cette page</span>
         <strong class="customer-page__total-value">{{ outstanding.pageAmountDue() | money }}</strong>
         <span class="customer-page__total-note">
-          Sur les {{ outstanding.debts().length }} créances affichées
+          {{ outstanding.debts().length }} créance(s) affichée(s)
         </span>
       </div>
     }
   </header>
 
   <!-- Ce qu'il doit encore. -->
-  <section class="card customer-section" aria-labelledby="customer-outstanding-title">
+  <section class="card customer-section customer-section--outstanding" aria-labelledby="customer-outstanding-title">
     <div class="section-heading">
       <h2 id="customer-outstanding-title">Créances en cours</h2>
     </div>
@@ -51,11 +71,17 @@
       />
     } @else {
       <app-debt-list [debts]="outstanding.debts()" caption="Créances en cours du client" />
+      @if (outstanding.pageMeta().totalPages > 1) {
+        <app-pagination
+          [meta]="outstanding.pageMeta()"
+          (goTo)="outstanding.goToPage($event)"
+        />
+      }
     }
   </section>
 
   <!-- Ce qu'il a déjà réglé : de quoi décider si on lui fait encore crédit. -->
-  <section class="card customer-section" aria-labelledby="customer-settled-title">
+  <section class="card customer-section customer-section--settled" aria-labelledby="customer-settled-title">
     <div class="section-heading">
       <h2 id="customer-settled-title">Créances réglées</h2>
     </div>
@@ -75,6 +101,13 @@
       />
     } @else {
       <app-debt-list [debts]="settled.debts()" caption="Créances réglées du client" />
+      @if (settled.pageMeta().totalPages > 1) {
+        <app-pagination
+          [meta]="settled.pageMeta()"
+          (goTo)="settled.goToPage($event)"
+        />
+      }
     }
   </section>
+  }
 </main>

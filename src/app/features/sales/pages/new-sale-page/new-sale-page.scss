@@ -2,6 +2,8 @@
 // ligne de flottaison. Sur 1440×900, panier + paiement + validation tiennent
 // sans défilement de page (le panier défile en interne).
 .sale-page {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   height: calc(100vh - var(--chrome-height));
   padding: var(--space-4) var(--space-6) var(--space-5);
   background: var(--gray-50);
@@ -10,6 +12,7 @@
 }
 
 .sale-header {
+  width: 100%;
   max-width: var(--content-lg);
   margin-bottom: var(--space-4);
 }
@@ -17,7 +20,8 @@
 .sale-form {
   display: grid;
   max-width: var(--content-lg);
-  height: calc(100% - var(--space-9));
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
   min-height: 0;
 }
@@ -48,7 +52,34 @@
 }
 
 .sale-entry {
-  padding: var(--space-4);
+  padding: 0;
+}
+
+.sale-entry__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border-bottom: var(--border-subtle);
+  background: var(--gray-100);
+}
+
+.sale-entry__shortcut {
+  color: var(--gray-500);
+  font-size: var(--text-xs);
+}
+
+.sale-entry__shortcut kbd {
+  padding: 2px var(--space-2);
+  border: var(--border-field);
+  border-radius: var(--radius-sm);
+  background: var(--gray-0);
+  color: var(--gray-900);
+  font-family: inherit;
+  font-weight: 600;
+  box-shadow: 0 1px 0 var(--gray-300);
 }
 
 // Une seule ligne : produit large, quantité étroite, bouton d'ajout.
@@ -57,6 +88,7 @@
   grid-template-columns: minmax(0, 1fr) 110px auto;
   align-items: end;
   gap: var(--space-3);
+  padding: var(--space-4) var(--space-4) 0;
 }
 
 .entry-row__add {
@@ -64,17 +96,21 @@
 }
 
 .entry-help {
-  margin: var(--space-2) 0 0;
+  margin: var(--space-2) var(--space-4) var(--space-4);
   color: var(--gray-500);
   font-size: var(--text-xs);
 }
 
 // Guidage de saisie (pas une erreur) : ambre, à côté du champ concerné.
 .entry-hint {
-  margin: var(--space-2) 0 0;
+  margin: var(--space-2) var(--space-4) var(--space-4);
   color: var(--warning-600);
   font-size: var(--text-sm);
   font-weight: 600;
+}
+
+.sale-entry > .field-error {
+  margin: 0 var(--space-4) var(--space-4);
 }
 
 .cart-card {
@@ -89,8 +125,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  min-height: var(--control-h-sm);
-  padding: var(--space-2) var(--space-4);
+  min-height: 48px;
+  padding: var(--space-3) var(--space-4);
   border-bottom: var(--border-subtle);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--gray-100);
@@ -123,7 +159,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-4);
+  padding: var(--space-5);
   position: sticky;
   top: var(--space-4);
 }
@@ -152,6 +188,7 @@
 // ─── Responsive ──────────────────────────────────────────────────────────────
 @media (max-width: 1099px) {
   .sale-page {
+    display: block;
     height: auto;
     min-height: calc(100vh - var(--chrome-height));
     overflow: visible;
@@ -203,5 +240,9 @@
   .entry-row__add {
     grid-column: auto;
     justify-self: stretch;
+  }
+
+  .sale-entry__shortcut {
+    display: none;
   }
 }

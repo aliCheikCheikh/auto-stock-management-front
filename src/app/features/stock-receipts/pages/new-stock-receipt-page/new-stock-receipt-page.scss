@@ -9,6 +9,13 @@
   max-width: var(--content-md);
 }
 
+.receipt-page__description {
+  max-width: 58ch;
+  margin-top: var(--space-2);
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+
 .receipt-form {
   display: grid;
   gap: var(--space-5);
@@ -50,9 +57,13 @@
   min-height: 110px;
   border: var(--border-subtle);
   border-radius: var(--radius-lg);
-  background: var(--gray-0);
-  box-shadow: var(--shadow-xs);
+  background: var(--gray-50);
+  box-shadow: none;
   padding: var(--space-5);
+}
+
+.distribution-card:focus-within {
+  border-color: var(--accent-600);
 }
 
 // Les compteurs de quantité héritent de la typographie de champ commune

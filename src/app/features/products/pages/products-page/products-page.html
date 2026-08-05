@@ -4,6 +4,7 @@
     <div>
       <p class="page-kicker">Stock</p>
       <h1>Catalogue produits</h1>
+      <p class="products-page__description">Consultez les prix, la disponibilité et les seuils de réapprovisionnement.</p>
     </div>
 
     <div class="page-actions">
@@ -35,11 +36,12 @@
   <section class="catalogue-section card" aria-labelledby="catalogue-title">
     <div class="section-heading">
       <h2 id="catalogue-title">Produits disponibles</h2>
+      <span class="catalogue-section__context">Stock consolidé · tous emplacements</span>
     </div>
 
     <div class="data-grid-scroll">
       <table
-        class="data-grid catalogue-table"
+        class="data-grid data-grid--cards catalogue-table"
         [class.catalogue-table--owner]="isOwner()"
         aria-label="Catalogue produits"
       >
@@ -68,7 +70,7 @@
         <tbody>
           @for (item of state.products; track item.product.productId) {
           <tr class="data-grid__row--link" [routerLink]="['/products', item.product.productId]">
-            <td class="product-main data-grid__start">
+            <td class="product-main data-grid__start" data-label="Produit">
               <a
                 class="product-main__link"
                 [routerLink]="['/products', item.product.productId]"
@@ -79,18 +81,18 @@
               </a>
             </td>
 
-            <td class="data-grid__start">{{ item.product.reference }}</td>
+            <td class="catalogue-reference data-grid__start" data-label="Référence">{{ item.product.reference }}</td>
 
-            <td class="price data-grid__num">{{ item.product.unitPrice | money }}</td>
+            <td class="price data-grid__num" data-label="Prix">{{ item.product.unitPrice | money }}</td>
 
-            <td class="catalogue-stock">
+            <td class="catalogue-stock" data-label="Stock global">
               <div class="stock-quantity">
                 <strong>{{ item.globalQuantity }}</strong>
                 <span>Seuil {{ item.product.minimumGlobalThreshold }}</span>
               </div>
             </td>
 
-            <td class="catalogue-status">
+            <td class="catalogue-status" data-label="État">
               <span class="stock-badge stock-badge--{{ item.stockStatus }}">
                 @switch (item.stockStatus) {
                 @case ('ok') {
@@ -107,7 +109,7 @@
             </td>
 
             @if (isOwner()) {
-            <td class="data-grid__actions">
+            <td class="data-grid__actions" data-label="Actions">
               <div class="catalogue-actions">
                 <a
                   class="btn-edit"

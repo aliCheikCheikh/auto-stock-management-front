@@ -12,15 +12,19 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
   gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--gray-50);
 }
 
 // Filet reliant les versements : la suite se lit d'un coup d'œil.
 .timeline__item:not(:last-child)::before {
   content: '';
   position: absolute;
-  top: var(--space-4);
-  bottom: calc(var(--space-4) * -1);
-  left: var(--space-1);
+  top: calc(50% + var(--space-3));
+  bottom: calc((var(--space-4) + var(--space-3)) * -1);
+  left: calc(var(--space-4) + var(--space-1));
   width: 1px;
   background: var(--gray-200);
 }
@@ -31,6 +35,7 @@
   width: var(--space-2);
   height: var(--space-2);
   margin-top: var(--space-2);
+  box-shadow: 0 0 0 4px var(--success-bg);
   border-radius: 50%;
   background: var(--success-600);
 }

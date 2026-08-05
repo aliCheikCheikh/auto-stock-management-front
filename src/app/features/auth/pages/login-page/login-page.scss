@@ -27,6 +27,24 @@
   color: var(--on-brand);
 }
 
+.login-brand__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.login-brand__mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.1);
+  font-size: var(--text-base);
+  font-weight: 800;
+}
+
 @media (min-width: 900px) {
   .login-brand {
     display: flex;
@@ -40,11 +58,17 @@
   letter-spacing: -0.01em;
 }
 
+.login-brand__workspace {
+  margin-top: 2px;
+  color: var(--on-brand-soft);
+  font-size: var(--text-xs);
+}
+
 // Une seule phrase, factuelle : ce que fait l'outil, pas un slogan.
 .login-brand__line {
   margin: 0;
   max-width: 24ch;
-  font-size: var(--text-xl);
+  font-size: clamp(var(--text-xl), 2.2vw, 32px);
   font-weight: 600;
   line-height: 1.35;
 }
@@ -63,13 +87,18 @@
   display: grid;
   align-content: center;
   justify-items: center;
-  padding: var(--space-8) var(--space-6);
+  padding: var(--space-8);
 }
 
 .login-form {
   display: grid;
   gap: var(--space-4);
-  width: min(100%, 400px);
+  width: min(100%, 440px);
+  padding: var(--space-7);
+  border: var(--border-subtle);
+  border-radius: 12px;
+  background: var(--gray-0);
+  box-shadow: var(--shadow-surface);
 }
 
 // Rappel du produit réservé aux écrans où le volet de marque est masqué.
@@ -92,10 +121,17 @@
   font-size: var(--text-xl);
 }
 
+.login-form__lead {
+  margin-top: calc(var(--space-2) * -1);
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+
 .login-form__error {
   margin: 0;
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--danger-border);
+  border-left: 4px solid var(--danger-600);
   border-radius: var(--radius-md);
   background: var(--danger-bg);
   color: var(--danger-600);
@@ -128,7 +164,7 @@
   background: none;
   color: var(--gray-500);
   cursor: pointer;
-  transition: color 0.12s, background 0.12s;
+  transition: transform 120ms var(--ease-out), color 120ms ease, background-color 120ms ease;
 }
 
 .field__toggle svg {
@@ -141,6 +177,10 @@
   background: var(--gray-100);
 }
 
+.field__toggle:active {
+  transform: translateY(-50%) scale(0.97);
+}
+
 .field__toggle:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
@@ -149,6 +189,20 @@
 .login-submit {
   width: 100%;
   margin-top: var(--space-1);
+}
+
+.login-submit__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: login-submit-spin 700ms linear infinite;
+}
+
+@keyframes login-submit-spin {
+  to { transform: rotate(360deg); }
 }
 
 .login-form__notice {
@@ -166,8 +220,32 @@
 }
 
 @media (max-width: 600px) {
+  .login {
+    background: var(--gray-0);
+  }
+
   .login-panel {
     align-content: start;
     padding: var(--space-7) var(--space-4);
+  }
+
+  .login-form {
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field__toggle {
+    transition-property: color, background-color;
+  }
+
+  .field__toggle:active {
+    transform: translateY(-50%);
+  }
+
+  .login-submit__spinner {
+    animation: none;
   }
 }
