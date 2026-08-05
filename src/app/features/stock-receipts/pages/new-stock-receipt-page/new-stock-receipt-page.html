@@ -7,6 +7,35 @@
         </div>
     </header>
 
+    <nav class="receipt-method" aria-label="Méthode de réception">
+        <button
+            type="button"
+            [class.receipt-method__option--active]="receiptMethod === 'manual'"
+            [attr.aria-pressed]="receiptMethod === 'manual'"
+            [disabled]="importSafetyLocked"
+            (click)="selectReceiptMethod('manual')"
+        >
+            <strong>Saisie manuelle</strong>
+            <span>Un produit à la fois</span>
+        </button>
+        <button
+            type="button"
+            [class.receipt-method__option--active]="receiptMethod === 'csv'"
+            [attr.aria-pressed]="receiptMethod === 'csv'"
+            (click)="selectReceiptMethod('csv')"
+        >
+            <strong>Importer un fichier CSV</strong>
+            <span>Plusieurs produits avec vérification</span>
+        </button>
+    </nav>
+
+    @if (receiptMethod === 'csv') {
+    @defer (on immediate) {
+    <app-stock-receipt-import (safetyLockChange)="onImportSafetyLockChange($event)" />
+    } @loading {
+    <div class="state-block" role="status">Chargement de l’outil d’import…</div>
+    }
+    } @else {
     <form class="receipt-form" [formGroup]="form" #fgd="ngForm" (ngSubmit)="onSubmit(fgd)">
         <section class="form-section" aria-labelledby="product-section-title">
             <div class="section-heading">
@@ -142,4 +171,5 @@
             </button>
         </footer>
     </form>
+    }
 </main>

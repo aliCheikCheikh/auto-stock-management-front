@@ -23,6 +23,55 @@
   margin: 0 auto;
 }
 
+.receipt-method {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  max-width: var(--content-md);
+  margin: 0 auto var(--space-5);
+  padding: var(--space-1);
+  border: var(--border-subtle);
+  border-radius: 10px;
+  background: var(--gray-100);
+}
+
+.receipt-method button {
+  display: grid;
+  gap: 2px;
+  min-height: 54px;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--gray-500);
+  text-align: left;
+  cursor: pointer;
+}
+
+.receipt-method button:hover {
+  color: var(--gray-900);
+}
+
+.receipt-method button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.receipt-method button.receipt-method__option--active {
+  border-color: var(--gray-300);
+  background: var(--gray-0);
+  color: var(--gray-900);
+  box-shadow: var(--shadow-xs);
+}
+
+.receipt-method strong {
+  font-size: var(--text-sm);
+}
+
+.receipt-method span {
+  font-size: var(--text-xs);
+}
+
 // ─── Prix unitaire (champ + suffixe devise) ───────────────────────────────────
 .price-input {
   display: grid;
@@ -92,5 +141,9 @@
 @media (max-width: 600px) {
   .receipt-page {
     padding: var(--space-4) var(--space-3);
+  }
+
+  .receipt-method {
+    grid-template-columns: 1fr;
   }
 }

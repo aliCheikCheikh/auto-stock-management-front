@@ -23,7 +23,16 @@ export type ProblemCode =
   | 'LAST_ACTIVE_OWNER'
   | 'OWNER_PASSWORD_RESET_FORBIDDEN'
   | 'CURRENT_PASSWORD_INCORRECT'
-  | 'INVALID_USER_DATA';
+  | 'INVALID_USER_DATA'
+  | 'UNSUPPORTED_FILE'
+  | 'FILE_TOO_LARGE'
+  | 'INVALID_ENCODING'
+  | 'INVALID_HEADER'
+  | 'EMPTY_FILE'
+  | 'TOO_MANY_ROWS'
+  | 'MALFORMED_CSV'
+  | 'INVALID_IMPORT_SELECTION'
+  | 'IMPORT_ID_REUSED';
 
 export interface ProblemValidationError {
   readonly field: string;

@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { ProductsPage } from './features/products/pages/products-page/products-page';
-import { NewStockReceiptPage } from './features/stock-receipts/pages/new-stock-receipt-page/new-stock-receipt-page';
+import {
+    NewStockReceiptPage,
+    pendingStockReceiptImportGuard,
+} from './features/stock-receipts/pages/new-stock-receipt-page/new-stock-receipt-page';
 import { NewSalePage } from './features/sales/pages/new-sale-page/new-sale-page';
 import { SalesHistoryPage } from './features/sales/pages/sales-history-page/sales-history-page';
 import { StockMovementsHistoryPage } from './features/stock-movements/pages/stock-movements-history-page/stock-movements-history-page';
@@ -27,7 +30,8 @@ export const routes: Routes = [
     {
         path: 'stock-receipts/new',
         component: NewStockReceiptPage,
-        canActivate: [authGuard]
+        canActivate: [authGuard],
+        canDeactivate: [pendingStockReceiptImportGuard]
 
     },
 
