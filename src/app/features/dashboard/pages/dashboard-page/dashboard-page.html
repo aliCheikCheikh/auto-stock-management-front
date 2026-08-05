@@ -1,0 +1,239 @@
+<main class="dashboard-page">
+  <header class="page-header dashboard-header">
+    <div>
+      <p class="page-kicker">Pilotage du magasin</p>
+      <h1>Tableau de bord</h1>
+      <p class="dashboard-header__description">Ce qui demande votre attention aujourd’hui.</p>
+    </div>
+
+    @if (summary(); as summary) {
+      <p class="dashboard-updated">
+        Données actualisées à
+        {{ summary.generatedAt | date: 'HH:mm' }}
+      </p>
+    }
+  </header>
+
+  @switch (state().status) {
+    @case ('loading') {
+      <section class="state-block dashboard-state" aria-live="polite" aria-busy="true">
+        <app-spinner label="Chargement du tableau de bord…" />
+      </section>
+    }
+
+    @case ('error') {
+      <section class="state-block state-block--error dashboard-state" role="alert">
+        <div>
+          <strong>Impossible de charger le tableau de bord.</strong>
+          <p>Les données du magasin n’ont pas pu être récupérées.</p>
+        </div>
+        <button class="btn btn--secondary dashboard-retry" type="button" (click)="retry()">
+          Réessayer
+        </button>
+      </section>
+    }
+
+    @case ('ready') {
+      @if (summary(); as summary) {
+        <section class="card dashboard-attention" aria-labelledby="attention-title">
+          <div class="dashboard-attention__heading">
+            <p class="dashboard-section-label">À traiter</p>
+            <h2 id="attention-title">Priorités du jour</h2>
+          </div>
+
+          <div class="dashboard-attention__items">
+            <a class="attention-item attention-item--critical" routerLink="/products">
+              <strong>{{ summary.attention.outOfStockCount }}</strong>
+              <span>
+                {{ summary.attention.outOfStockCount > 1 ? 'produits en rupture' : 'produit en rupture' }}
+              </span>
+              <small>Préparer une réception</small>
+            </a>
+            <a class="attention-item attention-item--warning" routerLink="/products">
+              <strong>{{ summary.attention.belowThresholdCount }}</strong>
+              <span>
+                {{ summary.attention.belowThresholdCount > 1 ? 'produits sous seuil' : 'produit sous seuil' }}
+              </span>
+              <small>Contrôler le stock</small>
+            </a>
+            <a class="attention-item attention-item--debt" routerLink="/debts">
+              <strong>{{ summary.attention.overdueCustomerCount }}</strong>
+              <span>
+                {{ summary.attention.overdueCustomerCount > 1 ? 'clients à relancer' : 'client à relancer' }}
+              </span>
+              <small>Créances de plus de 30 jours</small>
+            </a>
+          </div>
+        </section>
+
+        <section class="card dashboard-metrics" aria-labelledby="sales-summary-title">
+          <h2 id="sales-summary-title" class="sr-only">Résumé des ventes</h2>
+          <div class="dashboard-metric">
+            <span>Chiffre d’affaires aujourd’hui</span>
+            <strong>{{ summary.sales.today.revenue | money }}</strong>
+            <small>{{ summary.sales.today.saleCount }} vente{{ summary.sales.today.saleCount > 1 ? 's' : '' }}</small>
+          </div>
+          <div class="dashboard-metric">
+            <span>Articles vendus aujourd’hui</span>
+            <strong>{{ summary.sales.today.itemsSold }}</strong>
+            <small>Sur {{ summary.sales.today.saleCount }} passage{{ summary.sales.today.saleCount > 1 ? 's' : '' }} en caisse</small>
+          </div>
+          <div class="dashboard-metric">
+            <span>Chiffre d’affaires · 7 jours</span>
+            <strong>{{ summary.sales.last7Days.revenue | money }}</strong>
+            <small>
+              @if (summary.sales.revenueChangePercent !== null) {
+                {{ summary.sales.revenueChangePercent >= 0 ? '+' : '' }}{{ summary.sales.revenueChangePercent }} % vs 7 jours précédents
+              } @else {
+                Comparaison indisponible
+              }
+            </small>
+          </div>
+          <div class="dashboard-metric">
+            <span>Panier moyen · 7 jours</span>
+            <strong>{{ summary.sales.last7Days.averageBasket | money }}</strong>
+            <small>{{ summary.sales.last7Days.itemsSold }} article{{ summary.sales.last7Days.itemsSold > 1 ? 's' : '' }} vendu{{ summary.sales.last7Days.itemsSold > 1 ? 's' : '' }}</small>
+          </div>
+        </section>
+
+        <div class="dashboard-worklists">
+          <section class="card dashboard-panel" aria-labelledby="stock-alerts-title">
+            <header class="dashboard-panel__header">
+              <div>
+                <p class="dashboard-section-label">Stock</p>
+                <h2 id="stock-alerts-title">Produits à réapprovisionner</h2>
+              </div>
+              <a class="dashboard-panel__action" routerLink="/stock-receipts/new">Nouvelle réception</a>
+            </header>
+
+            @if (summary.stock.alerts.length === 0) {
+              <p class="dashboard-list-empty">Aucune urgence de stock. Les seuils configurés sont respectés.</p>
+            } @else {
+              <div class="dashboard-list">
+                @for (alert of summary.stock.alerts; track alert.productId) {
+                  <a class="dashboard-row" [routerLink]="['/products', alert.productId]">
+                    <span class="dashboard-row__main">
+                      <strong>{{ alert.name }}</strong>
+                      <small>{{ alert.reference }}</small>
+                    </span>
+                    <span class="dashboard-row__stock">
+                      <strong>{{ alert.availableQuantity }}</strong>
+                      <small>Seuil {{ alert.threshold }}</small>
+                    </span>
+                    <span class="status-badge status-badge--{{ alert.status === 'OUT_OF_STOCK' ? 'critical' : 'warning' }}">
+                      {{ stockStatus(alert) }}
+                    </span>
+                  </a>
+                }
+              </div>
+            }
+          </section>
+
+          <section class="card dashboard-panel" aria-labelledby="debt-alerts-title">
+            <header class="dashboard-panel__header">
+              <div>
+                <p class="dashboard-section-label">Créances</p>
+                <h2 id="debt-alerts-title">Clients à relancer</h2>
+              </div>
+              <a class="dashboard-panel__action" routerLink="/debts">Toutes les créances</a>
+            </header>
+
+            <div class="dashboard-panel__summary">
+              <span>Encours total</span>
+              <strong>{{ summary.debts.totalOutstanding | money }}</strong>
+              <small>{{ summary.debts.openDebtCount }} créance{{ summary.debts.openDebtCount > 1 ? 's' : '' }} ouverte{{ summary.debts.openDebtCount > 1 ? 's' : '' }}</small>
+            </div>
+
+            @if (summary.debts.customersToContact.length === 0) {
+              <p class="dashboard-list-empty">Aucune créance de plus de 30 jours à relancer.</p>
+            } @else {
+              <div class="dashboard-list">
+                @for (customer of summary.debts.customersToContact; track customer.customerId) {
+                  <a class="dashboard-row dashboard-row--debt" [routerLink]="['/clients', customer.customerId, 'creances']">
+                    <span class="dashboard-row__main">
+                      <strong>{{ customerName(customer) }}</strong>
+                      <small>{{ customer.phoneNumber }} · {{ customer.openDebtCount }} créance{{ customer.openDebtCount > 1 ? 's' : '' }}</small>
+                    </span>
+                    <span class="dashboard-row__amount">
+                      <strong>{{ customer.totalDue | money }}</strong>
+                      <small>{{ customer.daysOutstanding }} jours</small>
+                    </span>
+                  </a>
+                }
+              </div>
+            }
+          </section>
+        </div>
+
+        <div class="dashboard-secondary">
+          <section class="card dashboard-panel" aria-labelledby="top-products-title">
+            <header class="dashboard-panel__header">
+              <div>
+                <p class="dashboard-section-label">7 derniers jours</p>
+                <h2 id="top-products-title">Produits les plus vendus</h2>
+              </div>
+              <a class="dashboard-panel__action" routerLink="/sales">Historique des ventes</a>
+            </header>
+
+            @if (summary.sales.topProducts.length === 0) {
+              <p class="dashboard-list-empty">Pas encore assez de ventes sur cette période.</p>
+            } @else {
+              <ol class="dashboard-list top-products">
+                @for (product of summary.sales.topProducts; track product.productId; let rank = $index) {
+                  <li class="dashboard-row">
+                    <span class="top-products__rank">{{ rank + 1 }}</span>
+                    <a class="dashboard-row__main top-products__link" [routerLink]="['/products', product.productId]">
+                      <strong>{{ product.name }}</strong>
+                      <small>{{ product.reference }}</small>
+                    </a>
+                    <span class="dashboard-row__amount">
+                      <strong>{{ product.revenue | money }}</strong>
+                      <small>{{ product.quantitySold }} vendus</small>
+                    </span>
+                  </li>
+                }
+              </ol>
+            }
+          </section>
+
+          <section class="card dashboard-panel" aria-labelledby="recent-activity-title">
+            <header class="dashboard-panel__header">
+              <div>
+                <p class="dashboard-section-label">Journal</p>
+                <h2 id="recent-activity-title">Activité récente</h2>
+              </div>
+              <a class="dashboard-panel__action" routerLink="/stock-movements">Voir les mouvements</a>
+            </header>
+
+            @if (summary.recentActivity.length === 0) {
+              <p class="dashboard-list-empty">Aucune opération récente.</p>
+            } @else {
+              <div class="dashboard-list activity-list">
+                @for (activity of summary.recentActivity; track activity.type + activity.resourceId + activity.occurredAt) {
+                  <a class="dashboard-row activity-row" [routerLink]="activityLink(activity)">
+                    <time [dateTime]="activity.occurredAt">{{ activity.occurredAt | date: 'dd/MM · HH:mm' }}</time>
+                    <span class="activity-row__main">
+                      <strong>{{ activityTitle(activity) }}</strong>
+                      <small>{{ activityDetail(activity) }} · {{ activity.actorName }}</small>
+                    </span>
+                    @if (activity.amount) {
+                      <strong class="activity-row__amount">{{ activity.amount | money }}</strong>
+                    }
+                  </a>
+                }
+              </div>
+            }
+          </section>
+        </div>
+
+        <nav class="dashboard-quick-actions" aria-label="Actions rapides">
+          <span>Actions rapides</span>
+          <a class="btn btn--primary" routerLink="/sales/new">Enregistrer une vente</a>
+          <a class="btn btn--secondary" routerLink="/stock-receipts/new">Réceptionner du stock</a>
+          <a class="btn btn--secondary" routerLink="/products">Voir le catalogue</a>
+          <a class="btn btn--secondary" routerLink="/debts">Consulter les créances</a>
+        </nav>
+      }
+    }
+  }
+</main>
