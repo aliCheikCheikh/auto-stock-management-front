@@ -4,6 +4,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { LoadingService } from '../../../../core/loading/loading.service';
 import { Router } from '@angular/router';
+import { landingRouteFor } from '../../../../core/auth/auth.model';
 
 @Component({
   selector: 'app-login-page',
@@ -67,7 +68,7 @@ export class LoginPage {
         this.notificationService.success('Connexion réussie');
         this.isSubmitting.set(false);
         this.loading.stopBlocking();
-        this.router.navigate([user.passwordTemporary ? '/change-password' : '/products']);
+        this.router.navigate([landingRouteFor(user)]);
       },
       error: () => {
         const message = 'Connexion échouée. Vérifiez vos identifiants et réessayez.';

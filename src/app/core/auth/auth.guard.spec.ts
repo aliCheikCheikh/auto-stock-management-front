@@ -155,4 +155,26 @@ describe('forcePasswordChangeGuard', () => {
         expect(result instanceof UrlTree).toBeTrue();
         expect((result as UrlTree).toString()).toBe('/products');
     });
+
+    it('redirige un propriétaire déjà régularisé vers le tableau de bord', () => {
+        TestBed.configureTestingModule({
+            providers: [
+                {
+                    provide: AuthService,
+                    useValue: {
+                        currentUser: () => ({
+                            userId: 'owner-1',
+                            role: 'OWNER',
+                            passwordTemporary: false,
+                        }),
+                    },
+                },
+                provideRouter([]),
+            ],
+        });
+
+        const result = runGuard();
+        expect(result instanceof UrlTree).toBeTrue();
+        expect((result as UrlTree).toString()).toBe('/dashboard');
+    });
 });
