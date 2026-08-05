@@ -111,7 +111,13 @@
             } @else {
               <div class="dashboard-list">
                 @for (alert of summary.stock.alerts; track alert.productId) {
-                  <a class="dashboard-row" [routerLink]="['/products', alert.productId]">
+                  <a
+                    class="dashboard-row"
+                    routerLink="/stock-receipts/new"
+                    [queryParams]="{ productId: alert.productId }"
+                    [attr.aria-label]="'Réceptionner ' + alert.name"
+                    title="Préparer une réception pour ce produit"
+                  >
                     <span class="dashboard-row__main">
                       <strong>{{ alert.name }}</strong>
                       <small>{{ alert.reference }}</small>

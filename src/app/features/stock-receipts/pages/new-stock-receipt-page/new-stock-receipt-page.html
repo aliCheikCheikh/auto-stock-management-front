@@ -71,6 +71,14 @@
                         inputId="productReference"
                         [initialLabel]="preselectedLabel()"
                         (selected)="onProductSelected($event)" />
+                    @if (preselectedLabel()) {
+                    <p class="receipt-prefill" role="status">
+                        <strong>{{ preselectedLabel() }}</strong>
+                        <span>
+                            Référence {{ form.controls.productReference.value }} · Saisissez seulement les quantités reçues.
+                        </span>
+                    </p>
+                    }
                     }
                     @if ((form.controls.productReference.dirty && form.controls.productReference.touched || fgd.submitted) && form.controls.productReference.invalid) {
                     <p class="field-error">Référence obligatoire.</p>
