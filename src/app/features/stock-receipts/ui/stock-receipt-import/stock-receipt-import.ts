@@ -263,7 +263,7 @@ export class StockReceiptImport {
     }
     const header = ['ligne', 'statut', 'action', 'reference', 'nom', 'quantite_recue', 'erreurs'];
     const rows = report.rows.map((row) => [
-      row.lineNumber,
+      this.displayLineNumber(row.lineNumber),
       this.executionStatusLabel(row.status),
       this.actionLabel(row.action),
       row.reference,
@@ -282,6 +282,10 @@ export class StockReceiptImport {
 
   isSelected(row: StockReceiptImportRowPreview): boolean {
     return this.selectedLineNumbers().has(row.lineNumber);
+  }
+
+  displayLineNumber(sourceLineNumber: number): number {
+    return sourceLineNumber - 1;
   }
 
   quantity(row: StockReceiptImportRowPreview): number {

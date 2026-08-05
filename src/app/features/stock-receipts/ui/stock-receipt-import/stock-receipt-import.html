@@ -55,7 +55,7 @@
         @for (row of result.rows; track row.lineNumber) {
           <article class="result-row" [class.result-row--error]="rowHasFailure(row)">
             <div>
-              <strong>Ligne {{ row.lineNumber }} · {{ row.reference || 'Sans référence' }}</strong>
+              <strong>Ligne {{ displayLineNumber(row.lineNumber) }} · {{ row.reference || 'Sans référence' }}</strong>
               <span>{{ row.name || 'Nom non renseigné' }}</span>
             </div>
             <div class="result-row__outcome">
@@ -168,7 +168,7 @@
                   @if (row.action !== 'REJECT') {
                     <input
                       type="checkbox"
-                      [attr.aria-label]="'Importer la ligne ' + row.lineNumber"
+                      [attr.aria-label]="'Importer la ligne ' + displayLineNumber(row.lineNumber)"
                       [checked]="isSelected(row)"
                       [disabled]="selectionLocked()"
                       (change)="toggleRow(row, $any($event.target).checked)"
@@ -177,7 +177,7 @@
                     <span aria-hidden="true">—</span>
                   }
                 </td>
-                <td>{{ row.lineNumber }}</td>
+                <td>{{ displayLineNumber(row.lineNumber) }}</td>
                 <td class="preview-table__product">
                   <strong>{{ row.reference || 'Sans référence' }}</strong>
                   <span>{{ row.name || 'Nom non renseigné' }}</span>
@@ -213,14 +213,14 @@
               @if (row.action !== 'REJECT') {
                 <input
                   type="checkbox"
-                  [attr.aria-label]="'Importer la ligne ' + row.lineNumber"
+                  [attr.aria-label]="'Importer la ligne ' + displayLineNumber(row.lineNumber)"
                   [checked]="isSelected(row)"
                   [disabled]="selectionLocked()"
                   (change)="toggleRow(row, $any($event.target).checked)"
                 />
               }
               <div>
-                <strong>Ligne {{ row.lineNumber }} · {{ row.reference || 'Sans référence' }}</strong>
+                <strong>Ligne {{ displayLineNumber(row.lineNumber) }} · {{ row.reference || 'Sans référence' }}</strong>
                 <span>{{ row.name || 'Nom non renseigné' }}</span>
               </div>
               <span

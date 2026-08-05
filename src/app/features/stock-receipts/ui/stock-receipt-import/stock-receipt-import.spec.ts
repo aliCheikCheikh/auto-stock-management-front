@@ -42,6 +42,14 @@ describe('StockReceiptImport', () => {
     expect(component.selectedQuantity()).toBe(8);
     expect(fixture.nativeElement.textContent).toContain('Vérifier les produits');
     expect(fixture.nativeElement.textContent).toContain('Cette référence apparaît plusieurs fois');
+    const renderedComponent = fixture.nativeElement as HTMLElement;
+    const displayedLineNumbers = Array.from(
+      renderedComponent.querySelectorAll<HTMLTableCellElement>(
+        '.preview-table tbody tr td:nth-child(2)',
+      ),
+      (cell) => cell.textContent?.trim(),
+    );
+    expect(displayedLineNumbers).toEqual(['1', '2']);
   });
 
   it('exécute seulement la sélection confirmée et affiche le rapport', () => {
