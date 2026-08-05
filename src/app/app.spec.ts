@@ -53,6 +53,7 @@ describe('App', () => {
 
     expect(categoryLinks(fixture.nativeElement).length).toBe(0);
     expect(userManagementLinks(fixture.nativeElement).length).toBe(0);
+    expect(dashboardLinks(fixture.nativeElement).length).toBe(0);
 
     currentUser.set({
       userId: 'owner-1',
@@ -65,6 +66,7 @@ describe('App', () => {
 
     expect(categoryLinks(fixture.nativeElement).length).toBe(1);
     expect(userManagementLinks(fixture.nativeElement).length).toBe(1);
+    expect(dashboardLinks(fixture.nativeElement).length).toBe(1);
   });
 
   it('retire toute la navigation métier de l’écran de changement obligatoire', async () => {
@@ -84,4 +86,8 @@ function categoryLinks(root: HTMLElement): HTMLAnchorElement[] {
 
 function userManagementLinks(root: HTMLElement): HTMLAnchorElement[] {
   return Array.from(root.querySelectorAll<HTMLAnchorElement>('a[href="/admin/users"]'));
+}
+
+function dashboardLinks(root: HTMLElement): HTMLAnchorElement[] {
+  return Array.from(root.querySelectorAll<HTMLAnchorElement>('.app-nav a[href="/dashboard"]'));
 }

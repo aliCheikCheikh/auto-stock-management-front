@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { landingRouteFor } from '../../../../core/auth/auth.model';
 import { passwordChangeFailureFrom } from '../../../../core/auth/password-change-failure';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 
@@ -105,10 +106,10 @@ export class ChangePasswordPage {
     // de rouvrir les écrans métier. Un échec réseau à cette étape ne remet pas
     // en cause le changement déjà effectué : on demande une reconnexion claire.
     this.authService.me().subscribe({
-      next: () => {
+      next: (user) => {
         this.isSubmitting.set(false);
         this.notificationService.success('Votre mot de passe a été mis à jour.');
-        void this.router.navigate(['/products']);
+        void this.router.navigate([landingRouteFor(user)]);
       },
       error: () => {
         this.isSubmitting.set(false);

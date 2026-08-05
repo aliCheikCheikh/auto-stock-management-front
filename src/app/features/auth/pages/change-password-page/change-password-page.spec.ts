@@ -46,6 +46,26 @@ describe('ChangePasswordPage', () => {
     expect(component.isSubmitting()).toBeFalse();
   });
 
+  it('ouvre le tableau de bord après la régularisation du propriétaire', () => {
+    const navigateSpy = spyOn(router, 'navigate').and.resolveTo(true);
+    component.form.setValue({
+      currentPassword: 'Temporaire1',
+      newPassword: 'NouveauSecret1',
+    });
+    component.onSubmit();
+
+    httpTesting.expectOne('/api/v1/auth/change-password').flush(null);
+    httpTesting.expectOne('/api/v1/auth/me').flush({
+      userId: 'owner-1',
+      displayName: 'Patron',
+      email: 'owner@example.com',
+      role: 'OWNER',
+      passwordTemporary: false,
+    });
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+  });
+
   it('affiche un mot de passe actuel incorrect près du champ concerné', () => {
     component.form.setValue({
       currentPassword: 'MauvaisSecret',

@@ -1,4 +1,5 @@
 import { guardFromDecision } from './guard-helpers';
+import { landingRouteFor } from './auth.model';
 
 // Routes métier : il faut être authentifié ET ne pas avoir de mot de passe temporaire.
 export const authGuard = guardFromDecision((user, router) => {
@@ -18,7 +19,7 @@ export const forcePasswordChangeGuard = guardFromDecision((user, router) => {
     return router.createUrlTree(['/login']);
   }
   if (!user.passwordTemporary) {
-    return router.createUrlTree(['/products']);
+    return router.createUrlTree([landingRouteFor(user)]);
   }
   return true;
 });

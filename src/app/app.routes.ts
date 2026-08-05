@@ -22,6 +22,13 @@ import { CategoriesPage } from './features/categories/pages/categories-page/cate
 
 export const routes: Routes = [
     {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/pages/dashboard-page/dashboard-page')
+            .then(({ DashboardPage }) => DashboardPage),
+        canActivate: [authGuard, ownerGuard]
+    },
+
+    {
         path: 'products',
         component: ProductsPage,
         canActivate: [authGuard]
@@ -115,7 +122,7 @@ export const routes: Routes = [
 
     {
         path: '',
-        redirectTo: 'products',
+        redirectTo: 'dashboard',
         pathMatch: 'full',
     },
 

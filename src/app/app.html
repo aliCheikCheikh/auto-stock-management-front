@@ -2,7 +2,11 @@
 <header class="app-topbar">
   <!-- Bandeau haut : marque à gauche, actions compte/affichage à droite -->
   <div class="app-topbar__band">
-    <a class="app-brand" routerLink="/products" aria-label="AutoStock — catalogue produits">
+    <a
+      class="app-brand"
+      [routerLink]="isOwner() ? '/dashboard' : '/products'"
+      aria-label="AutoStock — accueil"
+    >
       <span class="app-brand__mark" aria-hidden="true">AS</span>
       <span class="app-brand__copy">
         <strong>AutoStock</strong>
@@ -172,6 +176,9 @@
     [class.is-mobile-open]="mobileNavOpen()"
     aria-label="Navigation principale"
   >
+    @if (isOwner()) {
+      <a routerLink="/dashboard" routerLinkActive="is-active">Tableau de bord</a>
+    }
     <a routerLink="/products" routerLinkActive="is-active">Catalogue</a>
     <a routerLink="/stock-receipts/new" routerLinkActive="is-active">Réception stock</a>
     <a routerLink="/sales/new" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Ventes</a>

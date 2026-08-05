@@ -17,3 +17,11 @@ export interface ChangePasswordRequest {
     readonly currentPassword: string;
     readonly newPassword: string;
 }
+
+/** Point d'entrée utile selon l'état et le rôle de l'utilisateur. */
+export function landingRouteFor(user: AuthenticatedUser): string {
+    if (user.passwordTemporary) {
+        return '/change-password';
+    }
+    return user.role === 'OWNER' ? '/dashboard' : '/products';
+}
