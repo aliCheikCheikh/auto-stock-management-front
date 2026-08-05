@@ -2,7 +2,13 @@
   <!-- Volet de marque : le nom du produit y figure UNE fois, avec une seule
        phrase utile. Masqué sous 900 px — sur téléphone, le formulaire suffit. -->
   <aside class="login-brand">
-    <p class="login-brand__name">AutoStock</p>
+    <div class="login-brand__identity">
+      <span class="login-brand__mark" aria-hidden="true">AS</span>
+      <div>
+        <p class="login-brand__name">AutoStock</p>
+        <p class="login-brand__workspace">Espace de gestion de l’atelier</p>
+      </div>
+    </div>
     <p class="login-brand__line">Gestion du stock, des ventes et des créances de l’atelier.</p>
     <p class="login-brand__foot">Identifiants fournis par l’administrateur de votre atelier.</p>
   </aside>
@@ -13,6 +19,7 @@
       <p class="login-form__brand">AutoStock</p>
 
       <h1 id="login-title">Connexion</h1>
+      <p class="login-form__lead">Accédez à votre espace de travail sécurisé.</p>
 
       @if (errorMessage()) {
       <p class="login-form__error" role="alert">{{ errorMessage() }}</p>
@@ -79,6 +86,7 @@
         [attr.aria-busy]="isSubmitting()"
       >
         @if (isSubmitting()) {
+          <span class="login-submit__spinner" aria-hidden="true"></span>
           Connexion…
         } @else {
           Se connecter
