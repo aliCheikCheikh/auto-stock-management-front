@@ -11,12 +11,13 @@ import { CategoriesApiService } from '../../../categories/data-access/categories
 import { Category } from '../../../categories/models/category.model';
 import { ProductsApiService } from '../../../products/data-access/products-api.service';
 import { ProductSearchResult } from '../../../products/models/product.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, CanDeactivateFn } from '@angular/router';
 import { ProductPicker } from '../../../products/ui/product-picker/product-picker';
+import { StockReceiptImport } from '../../ui/stock-receipt-import/stock-receipt-import';
 
 @Component({
   selector: 'app-new-stock-receipt-page',
-  imports: [ReactiveFormsModule, ProductPicker],
+  imports: [ReactiveFormsModule, ProductPicker, StockReceiptImport],
   templateUrl: './new-stock-receipt-page.html',
   styleUrl: './new-stock-receipt-page.scss',
 })
@@ -35,6 +36,28 @@ export class NewStockReceiptPage {
 
   isSubmitting = false;
   currentIdempotencyKey: string | null = null;
+  receiptMethod: 'manual' | 'csv' = 'manual';
+  importSafetyLocked = false;
+
+  selectReceiptMethod(method: 'manual' | 'csv'): void {
+    if (this.importSafetyLocked && method !== 'csv') {
+      this.notificationService.info('Terminez ou réessayez l’import en cours avant de changer de méthode.');
+      return;
+    }
+    this.receiptMethod = method;
+  }
+
+  onImportSafetyLockChange(locked: boolean): void {
+    this.importSafetyLocked = locked;
+  }
+
+  canLeavePage(): boolean {
+    if (!this.importSafetyLocked) {
+      return true;
+    }
+    this.notificationService.info('Attendez le rapport ou réessayez l’import avant de quitter cette page.');
+    return false;
+  }
 
   constructor() {
     // Charge le contexte magasin (shopId + emplacements réels) une fois, en cache.
@@ -258,3 +281,6 @@ export class NewStockReceiptPage {
     this.form.controls.minimumGlobalThreshold.updateValueAndValidity();
   }
 }
+
+export const pendingStockReceiptImportGuard: CanDeactivateFn<NewStockReceiptPage> = (page) =>
+  page.canLeavePage();

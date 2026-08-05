@@ -1,0 +1,364 @@
+<section class="import-shell" aria-labelledby="import-title">
+  @if (report(); as result) {
+    <header class="section-heading">
+      <div>
+        <h2 id="import-title">Rapport d’import</h2>
+        <p class="section-heading__detail">L’opération est terminée et son résultat est conservé.</p>
+      </div>
+      <span class="import-step">Étape 3 sur 3</span>
+    </header>
+
+    <div class="import-body">
+      <div
+        class="result-banner"
+        [class.result-banner--warning]="result.summary.failedRows > 0"
+        role="status"
+      >
+        <strong>
+          @if (result.summary.failedRows > 0) {
+            Import terminé avec des lignes en erreur
+          } @else {
+            Import terminé avec succès
+          }
+        </strong>
+        <span>{{ result.summary.importedRows }} ligne(s) importées sur {{ result.summary.totalRows }}.</span>
+      </div>
+
+      <dl class="summary-grid" aria-label="Résumé de l’import">
+        <div>
+          <dt>Lignes importées</dt>
+          <dd>{{ result.summary.importedRows }}</dd>
+        </div>
+        <div>
+          <dt>Produits créés</dt>
+          <dd>{{ result.summary.productsCreated }}</dd>
+        </div>
+        <div>
+          <dt>Stocks complétés</dt>
+          <dd>{{ result.summary.existingProductsReceived }}</dd>
+        </div>
+        <div>
+          <dt>Quantité reçue</dt>
+          <dd>{{ result.summary.totalQuantityReceived }}</dd>
+        </div>
+        <div [class.summary-grid__danger]="result.summary.failedRows > 0">
+          <dt>Lignes en erreur</dt>
+          <dd>{{ result.summary.failedRows }}</dd>
+        </div>
+        <div>
+          <dt>Lignes ignorées</dt>
+          <dd>{{ result.summary.ignoredInvalidRows + result.summary.ignoredByUserRows }}</dd>
+        </div>
+      </dl>
+
+      <div class="result-list" aria-label="Détail du rapport">
+        @for (row of result.rows; track row.lineNumber) {
+          <article class="result-row" [class.result-row--error]="rowHasFailure(row)">
+            <div>
+              <strong>Ligne {{ row.lineNumber }} · {{ row.reference || 'Sans référence' }}</strong>
+              <span>{{ row.name || 'Nom non renseigné' }}</span>
+            </div>
+            <div class="result-row__outcome">
+              <span
+                class="import-badge"
+                [class.import-badge--success]="row.status === 'IMPORTED'"
+                [class.import-badge--danger]="row.status === 'FAILED'"
+              >{{ executionStatusLabel(row.status) }}</span>
+              @if (row.quantityReceived > 0) {
+                <span>{{ row.quantityReceived }} unité(s)</span>
+              }
+            </div>
+            @if (row.issues.length > 0) {
+              <ul class="issue-list">
+                @for (issue of row.issues; track issue.code + issue.field) {
+                  <li>{{ issue.message }}</li>
+                }
+              </ul>
+            }
+          </article>
+        }
+      </div>
+
+      <footer class="import-actions">
+        <button class="btn btn--secondary" type="button" (click)="downloadReport()">
+          Télécharger le rapport
+        </button>
+        <button class="btn btn--primary" type="button" (click)="chooseAnotherFile()">
+          Faire un nouvel import
+        </button>
+      </footer>
+    </div>
+  } @else if (isImporting()) {
+    <header class="section-heading">
+      <div>
+        <h2 id="import-title">Import en cours</h2>
+        <p class="section-heading__detail">Ne fermez pas cette page avant le rapport final.</p>
+      </div>
+      <span class="import-step">Étape 3 sur 3</span>
+    </header>
+    <div class="processing-state" aria-live="polite">
+      <app-spinner [size]="36" label="Import sécurisé des lignes…" />
+      <p>Chaque ligne est traitée séparément. Aucun total intermédiaire n’est affiché avant la réponse du serveur.</p>
+    </div>
+  } @else if (preview(); as prepared) {
+    <header class="section-heading">
+      <div>
+        <h2 id="import-title">Vérifier les produits</h2>
+        <p class="section-heading__detail">Seules les lignes cochées et sans erreur seront importées.</p>
+      </div>
+      <span class="import-step">Étape 2 sur 3</span>
+    </header>
+
+    <div class="import-body">
+      <dl class="summary-grid" aria-label="Résumé de la prévisualisation">
+        <div>
+          <dt>Total des lignes</dt>
+          <dd>{{ prepared.summary.totalRows }}</dd>
+        </div>
+        <div>
+          <dt>Nouveaux produits</dt>
+          <dd>{{ prepared.summary.productsToCreate }}</dd>
+        </div>
+        <div>
+          <dt>Produits existants</dt>
+          <dd>{{ prepared.summary.existingProductsToReceive }}</dd>
+        </div>
+        <div [class.summary-grid__danger]="prepared.summary.invalidRows > 0">
+          <dt>Lignes à corriger</dt>
+          <dd>{{ prepared.summary.invalidRows }}</dd>
+        </div>
+      </dl>
+
+      <div class="selection-bar">
+        <label class="selection-control">
+          <input
+            type="checkbox"
+            [checked]="allValidRowsSelected()"
+            [disabled]="validRows().length === 0 || selectionLocked()"
+            (change)="toggleAllValidRows($any($event.target).checked)"
+          />
+          Sélectionner toutes les lignes valides
+        </label>
+        <strong>{{ selectedRows().length }} sélectionnée(s) · {{ selectedQuantity() }} unité(s)</strong>
+      </div>
+
+      @if (selectionLocked()) {
+        <div class="safety-notice" role="status">
+          La sélection est verrouillée après la première tentative. Le bouton réessaiera exactement la même opération pour éviter un doublon de stock.
+        </div>
+      }
+
+      <div class="preview-table-wrap">
+        <table class="preview-table">
+          <thead>
+            <tr>
+              <th class="preview-table__check"><span class="sr-only">Sélection</span></th>
+              <th>Ligne</th>
+              <th>Produit</th>
+              <th>Catégorie</th>
+              <th>Prix</th>
+              <th>Quantité</th>
+              <th>Décision</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of prepared.rows; track row.lineNumber) {
+              <tr [class.preview-table__row--invalid]="row.action === 'REJECT'">
+                <td class="preview-table__check">
+                  @if (row.action !== 'REJECT') {
+                    <input
+                      type="checkbox"
+                      [attr.aria-label]="'Importer la ligne ' + row.lineNumber"
+                      [checked]="isSelected(row)"
+                      [disabled]="selectionLocked()"
+                      (change)="toggleRow(row, $any($event.target).checked)"
+                    />
+                  } @else {
+                    <span aria-hidden="true">—</span>
+                  }
+                </td>
+                <td>{{ row.lineNumber }}</td>
+                <td class="preview-table__product">
+                  <strong>{{ row.reference || 'Sans référence' }}</strong>
+                  <span>{{ row.name || 'Nom non renseigné' }}</span>
+                  @if (row.issues.length > 0) {
+                    <ul class="issue-list">
+                      @for (issue of row.issues; track issue.code + issue.field) {
+                        <li>{{ issue.message }}</li>
+                      }
+                    </ul>
+                  }
+                </td>
+                <td>{{ row.categoryName || '—' }}</td>
+                <td>{{ price(row) }}</td>
+                <td class="preview-table__quantity">{{ quantity(row) }}</td>
+                <td>
+                  <span
+                    class="import-badge"
+                    [class.import-badge--create]="row.action === 'CREATE_PRODUCT'"
+                    [class.import-badge--receive]="row.action === 'RECEIVE_EXISTING'"
+                    [class.import-badge--danger]="row.action === 'REJECT'"
+                  >{{ actionLabel(row.action) }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="preview-cards">
+        @for (row of prepared.rows; track row.lineNumber) {
+          <article class="preview-card" [class.preview-card--invalid]="row.action === 'REJECT'">
+            <header>
+              @if (row.action !== 'REJECT') {
+                <input
+                  type="checkbox"
+                  [attr.aria-label]="'Importer la ligne ' + row.lineNumber"
+                  [checked]="isSelected(row)"
+                  [disabled]="selectionLocked()"
+                  (change)="toggleRow(row, $any($event.target).checked)"
+                />
+              }
+              <div>
+                <strong>Ligne {{ row.lineNumber }} · {{ row.reference || 'Sans référence' }}</strong>
+                <span>{{ row.name || 'Nom non renseigné' }}</span>
+              </div>
+              <span
+                class="import-badge"
+                [class.import-badge--create]="row.action === 'CREATE_PRODUCT'"
+                [class.import-badge--receive]="row.action === 'RECEIVE_EXISTING'"
+                [class.import-badge--danger]="row.action === 'REJECT'"
+              >{{ actionLabel(row.action) }}</span>
+            </header>
+            <dl>
+              <div><dt>Catégorie</dt><dd>{{ row.categoryName || '—' }}</dd></div>
+              <div><dt>Prix</dt><dd>{{ price(row) }}</dd></div>
+              <div><dt>Quantité</dt><dd>{{ quantity(row) }}</dd></div>
+            </dl>
+            @if (row.issues.length > 0) {
+              <ul class="issue-list">
+                @for (issue of row.issues; track issue.code + issue.field) {
+                  <li>{{ issue.message }}</li>
+                }
+              </ul>
+            }
+          </article>
+        }
+      </div>
+
+      @if (prepared.summary.invalidRows > 0) {
+        <div class="correction-help">
+          <strong>Comment corriger ?</strong>
+          <span>Ouvrez le fichier, corrigez les lignes signalées, enregistrez-le en CSV UTF-8 puis analysez-le de nouveau. Les lignes rouges ne seront jamais importées.</span>
+        </div>
+      }
+
+      @if (errorMessage()) {
+        <div class="state-block state-block--error" role="alert">{{ errorMessage() }}</div>
+      }
+
+      <footer class="import-actions">
+        @if (!selectionLocked()) {
+        <button class="btn btn--secondary" type="button" (click)="chooseAnotherFile()">
+          Analyser un autre fichier
+        </button>
+        }
+        <button
+          class="btn btn--primary"
+          type="button"
+          [disabled]="selectedRows().length === 0"
+          (click)="requestConfirmation()"
+        >
+          @if (selectionLocked()) { Réessayer le même import } @else { Confirmer l’import }
+        </button>
+      </footer>
+    </div>
+  } @else {
+    <header class="section-heading">
+      <div>
+        <h2 id="import-title">Importer un fichier CSV</h2>
+        <p class="section-heading__detail">Utilisez le modèle pour éviter toute erreur de colonne.</p>
+      </div>
+      <span class="import-step">Étape 1 sur 3</span>
+    </header>
+
+    <div class="import-body">
+      <ol class="guide-steps" aria-label="Étapes de préparation du fichier">
+        <li><span>1</span><strong>Téléchargez le modèle</strong></li>
+        <li><span>2</span><strong>Remplissez-le dans Excel</strong></li>
+        <li><span>3</span><strong>Enregistrez en CSV UTF-8</strong></li>
+      </ol>
+
+      <div class="template-card">
+        <div>
+          <strong>Commencez toujours avec le modèle officiel</strong>
+          <p>Les noms et l’ordre des colonnes sont déjà prêts. Ne les modifiez pas.</p>
+        </div>
+        <button
+          class="btn btn--secondary"
+          type="button"
+          [disabled]="isDownloadingTemplate()"
+          (click)="downloadTemplate()"
+        >
+          @if (isDownloadingTemplate()) { Téléchargement… } @else { Télécharger le modèle }
+        </button>
+      </div>
+
+      <div class="file-field" [class.file-field--ready]="selectedFile()">
+        <label for="stockImportFile">Fichier CSV à analyser</label>
+        <input
+          #fileInput
+          id="stockImportFile"
+          type="file"
+          accept=".csv,text/csv"
+          (change)="onFileSelected($event)"
+        />
+        <p class="helper-text">1 fichier CSV UTF-8 · 500 lignes maximum · 1 Mo maximum.</p>
+        @if (selectedFile(); as file) {
+          <div class="selected-file" role="status">
+            <span aria-hidden="true">CSV</span>
+            <div><strong>{{ file.name }}</strong><small>{{ fileSize(file) }}</small></div>
+          </div>
+        }
+      </div>
+
+      <div class="column-guide">
+        <strong>À remplir dans le fichier</strong>
+        <ul>
+          <li><b>Toujours :</b> référence et au moins une quantité.</li>
+          <li><b>Nouveau produit :</b> nom, catégorie existante et prix unitaire.</li>
+          <li><b>Produit existant :</b> la référence suffit avec les quantités.</li>
+          <li>Le seuil d’alerte peut rester vide : il vaudra alors 0.</li>
+        </ul>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="state-block state-block--error" role="alert">{{ errorMessage() }}</div>
+      }
+
+      <footer class="import-actions">
+        <button
+          class="btn btn--primary btn--lg"
+          type="button"
+          [disabled]="!selectedFile() || isAnalyzing()"
+          [attr.aria-busy]="isAnalyzing()"
+          (click)="analyze()"
+        >
+          @if (isAnalyzing()) { Analyse en cours… } @else { Analyser le fichier }
+        </button>
+      </footer>
+    </div>
+  }
+</section>
+
+@if (showConfirmation()) {
+  <app-confirm-dialog
+    title="Confirmer l’import de stock"
+    [message]="confirmationMessage()"
+    confirmLabel="Importer maintenant"
+    cancelLabel="Continuer la vérification"
+    confirmTone="primary"
+    (confirmed)="confirmImport()"
+    (cancelled)="cancelConfirmation()"
+  />
+}
