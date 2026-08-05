@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  discardPeriodicTasks,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Subject, of, throwError } from 'rxjs';
 import { DashboardApiService } from '../../data-access/dashboard-api.service';
@@ -51,6 +57,53 @@ describe('DashboardPage', () => {
     expect(api.getSummary).toHaveBeenCalledTimes(2);
     expect(root.textContent).toContain('125 000 FCFA');
   });
+
+  it('actualise les données toutes les minutes tant que le dashboard est affiché', fakeAsync(() => {
+    api.getSummary.and.returnValues(of(summaryFixture()), of(summaryFixture()));
+    createComponent();
+
+    expect(api.getSummary).toHaveBeenCalledTimes(1);
+
+    tick(60_000);
+
+    expect(api.getSummary).toHaveBeenCalledTimes(2);
+    fixture.destroy();
+    discardPeriodicTasks();
+  }));
+
+  it('ne lance pas une seconde actualisation tant que la précédente est en cours', fakeAsync(() => {
+    const pendingRequest = new Subject<DashboardSummary>();
+    api.getSummary.and.returnValues(pendingRequest, of(summaryFixture()));
+    createComponent();
+
+    tick(60_000);
+    expect(api.getSummary).toHaveBeenCalledTimes(1);
+
+    pendingRequest.next(summaryFixture());
+    pendingRequest.complete();
+    tick(60_000);
+
+    expect(api.getSummary).toHaveBeenCalledTimes(2);
+    fixture.destroy();
+    discardPeriodicTasks();
+  }));
+
+  it('conserve les dernières données si une actualisation automatique échoue', fakeAsync(() => {
+    api.getSummary.and.returnValues(
+      of(summaryFixture()),
+      throwError(() => new Error('network')),
+    );
+    createComponent();
+
+    tick(60_000);
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.textContent).toContain('125 000 FCFA');
+    expect(root.textContent).not.toContain('Impossible de charger le tableau de bord');
+    fixture.destroy();
+    discardPeriodicTasks();
+  }));
 
   function createComponent(): void {
     TestBed.configureTestingModule({

@@ -1,7 +1,20 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DOCUMENT } from '@angular/common';
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import {
+  catchError,
+  EMPTY,
+  exhaustMap,
+  filter,
+  fromEvent,
+  interval,
+  map,
+  merge,
+  Observable,
+  of,
+  Subject,
+} from 'rxjs';
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
 import { Spinner } from '../../../../shared/ui/spinner/spinner';
 import { DashboardApiService } from '../../data-access/dashboard-api.service';
@@ -17,6 +30,8 @@ type DashboardState =
   | { readonly status: 'ready'; readonly summary: DashboardSummary }
   | { readonly status: 'error' };
 
+const DASHBOARD_REFRESH_INTERVAL_MS = 60_000;
+
 @Component({
   selector: 'app-dashboard-page',
   imports: [DatePipe, MoneyPipe, RouterLink, Spinner],
@@ -26,6 +41,8 @@ type DashboardState =
 export class DashboardPage {
   private readonly api = inject(DashboardApiService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
+  private readonly manualRefresh = new Subject<void>();
 
   readonly state = signal<DashboardState>({ status: 'loading' });
   readonly summary = computed(() => {
@@ -34,11 +51,28 @@ export class DashboardPage {
   });
 
   constructor() {
-    this.load();
+    merge(
+      of(undefined),
+      interval(DASHBOARD_REFRESH_INTERVAL_MS).pipe(
+        filter(() => this.document.visibilityState === 'visible'),
+        map(() => undefined),
+      ),
+      fromEvent(this.document, 'visibilitychange').pipe(
+        filter(() => this.document.visibilityState === 'visible'),
+        map(() => undefined),
+      ),
+      this.manualRefresh,
+    )
+      .pipe(
+        exhaustMap(() => this.load()),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((summary) => this.state.set({ status: 'ready', summary }));
   }
 
   retry(): void {
-    this.load();
+    this.state.set({ status: 'loading' });
+    this.manualRefresh.next();
   }
 
   customerName(customer: CustomerDebtAlert): string {
@@ -86,13 +120,14 @@ export class DashboardPage {
     }
   }
 
-  private load(): void {
-    this.state.set({ status: 'loading' });
-    this.api.getSummary()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (summary) => this.state.set({ status: 'ready', summary }),
-        error: () => this.state.set({ status: 'error' }),
-      });
+  private load(): Observable<DashboardSummary> {
+    return this.api.getSummary().pipe(
+      catchError(() => {
+        if (this.state().status !== 'ready') {
+          this.state.set({ status: 'error' });
+        }
+        return EMPTY;
+      }),
+    );
   }
 }
