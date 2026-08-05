@@ -2,9 +2,13 @@ import { Component, computed, effect, ElementRef, inject, input, output, signal,
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ProductsApiService } from '../../data-access/products-api.service';
 import { ProductSearchResult } from '../../models/product.model';
-import { catchError, debounceTime, distinctUntilChanged, map, of, switchMap } from 'rxjs';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, distinctUntilChanged, EMPTY, map, merge, of, Subject, switchMap, timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MoneyPipe } from '../../../../shared/pipes/money.pipe';
+
+type ProductSearchState = 'idle' | 'loading' | 'ready' | 'error';
+
+let productPickerInstance = 0;
 
 /**
  * Cœur de recherche produit réutilisable (recherche trigramme via
@@ -47,36 +51,63 @@ export class ProductPicker {
 
   readonly searchControl = new FormControl('', { nonNullable: true });
   readonly results = signal<ProductSearchResult[]>([]);
+  readonly searchState = signal<ProductSearchState>('idle');
 
-  // Terme courant (rogné) suivi en parallèle : distingue « champ trop court »
-  // de « recherche sans résultat ».
-  private readonly query = toSignal(
-    this.searchControl.valueChanges.pipe(map((value) => value.trim())),
-    { initialValue: '' }
-  );
+  private readonly query = signal('');
+  private readonly retryRequests = new Subject<void>();
 
   readonly focused = signal(false);
   readonly activeIndex = signal(-1);
 
+  readonly listboxId = `product-picker-listbox-${++productPickerInstance}`;
+  readonly activeOptionId = computed(() => {
+    const index = this.activeIndex();
+    return index >= 0 ? this.optionId(index) : null;
+  });
+
   readonly showDropdown = computed(
-    () => this.focused() && (this.results().length > 0 || this.query().length >= 2)
+    () => this.focused() && this.query().length >= 2
   );
   readonly showEmpty = computed(
-    () => this.query().length >= 2 && this.results().length === 0
+    () => this.searchState() === 'ready' && this.results().length === 0
   );
+  readonly isLoading = computed(() => this.searchState() === 'loading');
+  readonly hasError = computed(() => this.searchState() === 'error');
 
   constructor() {
-    this.searchControl.valueChanges.pipe(
-      debounceTime(250),
+    const typedRequests = this.searchControl.valueChanges.pipe(
       map((value) => value.trim()),
       distinctUntilChanged(),
-      switchMap((query) =>
-        query.length >= 2
-          ? this.productsApiService.searchProducts(query).pipe(catchError(() => of([])))
-          : of([])
-      ),
+      map((query) => ({ query, debounce: true }))
+    );
+    const retryRequests = this.retryRequests.pipe(
+      map(() => ({ query: this.query(), debounce: false }))
+    );
+
+    merge(typedRequests, retryRequests).pipe(
+      switchMap(({ query, debounce }) => {
+        this.query.set(query);
+        this.results.set([]);
+
+        if (query.length < 2) {
+          this.searchState.set('idle');
+          return EMPTY;
+        }
+
+        this.searchState.set('loading');
+        const delay = debounce ? timer(250) : of(0);
+
+        return delay.pipe(
+          switchMap(() => this.productsApiService.searchProducts(query)),
+          map((results) => ({ state: 'ready' as const, results })),
+          catchError(() => of({ state: 'error' as const, results: [] }))
+        );
+      }),
       takeUntilDestroyed()
-    ).subscribe((results) => this.results.set(results));
+    ).subscribe(({ state, results }) => {
+      this.results.set(results);
+      this.searchState.set(state);
+    });
 
     // Toute nouvelle liste réinitialise la sélection clavier.
     effect(() => {
@@ -89,8 +120,14 @@ export class ProductPicker {
       const label = this.initialLabel();
       if (label) {
         this.searchControl.setValue(label, { emitEvent: false });
+        this.query.set('');
+        this.searchState.set('idle');
       }
     });
+  }
+
+  optionId(index: number): string {
+    return `${this.listboxId}-option-${index}`;
   }
 
   onFocus() {
@@ -136,18 +173,28 @@ export class ProductPicker {
     this.selected.emit(item);
     if (this.clearOnSelect()) {
       this.searchControl.setValue('', { emitEvent: false });
-      this.results.set([]);
     } else {
       // Affiche le nom retenu (sans relancer de recherche).
       this.searchControl.setValue(item.name, { emitEvent: false });
     }
+    this.query.set('');
+    this.results.set([]);
+    this.searchState.set('idle');
     this.close();
+  }
+
+  retrySearch() {
+    if (this.query().length >= 2) {
+      this.retryRequests.next();
+    }
   }
 
   // Réinitialise le champ (ex. après soumission réussie d'un formulaire).
   reset() {
     this.searchControl.setValue('', { emitEvent: false });
+    this.query.set('');
     this.results.set([]);
+    this.searchState.set('idle');
     this.close();
   }
 

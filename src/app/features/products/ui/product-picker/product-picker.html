@@ -17,19 +17,36 @@
     [attr.aria-label]="ariaLabel()"
     role="combobox"
     aria-autocomplete="list"
-    aria-controls="product-picker-listbox"
+    [attr.aria-controls]="listboxId"
     [attr.aria-expanded]="showDropdown()"
-    [attr.aria-activedescendant]="activeIndex() >= 0 ? 'product-picker-option-' + activeIndex() : null"
+    [attr.aria-activedescendant]="activeOptionId()"
+    [attr.aria-busy]="isLoading()"
     (focus)="onFocus()"
     (blur)="onBlur()"
   />
 
   @if (showDropdown()) {
     <div class="product-picker__panel">
-      @if (results().length > 0) {
+      @if (isLoading()) {
+        <div class="product-picker__status" role="status" aria-live="polite">
+          Recherche en cours…
+        </div>
+      } @else if (hasError()) {
+        <div class="product-picker__status product-picker__status--error" role="alert">
+          <span>La recherche a échoué. Vérifiez votre connexion.</span>
+          <button
+            class="btn btn--secondary product-picker__retry"
+            type="button"
+            (mousedown)="$event.preventDefault()"
+            (click)="retrySearch()"
+          >
+            Réessayer
+          </button>
+        </div>
+      } @else if (results().length > 0) {
         <ul
           class="product-picker__list"
-          id="product-picker-listbox"
+          [attr.id]="listboxId"
           role="listbox"
           aria-label="Résultats de recherche"
         >
@@ -37,7 +54,7 @@
           <li
             class="product-picker__option"
             [class.is-active]="i === activeIndex()"
-            id="product-picker-option-{{ i }}"
+            [attr.id]="optionId(i)"
             role="option"
             [attr.aria-selected]="i === activeIndex()"
             (mousedown)="$event.preventDefault()"
