@@ -22,7 +22,11 @@
       </div>
 
       <div class="user-card__role">
-        <span class="role-badge">
+        <span
+          class="role-badge"
+          [class.role-badge--owner]="user.role === 'OWNER'"
+          [class.role-badge--seller]="user.role === 'SELLER'"
+        >
           @if (user.role === 'OWNER') { Propriétaire } @else { Vendeur }
         </span>
       </div>

@@ -14,36 +14,59 @@
   </header>
 
   <div class="users-content">
-    <section class="users-summary" aria-label="Résumé des comptes">
+    <section
+      class="users-summary"
+      [class.users-summary--loading]="store.loadState() === 'loading'"
+      [attr.aria-busy]="store.loadState() === 'loading'"
+      aria-label="Résumé des comptes"
+    >
       <div class="users-summary__item">
         <span class="users-summary__icon users-summary__icon--total" aria-hidden="true">◎</span>
         <div>
-          <strong>{{ store.totalCount() }}</strong>
+          <strong>
+            @if (store.loadState() === 'loading') {
+              <span class="skeleton users-summary__skeleton" aria-hidden="true"></span>
+            } @else {
+              {{ store.totalCount() }}
+            }
+          </strong>
           <span>Membres</span>
         </div>
       </div>
       <div class="users-summary__item">
         <span class="users-summary__icon users-summary__icon--active" aria-hidden="true">✓</span>
         <div>
-          <strong>{{ store.activeCount() }}</strong>
+          <strong>
+            @if (store.loadState() === 'loading') {
+              <span class="skeleton users-summary__skeleton" aria-hidden="true"></span>
+            } @else {
+              {{ store.activeCount() }}
+            }
+          </strong>
           <span>Comptes actifs</span>
         </div>
       </div>
       <div class="users-summary__item">
         <span class="users-summary__icon users-summary__icon--inactive" aria-hidden="true">—</span>
         <div>
-          <strong>{{ store.inactiveCount() }}</strong>
+          <strong>
+            @if (store.loadState() === 'loading') {
+              <span class="skeleton users-summary__skeleton" aria-hidden="true"></span>
+            } @else {
+              {{ store.inactiveCount() }}
+            }
+          </strong>
           <span>Comptes désactivés</span>
         </div>
       </div>
     </section>
 
     @if (store.loadState() === 'loading') {
-      <section class="card users-state" aria-live="polite">
+      <section class="state-block users-state" aria-live="polite">
         <app-spinner label="Chargement des utilisateurs" />
       </section>
     } @else if (store.loadState() === 'error') {
-      <section class="card users-state users-state--error" role="alert">
+      <section class="state-block state-block--error users-state" role="alert">
         <p>Impossible de charger les utilisateurs.</p>
         <button class="btn btn--secondary" type="button" (click)="loadUsers()">Réessayer</button>
       </section>

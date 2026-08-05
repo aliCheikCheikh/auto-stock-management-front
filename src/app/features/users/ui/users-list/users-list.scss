@@ -36,9 +36,9 @@
   min-height: 88px;
   padding: var(--space-4) var(--space-5);
   border: var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: 10px;
   background: var(--gray-0);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-surface);
 }
 
 .user-card--inactive {
@@ -107,6 +107,18 @@
   font-weight: 600;
 }
 
+.role-badge--owner {
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--accent-700);
+}
+
+.role-badge--seller {
+  border: var(--border-subtle);
+  background: var(--gray-50);
+  color: var(--gray-900);
+}
+
 .user-card__role {
   display: flex;
   align-items: center;
@@ -116,6 +128,12 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  width: fit-content;
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-pill);
+  background: var(--gray-50);
   color: var(--gray-900);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -132,8 +150,18 @@
   background: var(--success-600);
 }
 
+.status-badge--active {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+  color: var(--success-600);
+}
+
 .status-badge--inactive::before {
   background: var(--gray-400);
+}
+
+.status-badge--inactive {
+  color: var(--gray-500);
 }
 
 .password-status {
@@ -154,13 +182,14 @@
   min-height: var(--control-h-sm);
   padding: 0 var(--space-3);
   border: var(--border-field);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   background: var(--gray-0);
   color: var(--gray-900);
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   list-style: none;
+  transition: transform 120ms var(--ease-out), background-color 120ms ease;
 }
 
 .user-actions summary::-webkit-details-marker {
@@ -169,6 +198,10 @@
 
 .user-actions summary:hover {
   background: var(--gray-50);
+}
+
+.user-actions summary:active {
+  transform: scale(0.97);
 }
 
 .user-actions summary:focus-visible {
@@ -188,6 +221,7 @@
   border-radius: var(--radius-lg);
   background: var(--gray-0);
   box-shadow: var(--shadow-overlay);
+  transform-origin: top right;
 }
 
 .user-actions__menu button {
@@ -200,10 +234,15 @@
   font-size: var(--text-sm);
   text-align: left;
   cursor: pointer;
+  transition: transform 120ms var(--ease-out), background-color 120ms ease;
 }
 
 .user-actions__menu button:hover {
   background: var(--gray-100);
+}
+
+.user-actions__menu button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .user-actions__menu button:focus-visible {
@@ -217,6 +256,9 @@
 }
 
 .user-actions__menu .user-actions__danger {
+  margin-top: var(--space-1);
+  border-top: 1px solid var(--gray-200);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
   color: var(--danger-600);
 }
 
@@ -282,5 +324,17 @@
 
   .user-actions summary span {
     font-size: var(--text-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-actions summary,
+  .user-actions__menu button {
+    transition-property: background-color;
+  }
+
+  .user-actions summary:active,
+  .user-actions__menu button:active:not(:disabled) {
+    transform: none;
   }
 }
