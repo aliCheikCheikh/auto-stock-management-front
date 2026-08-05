@@ -9,10 +9,10 @@
 
 // ─── En-tête produit ─────────────────────────────────────────────────────────
 .product-header {
-  max-width: 960px;
-  margin: 0 auto 24px;
+  max-width: var(--content-md);
+  margin: 0 auto var(--space-6);
   display: grid;
-  gap: 14px;
+  gap: var(--space-2);
 }
 
 // Le lien de retour vient du design system (.back-link dans styles.scss) :
@@ -21,41 +21,43 @@
 // ─── Tuiles de stats ──────────────────────────────────────────────────────────
 .stat-tiles {
   display: flex;
-  gap: 12px;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
   flex-wrap: wrap;
 }
 
 .stat-tile {
   display: grid;
-  gap: 8px;
-  padding: 16px 20px;
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-subtle);
+  border-radius: 10px;
+  background: var(--gray-0);
+  box-shadow: var(--shadow-surface);
   min-width: 130px;
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
-  color: var(--color-muted);
+  color: var(--gray-500);
   text-transform: uppercase;
   letter-spacing: 0.07em;
 }
 
 .stat-value {
-  font-size: 26px;
+  font-size: var(--text-xl);
   font-weight: 700;
-  color: var(--color-ink);
+  color: var(--gray-900);
   line-height: 1;
 }
 
 // ─── Corps de la fiche ────────────────────────────────────────────────────────
 .detail-body {
-  max-width: 960px;
+  max-width: var(--content-md);
   margin: 0 auto;
   display: grid;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 // ─── Tableau emplacements ─────────────────────────────────────────────────────
@@ -67,19 +69,19 @@
 .location-table__quantity-col { width: 24%; }
 
 .location-name {
-  font-weight: 400;
-  color: var(--color-ink);
+  font-weight: 600;
+  color: var(--gray-900);
 }
 
 .location-quantity {
-  font-weight: 500;
-  color: var(--color-ink);
+  font-weight: 700;
+  color: var(--gray-900);
   font-variant-numeric: tabular-nums;
 }
 
 .location-empty {
   padding: var(--space-5) !important;
-  color: var(--color-muted);
+  color: var(--gray-500);
 }
 
 // ─── Barre d'actions (fiche = hub) ───────────────────────────────────────────
@@ -92,7 +94,7 @@
 
 // ─── États loading / error (centrés, spinner adapté au thème) ────────────────
 .state-block {
-  max-width: 960px;
+  max-width: var(--content-md);
   margin: 0 auto;
   display: grid;
   justify-items: center;
@@ -103,7 +105,7 @@
 }
 
 .state-block--error {
-  color: var(--gray-500);
+  color: var(--danger-600);
 }
 
 .state-block__message {
@@ -142,8 +144,12 @@
 
   .stat-tiles {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
+  }
+
+  .stat-tile:last-child {
+    grid-column: 1 / -1;
   }
 
   .stat-tile {
@@ -156,6 +162,6 @@
   }
 
   .location-table {
-    min-width: 420px;
+    min-width: 100%;
   }
 }
