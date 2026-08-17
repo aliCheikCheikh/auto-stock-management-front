@@ -93,16 +93,16 @@
             </td>
 
             <td class="catalogue-status" data-label="État">
-              <span class="stock-badge stock-badge--{{ item.stockStatus }}">
+              <span class="stock-state stock-state--{{ item.stockStatus }}">
                 @switch (item.stockStatus) {
                 @case ('ok') {
-                OK
+                Disponible
                 }
                 @case ('low') {
                 Sous seuil
                 }
                 @case ('critical') {
-                Critique
+                Rupture
                 }
                 }
               </span>
