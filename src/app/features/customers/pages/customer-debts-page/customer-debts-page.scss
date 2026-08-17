@@ -29,14 +29,6 @@
   background: var(--gray-50);
 }
 
-.customer-section--outstanding .section-heading {
-  box-shadow: inset 3px 0 0 var(--warning-600);
-}
-
-.customer-section--settled .section-heading {
-  box-shadow: inset 3px 0 0 var(--success-600);
-}
-
 .customer-page__phone {
   display: inline-block;
   margin-top: var(--space-1);
@@ -56,10 +48,7 @@
   gap: var(--space-1);
   min-width: 260px;
   padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--warning-border);
-  border-radius: 10px;
-  background: var(--warning-bg);
-  box-shadow: var(--shadow-surface);
+  border-left: var(--border-emphasis);
   text-align: right;
 }
 
@@ -74,6 +63,7 @@
 .customer-page__total-value {
   color: var(--gray-900);
   font-size: var(--text-xl);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
 }

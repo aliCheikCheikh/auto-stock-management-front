@@ -122,9 +122,8 @@
   margin: 0;
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--gray-300);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   background: var(--gray-50);
-  box-shadow: inset 3px 0 0 var(--accent-600);
 }
 
 .payment__row {
@@ -169,7 +168,10 @@
   line-height: 1.2;
 }
 
-.payment__row--due.is-due dt,
+.payment__row--due.is-due dt {
+  color: var(--gray-900);
+}
+
 .payment__row--due.is-due dd {
-  color: var(--warning-600);
+  color: var(--gray-900);
 }
