@@ -38,12 +38,7 @@
     </section>
   } @else if (detail(); as sale) {
     <!-- 1. Qui, et pour combien : l'information qu'on vient chercher. -->
-    <section
-      class="card detail-summary"
-      [class.detail-summary--settled]="sale.settled"
-      [class.detail-summary--outstanding]="!sale.settled"
-      aria-labelledby="detail-summary-title"
-    >
+    <section class="detail-summary" aria-labelledby="detail-summary-title">
       <div class="detail-summary__identity">
         <span class="detail-summary__eyebrow">Client</span>
         <h2 id="detail-summary-title">{{ customerName() }}</h2>
@@ -52,13 +47,14 @@
 
       <div class="detail-summary__balance" aria-live="polite">
         @if (sale.settled) {
-          <p class="detail-badge detail-badge--settled">Créance soldée</p>
+          <p class="detail-summary__label">État</p>
+          <p class="detail-summary__settled">Créance soldée</p>
           @if (settledOn(); as settledAt) {
-            <p class="detail-summary__label">
+            <p class="detail-summary__meta">
               Soldée le {{ settledAt | date: 'd MMMM y' }}
             </p>
           } @else {
-            <p class="detail-summary__label">Réglée en totalité</p>
+            <p class="detail-summary__meta">Réglée en totalité</p>
           }
         } @else {
           <p class="detail-summary__label">Reste à payer</p>
@@ -76,7 +72,7 @@
     </section>
 
     <!-- 3. Quand et par qui. -->
-    <section class="card detail-facts" aria-label="Informations de la vente">
+    <section class="detail-facts" aria-label="Informations de la vente">
       <div class="detail-fact">
         <span class="detail-fact__label">Date</span>
         <time class="detail-fact__value" [attr.datetime]="sale.occurredAt">
@@ -98,7 +94,7 @@
     </section>
 
     <!-- 2. Quoi : ce qui justifie le montant. -->
-    <section class="card detail-section" aria-labelledby="detail-lines-title">
+    <section class="detail-section" aria-labelledby="detail-lines-title">
       <div class="section-heading">
         <h2 id="detail-lines-title">Produits vendus</h2>
         <span class="section-heading__meta">
@@ -112,7 +108,7 @@
     </section>
 
     <!-- 4. Ce qui a déjà été versé. -->
-    <section class="card detail-section" aria-labelledby="detail-payments-title">
+    <section class="detail-section" aria-labelledby="detail-payments-title">
       <div class="section-heading">
         <h2 id="detail-payments-title">Versements</h2>
         <span class="section-heading__meta">

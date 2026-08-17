@@ -32,9 +32,8 @@
   min-width: 210px;
   padding: var(--space-3) var(--space-4);
   border: var(--border-subtle);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--gray-0);
-  box-shadow: var(--shadow-surface);
   color: var(--gray-500);
   font-size: var(--text-xs);
   white-space: nowrap;
@@ -64,9 +63,8 @@
 .operation-card {
   overflow: hidden;
   border: var(--border-subtle);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--gray-0);
-  box-shadow: var(--shadow-surface);
 }
 
 .operation-card__header {
@@ -77,18 +75,6 @@
   padding: var(--space-4) var(--space-5);
   border-bottom: var(--border-subtle);
   background: var(--gray-100);
-}
-
-.operation-card--ENTRY .operation-card__header {
-  box-shadow: inset 3px 0 0 var(--success-600);
-}
-
-.operation-card--EXIT .operation-card__header {
-  box-shadow: inset 3px 0 0 var(--accent-600);
-}
-
-.operation-card--TRANSFER .operation-card__header {
-  box-shadow: inset 3px 0 0 var(--warning-600);
 }
 
 .operation-card__identity {
@@ -104,30 +90,22 @@
   width: 40px;
   height: 40px;
   flex: 0 0 40px;
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  background: var(--gray-100);
+  border-right: var(--border-subtle);
   color: var(--gray-500);
   font-size: var(--text-lg);
   font-weight: 700;
 }
 
 .operation-icon--ENTRY {
-  border-color: var(--success-border);
-  background: var(--success-bg);
-  color: var(--success-600);
+  color: var(--gray-500);
 }
 
 .operation-icon--EXIT {
-  border-color: var(--gray-200);
-  background: var(--gray-100);
-  color: var(--accent-700);
+  color: var(--gray-500);
 }
 
 .operation-icon--TRANSFER {
-  border-color: var(--warning-border);
-  background: var(--warning-bg);
-  color: var(--warning-600);
+  color: var(--gray-500);
 }
 
 .operation-card__title-line {
@@ -144,9 +122,6 @@
 }
 
 .operation-card__reference {
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-pill);
-  background: var(--gray-100);
   color: var(--gray-500);
   font-size: var(--text-xs);
   font-weight: 600;
@@ -199,9 +174,6 @@
 
 .operation-product__identity span {
   width: fit-content;
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-pill);
-  background: var(--gray-100);
   color: var(--gray-500);
   font-size: var(--text-xs);
 }

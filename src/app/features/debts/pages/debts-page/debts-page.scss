@@ -37,10 +37,7 @@
   gap: var(--space-1);
   min-width: 240px;
   padding: var(--space-4) var(--space-5);
-  border: var(--border-subtle);
-  border-radius: 10px;
-  background: var(--gray-0);
-  box-shadow: var(--shadow-surface);
+  border-left: var(--border-emphasis);
   text-align: right;
 }
 
@@ -55,6 +52,7 @@
 .debts-total__value {
   color: var(--gray-900);
   font-size: var(--text-xl);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
 }
@@ -109,10 +107,6 @@
 .debts-section {
   margin-bottom: var(--space-4);
   overflow: hidden;
-}
-
-.debts-section .section-heading {
-  box-shadow: inset 3px 0 0 var(--brand-900);
 }
 
 .debts-error {

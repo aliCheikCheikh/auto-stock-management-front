@@ -61,10 +61,8 @@
 }
 
 .debt-list__warning {
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--danger-border);
-  border-radius: var(--radius-pill);
-  background: var(--danger-bg);
+  padding-left: var(--space-2);
+  border-left: var(--border-state);
   color: var(--danger-600);
   font-size: var(--text-xs);
   font-weight: 700;
