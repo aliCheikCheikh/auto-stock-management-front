@@ -44,3 +44,12 @@ Thumbs.db
 
 # Tooling output
 graphify-out/
+
+# Personal study notes and local pull-request drafts.
+/docs/revisions/
+/PULL_REQUEST.md
+/PR_*.md
+
+# Outils d'assistance locaux (non publiés)
+.agents/
+skills-lock.json
